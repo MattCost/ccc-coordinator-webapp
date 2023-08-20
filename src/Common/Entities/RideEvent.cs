@@ -2,11 +2,11 @@ namespace CCC.Entities;
 
 public class RideEvent
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public DateTime StartTime { get; set; }
     public string Location { get; set; } = string.Empty;
-    public List<int> Rides { get; set; } = new();
+    public List<Guid> Rides { get; set; } = new();
 
 }

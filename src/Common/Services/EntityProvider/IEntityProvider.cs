@@ -5,19 +5,19 @@ namespace CCC.Services.EntityProvider;
 
 public interface IEntityProvider
 {
-    Task<BikeRoute> GetBikeRoute(int routeId);
+    Task<BikeRoute> GetBikeRoute(Guid routeId);
     Task<IEnumerable<BikeRoute>> GetAllBikeRoutes();
-    Task DeleteBikeRoute(int routeId);
+    Task DeleteBikeRoute(Guid routeId);
     Task UpdateBikeRoute(BikeRoute bikeRoute);
 
-    Task<GroupRide> GetGroupRide(int rideId);
+    Task<GroupRide> GetGroupRide(Guid rideId);
     Task<IEnumerable<GroupRide>> GetAllGroupRides();
-    Task DeleteGroupRide(int rideId);
+    Task DeleteGroupRide(Guid rideId);
     Task UpdateGroupRide(GroupRide groupRide);
 
-    Task<RideEvent> GetRideEvent(int eventId);
+    Task<RideEvent> GetRideEvent(Guid eventId);
     Task<IEnumerable<RideEvent>> GetAllRideEvents();
-    Task DeleteRideEvent (int eventId);
+    Task DeleteRideEvent (Guid eventId);
     Task UpdateRideEvent(RideEvent rideEvent);
 
 

@@ -22,8 +22,8 @@ public class BikeRoutesController : EntityProviderBaseController
         return await EntityProviderActionHelper( async () => { return await EntityProvider.GetAllBikeRoutes();}, "Unable to get all bike routes");
     }
 
-    [HttpGet("{id:int}")]
-    public async Task<ActionResult<BikeRoute>> Get([FromRoute] int id)
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<BikeRoute>> Get([FromRoute] Guid id)
     {
         return await EntityProviderActionHelper( async () => { return await EntityProvider.GetBikeRoute(id);}, "Unable to get Bike Route");
     }
@@ -34,8 +34,8 @@ public class BikeRoutesController : EntityProviderBaseController
         return await EntityProviderActionHelper( async () => await EntityProvider.UpdateBikeRoute(model), "Unable to update Bike Route");
     }
 
-    [HttpDelete("{id:int}")]
-    public async Task<ActionResult> Delete([FromRoute] int id)
+    [HttpDelete("{id:guid}")]
+    public async Task<ActionResult> Delete([FromRoute] Guid id)
     {
         return await EntityProviderActionHelper( async () => await EntityProvider.DeleteBikeRoute(id), "Unable to delete bike route");
     }

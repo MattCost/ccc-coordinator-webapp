@@ -5,10 +5,10 @@ namespace CCC.Services.EntityProvider;
 
 public class MemoryEntityProvider : IEntityProvider
 {
-    private Dictionary<int, BikeRoute> _bikeRoutes = new();
-    private Dictionary<int, GroupRide> _groupRides = new();
-    private Dictionary<int, RideEvent> _rideEvents = new();
-    public Task DeleteBikeRoute(int routeId)
+    private Dictionary<Guid, BikeRoute> _bikeRoutes = new();
+    private Dictionary<Guid, GroupRide> _groupRides = new();
+    private Dictionary<Guid, RideEvent> _rideEvents = new();
+    public Task DeleteBikeRoute(Guid routeId)
     {      
         if(!_bikeRoutes.ContainsKey(routeId))  
             throw new EntityNotFoundException(typeof(BikeRoute), routeId);
@@ -24,7 +24,7 @@ public class MemoryEntityProvider : IEntityProvider
 
     }
 
-    public Task DeleteGroupRide(int rideId)
+    public Task DeleteGroupRide(Guid rideId)
     {
         if(!_groupRides.ContainsKey(rideId))
             throw new EntityNotFoundException(typeof(GroupRide), rideId);
@@ -36,7 +36,7 @@ public class MemoryEntityProvider : IEntityProvider
         return Task.CompletedTask;
     }
 
-    public Task DeleteRideEvent(int eventId)
+    public Task DeleteRideEvent(Guid eventId)
     {
         if(!_rideEvents.ContainsKey(eventId))
             throw new EntityNotFoundException(typeof(RideEvent), eventId);
@@ -65,19 +65,19 @@ public class MemoryEntityProvider : IEntityProvider
         return Task.FromResult<IEnumerable<RideEvent>>(_rideEvents.Values.ToList());
     }
 
-    public Task<BikeRoute> GetBikeRoute(int routeId)
+    public Task<BikeRoute> GetBikeRoute(Guid routeId)
     {
         return _bikeRoutes.ContainsKey(routeId) ? Task.FromResult(_bikeRoutes[routeId]) : 
             throw new EntityNotFoundException(typeof(BikeRoute), routeId);
     }
 
-    public Task<GroupRide> GetGroupRide(int rideId)
+    public Task<GroupRide> GetGroupRide(Guid rideId)
     {
         return _groupRides.ContainsKey(rideId) ? Task.FromResult(_groupRides[rideId]) :
             throw new EntityNotFoundException(typeof(GroupRide), rideId);
     }
 
-    public Task<RideEvent> GetRideEvent(int eventId)
+    public Task<RideEvent> GetRideEvent(Guid eventId)
     {
         return _rideEvents.ContainsKey(eventId) ? Task.FromResult(_rideEvents[eventId]) :
             throw new EntityNotFoundException(typeof(RideEvent), eventId);
