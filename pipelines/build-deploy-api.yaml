@@ -1,3 +1,10 @@
+triggers:
+  include:
+    paths:
+      - /pipelines/build-deploy-api.yaml
+      - /src/API
+      - /src/Common
+
 variables:
   buildConfiguration: 'Release'
 
