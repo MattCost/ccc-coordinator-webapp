@@ -94,11 +94,11 @@ namespace CCC.API
                 // dev certs don't work on fedora. need to do manual setup to use https locally
             }
 
-            // app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
-            
+
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
