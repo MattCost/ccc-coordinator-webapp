@@ -5,6 +5,7 @@ steps:
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
   workingDirectory: src/API
+
 - task: DotNetCoreCLI@2
   inputs:
     command: 'publish'
@@ -12,7 +13,7 @@ steps:
     projects: 'src/API'
 - task: AzureWebApp@1
   inputs:
-    azureSubscription: '<Azure service connection>'
+    azureSubscription: 'azure-sc'
     appType: 'webAppLinux'
-    appName: '<Name of web app>'
+    appName: 'app-ccc-webapp-api-dev'
     package: '$(System.DefaultWorkingDirectory)/**/*.zip'
