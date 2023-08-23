@@ -79,14 +79,14 @@ namespace CCC.API
                 // For debugging/development purposes, one can enable additional detail in exceptions by setting IdentityModelEventSource.ShowPII to true.
                 // Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(options =>
-                {
-                    options.EnableTryItOutByDefault();
-                    options.OAuthUsePkce();
-                    options.OAuthClientId("a6fe10f9-9e44-4865-8ee8-ccacca8715f1");
-                    options.OAuthScopes(new string[] { "api://catcam-api/api.access" });
-                });
+                // app.UseSwagger();
+                // app.UseSwaggerUI(options =>
+                // {
+                //     options.EnableTryItOutByDefault();
+                //     options.OAuthUsePkce();
+                //     options.OAuthClientId("a6fe10f9-9e44-4865-8ee8-ccacca8715f1");
+                //     options.OAuthScopes(new string[] { "api://catcam-api/api.access" });
+                // });
             }
             else
             {
@@ -95,6 +95,8 @@ namespace CCC.API
             }
 
             app.UseHttpsRedirection();
+
+            app.UseDefaultFiles();
 
             app.UseRouting();
             app.UseAuthentication();
