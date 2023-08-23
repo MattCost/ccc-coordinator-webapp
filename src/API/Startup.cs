@@ -18,7 +18,6 @@ namespace CCC.API
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureCommonServices(IServiceCollection services)
         {
             // This is required to be instantiated before the OpenIdConnectOptions starts getting configured.
@@ -32,6 +31,14 @@ namespace CCC.API
             // You might not want to keep this following flag on for production
             IdentityModelEventSource.ShowPII = true;
 
+            // Adds Microsoft Identity platform (AAD v2.0) support to protect this Api
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                    .AddMicrosoftIdentityWebApi(options =>
+            {
+                Configuration.Bind("AzureAdB2C", options);
+            },
+            options => { Configuration.Bind("AzureAdB2C", options); });
+        
             services.AddMvc(options =>
             {
                 // options.Filters.Add<CustomExceptionFilter>();
@@ -57,6 +64,7 @@ namespace CCC.API
         public void ConfigureProductionServices(IServiceCollection services)
         {
             ConfigureCommonServices(services);
+            services.AddSingleton<IEntityProvider, MemoryEntityProvider>();
             // services.AddSingleton<ISecretsManager, EnvVarSecretManager>();
             // Auth handlers after app roles are defined and worked out
         }
@@ -84,13 +92,13 @@ namespace CCC.API
             {
                 app.UseHsts();
                 // dev certs don't work on fedora. need to do manual setup to use https locally
-                app.UseHttpsRedirection();
             }
 
+            app.UseHttpsRedirection();
 
             app.UseRouting();
-            // app.UseAuthentication();
-            // app.UseAuthorization();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
