@@ -32,12 +32,12 @@ namespace CCC.API
             IdentityModelEventSource.ShowPII = true;
 
             // Adds Microsoft Identity platform (AAD v2.0) support to protect this Api
-            // services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            //         .AddMicrosoftIdentityWebApi(options =>
-            // {
-            //     Configuration.Bind("AzureAdB2C", options);
-            // },
-            // options => { Configuration.Bind("AzureAdB2C", options); });
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                    .AddMicrosoftIdentityWebApi(options =>
+            {
+                Configuration.Bind("AzureAdB2C", options);
+            },
+            options => { Configuration.Bind("AzureAdB2C", options); });
         
             services.AddMvc(options =>
             {
@@ -91,10 +91,10 @@ namespace CCC.API
             else
             {
                 app.UseHsts();
-                // dev certs don't work on fedora. need to do manual setup to use https locally
+                // dev certs don't work on fedora. need to do manual setup to use https locally, so when in development, we don't use https
+                app.UseHttpsRedirection();
             }
 
-            app.UseHttpsRedirection();
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
