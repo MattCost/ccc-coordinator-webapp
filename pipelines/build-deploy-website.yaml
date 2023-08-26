@@ -1,0 +1,29 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - pipelines/build-deploy-website.yaml
+      - src/website
+      - src/Common
+
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+- script: dotnet build --configuration $(buildConfiguration)
+  displayName: 'dotnet build $(buildConfiguration)'
+  workingDirectory: src/API
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: 'src/website'
+- task: AzureWebApp@1
+  inputs:
+    azureSubscription: 'azure-sc'
+    appType: 'webAppLinux'
+    appName: 'app-ccc-webapp-website-dev'
+    package: '$(System.DefaultWorkingDirectory)/**/*.zip'
