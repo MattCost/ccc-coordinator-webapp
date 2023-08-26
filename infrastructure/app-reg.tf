@@ -79,8 +79,14 @@ resource "azuread_application" "website" {
       access_token_issuance_enabled = true
       id_token_issuance_enabled     = true
     }
-    redirect_uris = [ "https://jwt.ms/", "https://${azurecaf_name.website.result}.azurewebsites.net/" ]
-    # redirect_uris = [ "https://jwt.ms/", azurerm_linux_web_app.website.default_hostname ]
+    redirect_uris = [ 
+      "https://jwt.ms/", 
+      "https://${azurecaf_name.website.result}.azurewebsites.net/signin-oidc",
+      "http://localhost:5005/signin-oidc"
+    ]
+    
+    logout_url = "https://${azurecaf_name.website.result}.azurewebsites.net/signout-oidc"
+    
   }
 
   required_resource_access {

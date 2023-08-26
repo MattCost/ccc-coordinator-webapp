@@ -110,19 +110,7 @@ resource "azurerm_linux_web_app" "api" {
         retention_in_mb = 35
       }
     }
-  }
-  # The above was from json view or a diff in tf.
-  # This was from a git-hub issue
-  # logs {
-  #   application_logs {
-  #     file_system {
-  #       quota            = 30     # in Megabytes
-  #       retention_period = 30     # in days
-
-  #     }
-  #   }
-  # }
-  
+  } 
 }
 
 resource "azurerm_linux_web_app" "website" {
@@ -144,7 +132,7 @@ resource "azurerm_linux_web_app" "website" {
     AzureAdB2C__SignUpSignInPolicyId = "B2C_1_SignupSignin"
     AzureAdB2C__SignOutCallbackPath = "/signout/B2C_1_SignupSignin"
     API__Scopes = "[ \"${local.api_uri}/${local.api_access_scope}\" ]"
-    API__BaseUrl = azurerm_linux_web_app.api.default_hostname # this?
+    API__BaseUrl = azurerm_linux_web_app.api.default_hostname
 
   }
 
