@@ -39,6 +39,10 @@ namespace CCC.website
                     .AddInMemoryTokenCaches();
             //     .AddDistributedTokenCaches(); need this in app service?
 
+
+            //Configuring appsettings section AzureAdB2C, into IOptions
+            services.AddOptions();
+            services.Configure<OpenIdConnectOptions>(Configuration.GetSection("AzureAdB2C"));
             // var scopes = new string[] { "api://catcam-api/api.access"};
 
             // string clientSecret = Environment.GetEnvironmentVariable("AZUREAD_CLIENT_SECRET") ?? string.Empty;
