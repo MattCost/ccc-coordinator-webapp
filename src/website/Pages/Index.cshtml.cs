@@ -14,6 +14,9 @@ public class IndexModel : PageModel
 
     public void OnGet()
     {
+        _logger.LogTrace("Entering OnGet");
+        _logger.LogDebug("Entering OnGet");
+        _logger.LogInformation("Entering OnGet");
 
     }
 }

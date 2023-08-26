@@ -14,6 +14,7 @@ namespace CCC.website.Pages.Hello
 
         public async Task OnGet()
         {
+            Logger.LogDebug("Entering OnGet");
             try
             {
                 var result = await API.GetForUserAsync<string>("API", options =>
@@ -21,7 +22,7 @@ namespace CCC.website.Pages.Hello
                     options.RelativePath = "/api/HelloWorld";
                 });
                 Logger.LogDebug("Result from API {Result}", result);
-                APIStatus = result ?? "unknown";
+                APIStatus = string.IsNullOrEmpty(result) ? "empty!" : result;
             }
             catch (Exception ex)
             {
