@@ -30,9 +30,6 @@ namespace CCC.website
                 options.HandleSameSiteCookieCompatibility();
             });
 
-            services.AddOptions();
-
-
             services.AddMicrosoftIdentityWebAppAuthentication(Configuration, Constants.AzureAdB2C)
                     .EnableTokenAcquisitionToCallDownstreamApi(Configuration.GetValue<string[]>("API:Scopes") ?? new string[] {string.Empty })
                     .AddDownstreamApi("API", Configuration.GetSection("API"))            
