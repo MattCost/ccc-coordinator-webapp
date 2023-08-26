@@ -1,11 +1,13 @@
 ﻿@page
 @model CCC.website.Pages.Hello.IndexModel
 @{
+    ViewData["Title"] = "Hello World";
+
 }
 
 <p>Hello There,</p>
 <P>General Kanobi!</P>
 
 <div>
-    API Status: @Html.DisplayFor( Model => Model.APIStatus)
+    API Status: @Html.DisplayFor( model => model.APIStatus)
 </div>

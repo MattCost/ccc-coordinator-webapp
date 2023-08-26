@@ -14,7 +14,6 @@ namespace CCC.website.Pages.Hello
 
         public async Task OnGetAsync()
         {
-            Logger.LogDebug("Entering OnGet");
             try
             {
                 var result = await API.GetForUserAsync<string>("API", options =>

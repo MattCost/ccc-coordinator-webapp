@@ -12,6 +12,6 @@ public class HelloWorldController : ControllerBase
     [HttpGet]
     public IActionResult Hello()
     {
-        return Ok("Hello World");
-    }
+        return new JsonResult("Hello World");
+    } 
 }
