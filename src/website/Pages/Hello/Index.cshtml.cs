@@ -18,7 +18,7 @@ namespace CCC.website.Pages.Hello
             {
                 var result = await API.GetForUserAsync<string>("API", options =>
                 {
-                    options.RelativePath = "/api/HelloWorld";
+                    options.RelativePath = "HelloWorld";
                 });
                 Logger.LogDebug("Result from API {Result}", result);
                 APIStatus = string.IsNullOrEmpty(result) ? "empty!" : result;

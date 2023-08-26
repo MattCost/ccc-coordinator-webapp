@@ -138,7 +138,7 @@ resource "azurerm_linux_web_app" "website" {
     AzureAdB2C__SignUpSignInPolicyId = "B2C_1_SignupSignin"
     AzureAdB2C__SignOutCallbackPath = "/signout/B2C_1_SignupSignin"
     API__Scopes = "[ \"${local.api_uri}/${local.api_access_scope}\" ]"
-    API__BaseUrl = azurerm_linux_web_app.api.default_hostname
+    API__BaseUrl = "https://${azurerm_linux_web_app.api.default_hostname}/api/"
 
   }
 
