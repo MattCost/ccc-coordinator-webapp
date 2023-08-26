@@ -87,6 +87,7 @@ resource "azurerm_linux_web_app" "api" {
 
   site_config {
     always_on = false
+
     application_stack {
       dotnet_version = "7.0"
     }
@@ -121,7 +122,12 @@ resource "azurerm_linux_web_app" "website" {
 
   site_config {
     always_on = false
+
+    application_stack {
+      dotnet_version = "7.0"
+    }
   }
+
 
   # These become env vars, which can be read by the config provider (nested properties use : which becomes __ )
   app_settings = {
