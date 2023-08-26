@@ -6,3 +6,10 @@ Future setup.
 Create SP, give SP contributor rights to the resource group, and blob storage read/write to the container.
 Use this SP from pipelines.
 This SP would need permission in a) main RG, b) B2C tenant (for app reg)
+
+TODO
+Create SP. give this SP rights to the RG
+    use this SP for TF.
+
+Create SP. give this SP rights to deploy webapps
+    use this SP as an azure service connection for devops pipelines to build and deploy the code

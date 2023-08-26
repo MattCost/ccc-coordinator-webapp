@@ -87,7 +87,42 @@ resource "azurerm_linux_web_app" "api" {
 
   site_config {
     always_on = false
+    application_stack {
+      dotnet_version = "7.0"
+    }
+    
   }
+
+  # These become env vars, which can be read by the config provider (nested properties use : which becomes __ )
+  app_settings = {
+    AzureAdB2C__Instance = "https://cccwebapp.b2clogin.com"
+    AzureAdB2C__Domain = "cccwebapp.onmicrosoft.com"
+    AzureAdB2C__ClientId = azuread_application.api.application_id
+    AzureAdB2C__SignUpSignInPolicyId = "B2C_1_SignupSignin"
+  }
+
+  logs {
+    detailed_error_messages = true
+    failed_request_tracing = true
+    http_logs {
+      file_system {
+        retention_in_days = 4
+        retention_in_mb = 35
+      }
+    }
+  }
+  # The above was from json view or a diff in tf.
+  # This was from a git-hub issue
+  # logs {
+  #   application_logs {
+  #     file_system {
+  #       quota            = 30     # in Megabytes
+  #       retention_period = 30     # in days
+
+  #     }
+  #   }
+  # }
+  
 }
 
 resource "azurerm_linux_web_app" "website" {
@@ -99,6 +134,31 @@ resource "azurerm_linux_web_app" "website" {
   site_config {
     always_on = false
   }
+
+  # These become env vars, which can be read by the config provider (nested properties use : which becomes __ )
+  app_settings = {
+    AzureAdB2C__Instance = "https://cccwebapp.b2clogin.com"
+    AzureAdB2C__Domain = "cccwebapp.onmicrosoft.com"
+    AzureAdB2C__ClientId = azuread_application.website.application_id
+    AzureAdB2C__ClientSecret = azuread_application_password.website.value
+    AzureAdB2C__SignUpSignInPolicyId = "B2C_1_SignupSignin"
+    AzureAdB2C__SignOutCallbackPath = "/signout/B2C_1_SignupSignin"
+    API__Scopes = "[ \"${local.api_uri}/${local.api_access_scope}\" ]"
+    API__BaseUrl = azurerm_linux_web_app.api.default_hostname # this?
+
+  }
+
+  logs {
+    detailed_error_messages = true
+    failed_request_tracing = true
+    http_logs {
+      file_system {
+        retention_in_days = 4
+        retention_in_mb = 35
+      }
+    }
+  }
+
 }
 
 # Manually created. could import later if really need to manage

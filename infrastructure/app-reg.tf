@@ -2,16 +2,12 @@ data "azuread_application_published_app_ids" "well_known" {}
 
 data "azuread_client_config" "current" {}
 
-
 resource "random_uuid" "apiaccess_scope_id" {}
 resource "random_uuid" "apiadmin_scope_id" {}
 
-
-
 resource "azuread_application" "api" {
   display_name = "CCC Webapp API"
-  # needed? portal created apps dont have this
-  identifier_uris  = ["https://cccwebapp.onmicrosoft.com/ccc-webapp-api"]
+  identifier_uris  = [ local.api_uri ]
   owners           = [data.azuread_client_config.current.object_id]
   sign_in_audience = "AzureADandPersonalMicrosoftAccount"
 
@@ -26,7 +22,7 @@ resource "azuread_application" "api" {
       enabled                    = true
       id                         = random_uuid.apiaccess_scope_id.result
       type                       = "User"
-      value                      = "API.Access"
+      value                      = local.api_access_scope
     }
 
     oauth2_permission_scope {
@@ -35,7 +31,7 @@ resource "azuread_application" "api" {
       enabled                    = true
       id                         = random_uuid.apiadmin_scope_id.result
       type                       = "Admin"
-      value                      = "API.Admin"
+      value                      = local.api_admin_scope
     }
   }
 
@@ -50,7 +46,6 @@ resource "azuread_application" "api" {
   required_resource_access {
     resource_app_id = data.azuread_application_published_app_ids.well_known.result.MicrosoftGraph
 
-    # Terraform datasource of well_known IDs doesn&#39;t contain openid and offline_access
     resource_access {
       id   = "37f7f235-527c-4136-accd-4a02d197296e" # openid
       type = "Scope"
@@ -84,7 +79,8 @@ resource "azuread_application" "website" {
       access_token_issuance_enabled = true
       id_token_issuance_enabled     = true
     }
-    redirect_uris = [ "https://jwt.ms/"]
+    redirect_uris = [ "https://jwt.ms/", "https://${azurecaf_name.website.result}.azurewebsites.net/" ]
+    # redirect_uris = [ "https://jwt.ms/", azurerm_linux_web_app.website.default_hostname ]
   }
 
   required_resource_access {
@@ -113,4 +109,8 @@ resource "azuread_application" "website" {
 
 resource "azuread_service_principal" "website" {
   application_id = azuread_application.website.application_id
+}
+
+resource "azuread_application_password" "website" {
+  application_object_id = azuread_application.website.object_id
 }

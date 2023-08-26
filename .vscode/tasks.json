@@ -25,7 +25,6 @@
             ],
             "problemMatcher": "$msCompile"
         },
-
         {
             "label": "watch",
             "command": "dotnet",
@@ -37,6 +36,24 @@
                 "${workspaceFolder}/src/API/API.sln"
             ],
             "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "terraform plan",
+            "command": "terraform plan -out tfplan",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/infrastructure"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "terraform apply",
+            "command": "terraform apply tfplan",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/infrastructure"
+            },
+            "problemMatcher": []
         }
     ]
 }
