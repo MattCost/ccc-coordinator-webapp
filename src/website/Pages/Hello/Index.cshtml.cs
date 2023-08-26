@@ -12,7 +12,7 @@ namespace CCC.website.Pages.Hello
         {
         }
 
-        public async Task OnGet()
+        public async Task OnGetAsync()
         {
             Logger.LogDebug("Entering OnGet");
             try
