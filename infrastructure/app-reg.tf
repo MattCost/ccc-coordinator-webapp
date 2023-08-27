@@ -80,9 +80,14 @@ resource "azuread_application" "website" {
       id_token_issuance_enabled     = true
     }
     redirect_uris = [ 
-      "https://jwt.ms/", 
-      "https://${azurecaf_name.website.result}.azurewebsites.net/signin-oidc",
-      "http://localhost:5005/signin-oidc"
+      "https://${azurecaf_name.website.result}.azurewebsites.net/signin-oidc", # Cloud website
+      "https://${azurecaf_name.api.result}.azurewebsites.net/swagger/oauth2-redirect.html", # Cloud swagger
+      
+      "http://localhost:5005/signin-oidc", # Local website
+      "https://localhost:7011/signin-oidc", # Local website
+      
+      "http://localhost:5128/swagger/oauth2-redirect.html", # Local swagger
+      "https://localhost:7043/swagger/oauth2-redirect.html", # Local swagger
     ]
     
     logout_url = "https://${azurecaf_name.website.result}.azurewebsites.net/signout-oidc"
