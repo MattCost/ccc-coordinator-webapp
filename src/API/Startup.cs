@@ -53,7 +53,10 @@ namespace CCC.API
                 options.B2CDomain = Configuration.GetValue<string>("Swagger:B2CDomain") ?? string.Empty;
                 options.PolicyName = Configuration.GetValue<string>("Swagger:PolicyId") ?? "B2C_1_SignupSignin";
                 options.ClientId = Configuration.GetValue<Guid>("Swagger:ClientId");
-                options.Scopes = Configuration.GetSection("Swagger:Scopes").GetChildren().ToDictionary( x => $"https://{x.Key}", x => x.Value ?? string.Empty);
+                options.Scopes = new Dictionary<string, string> {
+                    [ Configuration.GetValue<string>("Swagger:Scope") ?? "scope" ] = Configuration.GetValue<string>("Swagger:ScopeDisplay") ?? "empty"
+                };
+                // options.Scopes = Configuration.GetSection("Swagger:Scopes").GetChildren().ToDictionary( x => $"https://{x.Key}", x => x.Value ?? string.Empty);
             });
             services.AddHttpClient();
 
@@ -96,7 +99,11 @@ namespace CCC.API
 
             app.AddSwaggerUi(options => {
                 options.ClientId = Configuration.GetValue<Guid>("Swagger:ClientId");
-                options.Scopes = Configuration.GetSection("Swagger:Scopes").GetChildren().ToDictionary( x => $"https://{x.Key}", x => x.Value ?? string.Empty);
+                options.Scopes = new Dictionary<string, string> {
+                    [ Configuration.GetValue<string>("Swagger:Scope") ?? "scope" ] = Configuration.GetValue<string>("Swagger:ScopeDisplay") ?? "empty"
+                };
+
+                // options.Scopes = Configuration.GetSection("Swagger:Scopes").GetChildren().ToDictionary( x => $"https://{x.Key}", x => x.Value ?? string.Empty);
             });
 
             app.UseDefaultFiles();
