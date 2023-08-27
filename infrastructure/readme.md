@@ -1,6 +1,20 @@
-will hold files to create infrastructure
+# Overview
 
-TF run locally, using remote state.
+Terraform files for this webapp.
+
+# File Layout
+- main.tf - main entrypoint
+- locals.tf - customize settings here
+- outputs.tf - outputs generated here
+- naming.tf - naming convetion blocks here
+- *.tf - the rest of the filenames describe what role they play.
+- app-reg.tf - azure ad app registrations
+- app-service.tf - the azuread app service plan and apps
+- storage.tf - the azure storage act, and tables.
+
+# Running
+
+Setup to use remote state. VSCode has tasks for plan and apply.
 
 Future setup.
 Create SP, give SP contributor rights to the resource group, and blob storage read/write to the container.
