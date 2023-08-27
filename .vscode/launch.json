@@ -25,13 +25,13 @@
             }
         },
         {
-            "name": "webapp",
+            "name": "website",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build-webapp",
-            "program": "${workspaceFolder}/src/webapp/bin/Debug/net7.0/webapp.dll",
+            "preLaunchTask": "build-website",
+            "program": "${workspaceFolder}/src/website/bin/Debug/net7.0/website.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/src/webapp",
+            "cwd": "${workspaceFolder}/src/website",
             "stopAtEntry": false,
             "serverReadyAction": {
                 "action": "openExternally",

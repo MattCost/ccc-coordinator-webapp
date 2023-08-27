@@ -14,12 +14,12 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "build-webapp",
+            "label": "build-website",
             "command": "dotnet",
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/src/webapp/webapp.csproj",
+                "${workspaceFolder}/src/website/website.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
