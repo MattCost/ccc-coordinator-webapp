@@ -397,6 +397,8 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
+# Local appsettings
+appsettings.Development.json
 
 # Infrastructure
 .terraform
