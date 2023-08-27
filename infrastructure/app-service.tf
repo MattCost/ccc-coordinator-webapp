@@ -41,9 +41,9 @@ resource "azurerm_linux_web_app" "api" {
     Swagger__B2CDomain = "cccwebapp"
     Swagger__PolicyId = "B2C_1_SignupSignin"
     Swagger__ClientId = azuread_application.website.application_id
-    Swagger__RedirectUrl = "https://app-ccc-webapp-api-dev.azurewebsites.net/swagger/oauth2-redirect.html"
+    Swagger__Scopes = "{ \"cccwebapp.onmicrosoft.com/ccc-webapp-api/API.Access\" : \"access api as user\" }"
     
-
+    STORAGE_ACT_CONNECTION_STRING = azurerm_storage_account.this.primary_connection_string
   }
 
   logs {

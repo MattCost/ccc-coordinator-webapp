@@ -22,6 +22,11 @@ Use this SP from pipelines.
 This SP would need permission in a) main RG, b) B2C tenant (for app reg)
 
 TODO
+
+turn off implicit flow for website login.
+    make seperate app reg with implicit flow for swagger.
+    (does this matter?)
+
 Create SP. give this SP rights to the RG
     use this SP for TF.
 
