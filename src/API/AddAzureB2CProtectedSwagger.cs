@@ -11,7 +11,7 @@ public class AuthUrlSettings
     // public string RedirectUrl {get;set;} = string.Empty;
     public Dictionary<string, string> Scopes { get; set; } = new();
 
-    public string AuthorizationUrl => $"https://{B2CDomain}.b2clogin.com/{B2CDomain}.onmicrosoft.com/oauth2/v2.0/authorize?p={PolicyName}&response_type=code"; //&redirect_uri={RedirectUrl}"; //client_id={ClientId}&
+    public string AuthorizationUrl => $"https://{B2CDomain}.b2clogin.com/{B2CDomain}.onmicrosoft.com/oauth2/v2.0/authorize?p={PolicyName}&response_type=code+id_token"; //&redirect_uri={RedirectUrl}"; //client_id={ClientId}&
     public string TokenUrl => $"https://login.microsoftonline.com/{B2CDomain}.onmicrosoft.com/oauth2/v2.0/token";
 
 }
