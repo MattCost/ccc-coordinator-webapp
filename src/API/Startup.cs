@@ -52,7 +52,7 @@ namespace CCC.API
                 options.B2CDomain = Configuration.GetValue<string>("Swagger:B2CDomain") ?? string.Empty;
                 options.PolicyName = Configuration.GetValue<string>("Swagger:PolicyId") ?? "B2C_1_SignupSignin";
                 options.ClientId = Configuration.GetValue<Guid>("Swagger:ClientId");
-                options.RedirectUrl = Configuration.GetValue<string>("Swagger:RedirectUrl") ?? "https://jwt.ms";
+                // options.RedirectUrl = Configuration.GetValue<string>("Swagger:RedirectUrl") ?? "https://jwt.ms";
                 options.Scopes["https://cccwebapp.onmicrosoft.com/ccc-webapp-api/API.Access"] = "access api as user";
             });
             services.AddHttpClient();
@@ -93,15 +93,18 @@ namespace CCC.API
                 app.UseHttpsRedirection();
             }
 
-            app.UseSwagger();
-            app.UseSwaggerUI(options =>
-            {
-                options.EnableTryItOutByDefault();
-                options.OAuthUsePkce();
-                options.OAuthClientId(Configuration.GetValue<string>("AzureAdB2C:ClientId"));
-                options.OAuthScopes(new string[] { "https://cccwebapp.onmicrosoft.com/ccc-webapp-api/API.Access" });
 
+            app.AddSwaggerUi(options => {
+                options.ClientId = Configuration.GetValue<Guid>("Swagger:ClientId");
             });
+            // app.UseSwagger();
+            // app.UseSwaggerUI(options =>
+            // {
+            //     options.EnableTryItOutByDefault();
+            //     options.OAuthUsePkce();
+            //     options.OAuthClientId(Configuration.GetValue<string>("AzureAdB2C:ClientId"));
+            //     options.OAuthScopes(new string[] { "https://cccwebapp.onmicrosoft.com/ccc-webapp-api/API.Access" });
+            // });
 
             app.UseDefaultFiles();
             app.UseStaticFiles();

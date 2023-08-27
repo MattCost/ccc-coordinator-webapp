@@ -5,24 +5,39 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public class AuthUrlSettings
 {
-    public string B2CDomain {get;set; } = string.Empty;
-    public string PolicyName {get;set;} = string.Empty;
-    public Guid ClientId {get;set;}
-    public string RedirectUrl {get;set;} = string.Empty;
-    public Dictionary<string, string> Scopes {get;set;} = new();
+    public string B2CDomain { get; set; } = string.Empty;
+    public string PolicyName { get; set; } = string.Empty;
+    public Guid ClientId { get; set; }
+    // public string RedirectUrl {get;set;} = string.Empty;
+    public Dictionary<string, string> Scopes { get; set; } = new();
 
-    public string AuthorizationUrl => $"https://{B2CDomain}.b2clogin.com/{B2CDomain}.onmicrosoft.com/oauth2/v2.0/authorize?p={PolicyName}&response_type=code&client_id={ClientId}&redirect_uri={RedirectUrl}";
+    public string AuthorizationUrl => $"https://{B2CDomain}.b2clogin.com/{B2CDomain}.onmicrosoft.com/oauth2/v2.0/authorize?p={PolicyName}&response_type=code"; //&redirect_uri={RedirectUrl}"; //client_id={ClientId}&
     public string TokenUrl => $"https://login.microsoftonline.com/{B2CDomain}.onmicrosoft.com/oauth2/v2.0/token";
 
 }
 
 public static class AddMySwaggerGenCollectionExtensions
 {
-    public static IServiceCollection AddAzureAdB2CProtectedSwagger(this IServiceCollection services, Action<AuthUrlSettings>? setupAction = null)
+    public static IApplicationBuilder AddSwaggerUi(this IApplicationBuilder app, Action<AuthUrlSettings> setupAction)
     {
         var settings = new AuthUrlSettings();
-        if (setupAction != null)
-            setupAction(settings);
+        setupAction(settings);
+
+        app.UseSwagger();
+        app.UseSwaggerUI(options =>
+        {
+            options.EnableTryItOutByDefault();
+            options.OAuthUsePkce();
+            options.OAuthClientId(settings.ClientId.ToString());
+            options.OAuthScopes(new string[] { "https://cccwebapp.onmicrosoft.com/ccc-webapp-api/API.Access" });
+        });
+
+        return app;
+    }
+    public static IServiceCollection AddAzureAdB2CProtectedSwagger(this IServiceCollection services, Action<AuthUrlSettings> setupAction)
+    {
+        var settings = new AuthUrlSettings();
+        setupAction(settings);
 
 
         var scheme = new OpenApiSecurityScheme
@@ -40,8 +55,8 @@ public static class AddMySwaggerGenCollectionExtensions
             {
                 AuthorizationCode = new OpenApiOAuthFlow
                 {
-                    AuthorizationUrl = new Uri( settings.AuthorizationUrl ), 
-                    TokenUrl = new Uri( settings.TokenUrl), 
+                    AuthorizationUrl = new Uri(settings.AuthorizationUrl),
+                    TokenUrl = new Uri(settings.TokenUrl),
                     Scopes = settings.Scopes
                 }
             }
