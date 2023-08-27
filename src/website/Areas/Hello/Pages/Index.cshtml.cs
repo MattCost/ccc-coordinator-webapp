@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Identity.Abstractions;
 
-namespace CCC.website.Pages.Hello
+namespace CCC.website.Areas.Hello.Pages
 {
     public class IndexModel : PageModelBase
     {
