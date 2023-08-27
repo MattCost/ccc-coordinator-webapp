@@ -1,6 +1,7 @@
 
 using System.IdentityModel.Tokens.Jwt;
 using CCC.Services.EntityProvider;
+using CCC.Services.Secrets;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Identity.Web;
@@ -52,8 +53,7 @@ namespace CCC.API
                 options.B2CDomain = Configuration.GetValue<string>("Swagger:B2CDomain") ?? string.Empty;
                 options.PolicyName = Configuration.GetValue<string>("Swagger:PolicyId") ?? "B2C_1_SignupSignin";
                 options.ClientId = Configuration.GetValue<Guid>("Swagger:ClientId");
-                // options.RedirectUrl = Configuration.GetValue<string>("Swagger:RedirectUrl") ?? "https://jwt.ms";
-                options.Scopes["https://cccwebapp.onmicrosoft.com/ccc-webapp-api/API.Access"] = "access api as user";
+                options.Scopes = Configuration.GetSection("Swagger:Scopes").GetChildren().ToDictionary( x => $"https://{x.Key}", x => x.Value ?? string.Empty);
             });
             services.AddHttpClient();
 
@@ -70,8 +70,8 @@ namespace CCC.API
         public void ConfigureProductionServices(IServiceCollection services)
         {
             ConfigureCommonServices(services);
-            services.AddSingleton<IEntityProvider, MemoryEntityProvider>();
-            // services.AddSingleton<ISecretsManager, EnvVarSecretManager>();
+            services.AddSingleton<IEntityProvider, EntityProviderTableStorage>();
+            services.AddSingleton<ISecretsManager, EnvVarSecretManager>();
             // Auth handlers after app roles are defined and worked out
         }
 
@@ -96,15 +96,8 @@ namespace CCC.API
 
             app.AddSwaggerUi(options => {
                 options.ClientId = Configuration.GetValue<Guid>("Swagger:ClientId");
+                options.Scopes = Configuration.GetSection("Swagger:Scopes").GetChildren().ToDictionary( x => $"https://{x.Key}", x => x.Value ?? string.Empty);
             });
-            // app.UseSwagger();
-            // app.UseSwaggerUI(options =>
-            // {
-            //     options.EnableTryItOutByDefault();
-            //     options.OAuthUsePkce();
-            //     options.OAuthClientId(Configuration.GetValue<string>("AzureAdB2C:ClientId"));
-            //     options.OAuthScopes(new string[] { "https://cccwebapp.onmicrosoft.com/ccc-webapp-api/API.Access" });
-            // });
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
