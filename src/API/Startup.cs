@@ -48,7 +48,13 @@ namespace CCC.API
 
             services.AddEndpointsApiExplorer();
 
-            services.AddSwaggerGen();
+            services.AddAzureAdB2CProtectedSwagger( options => {
+                options.B2CDomain = Configuration.GetValue<string>("Swagger:B2CDomain") ?? string.Empty;
+                options.PolicyName = Configuration.GetValue<string>("Swagger:PolicyId") ?? "B2C_1_SignupSignin";
+                options.ClientId = Configuration.GetValue<Guid>("Swagger:ClientId");
+                options.RedirectUrl = Configuration.GetValue<string>("Swagger:RedirectUrl") ?? "https://jwt.ms";
+                options.Scopes["https://cccwebapp.onmicrosoft.com/ccc-webapp-api/API.Access"] = "access api as user";
+            });
             services.AddHttpClient();
 
         }
