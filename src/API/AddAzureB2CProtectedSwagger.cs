@@ -11,9 +11,8 @@ public class AuthUrlSettings
     // public string RedirectUrl {get;set;} = string.Empty;
     public Dictionary<string, string> Scopes { get; set; } = new();
 
-    public string AuthorizationUrl => $"https://{B2CDomain}.b2clogin.com/{B2CDomain}.onmicrosoft.com/oauth2/v2.0/authorize?p={PolicyName}&response_type=code+id_token"; //&redirect_uri={RedirectUrl}"; //client_id={ClientId}&
-    public string TokenUrl => $"https://login.microsoftonline.com/{B2CDomain}.onmicrosoft.com/oauth2/v2.0/token";
-
+    public string AuthorizationUrl => $"https://{B2CDomain}.b2clogin.com/{B2CDomain}.onmicrosoft.com/oauth2/v2.0/authorize?p={PolicyName}";
+    public string TokenUrl => $"https://login.microsoftonline.com/{B2CDomain}.onmicrosoft.com/oauth2/v2.0/token?p={PolicyName}";
 }
 
 public static class AddMySwaggerGenCollectionExtensions
@@ -50,15 +49,20 @@ public static class AddMySwaggerGenCollectionExtensions
                 Id = JwtBearerDefaults.AuthenticationScheme,
                 Type = ReferenceType.SecurityScheme
             },
-
             Flows = new OpenApiOAuthFlows
             {
-                AuthorizationCode = new OpenApiOAuthFlow
+                Implicit = new OpenApiOAuthFlow()
                 {
                     AuthorizationUrl = new Uri(settings.AuthorizationUrl),
                     TokenUrl = new Uri(settings.TokenUrl),
                     Scopes = settings.Scopes
                 }
+                // AuthorizationCode = new OpenApiOAuthFlow
+                // {
+                //     AuthorizationUrl = new Uri(settings.AuthorizationUrl),
+                //     TokenUrl = new Uri(settings.TokenUrl),
+                //     Scopes = settings.Scopes
+                // }
             }
         };
 
