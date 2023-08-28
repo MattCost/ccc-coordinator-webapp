@@ -42,6 +42,9 @@ resource "azurerm_linux_web_app" "api" {
     Swagger__PolicyId = "B2C_1_SignupSignin"
     Swagger__ClientId = azuread_application.website.application_id
     Swagger__Scopes = "{ \"cccwebapp.onmicrosoft.com/ccc-webapp-api/API.Access\" : \"access api as user\" }"
+    Swagger__Scope = "https://cccwebapp.onmicrosoft.com/ccc-webapp-api/API.Access"
+    Swagger__ScopeDisplay = "access api as user"
+
     
     STORAGE_ACT_CONNECTION_STRING = azurerm_storage_account.this.primary_connection_string
   }
