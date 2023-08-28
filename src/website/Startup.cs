@@ -32,7 +32,8 @@ namespace CCC.website
             services.AddOptions();
 
             services.AddMicrosoftIdentityWebAppAuthentication(Configuration, Constants.AzureAdB2C)
-                    .EnableTokenAcquisitionToCallDownstreamApi( new string[] { Configuration["API:Scope"] ?? throw new Exception("API:Scope is required!")})
+                    // .EnableTokenAcquisitionToCallDownstreamApi( Configuration.GetValue<List<string>>("API:Scopes") ?? throw new Exception("API:Scopes is required!") ) //ask for the scope right away
+                    .EnableTokenAcquisitionToCallDownstreamApi()    // don't ask for the scope now.
                     .AddDownstreamApi("API", Configuration.GetSection("API"))            
                     .AddInMemoryTokenCaches();
 
