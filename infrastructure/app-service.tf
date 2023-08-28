@@ -41,7 +41,6 @@ resource "azurerm_linux_web_app" "api" {
     Swagger__B2CDomain = "cccwebapp"
     Swagger__PolicyId = "B2C_1_SignupSignin"
     Swagger__ClientId = azuread_application.website.application_id
-    Swagger__Scopes = "{ \"cccwebapp.onmicrosoft.com/ccc-webapp-api/API.Access\" : \"access api as user\" }"
     Swagger__Scope = "https://cccwebapp.onmicrosoft.com/ccc-webapp-api/API.Access"
     Swagger__ScopeDisplay = "access api as user"
 
@@ -84,6 +83,7 @@ resource "azurerm_linux_web_app" "website" {
     AzureAdB2C__ClientSecret = azuread_application_password.website.value
     AzureAdB2C__SignUpSignInPolicyId = "B2C_1_SignupSignin"
     AzureAdB2C__SignOutCallbackPath = "/signout/B2C_1_SignupSignin"
+
     API__Scopes = "[ \"${local.api_uri}/${local.api_access_scope}\" ]"
     API__BaseUrl = "https://${azurerm_linux_web_app.api.default_hostname}/api/"
 
