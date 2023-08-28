@@ -24,10 +24,10 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
+                            <a class="nav-link text-dark" asp-page="/Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Hello">Hello</a>
+                            <a class="nav-link text-dark" asp-page="/Hello/Index">Hello</a>
                         </li>
 
                         @if (Model.DisplayCurrentError || Model.DisplayPreviousError)
@@ -63,12 +63,12 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                                 aria-expanded="false">
-                                Person
+                                Bike Route
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item nav-link text-dark" asp-page="/Person/Index">Overview</a>
+                                <li><a class="dropdown-item nav-link text-dark" asp-page="/BikeRoutes/Index">Overview</a>
                                 </li>
-                                <li><a class="dropdown-item nav-link text-dark" asp-page="/Person/Create">Create New</a>
+                                <li><a class="dropdown-item nav-link text-dark" asp-page="/BikeRoutes/Create">Create New</a>
                                 </li>
                             </ul>
                         </li>

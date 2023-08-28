@@ -16,7 +16,6 @@ namespace CCC.website
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDistributedMemoryCache();
@@ -30,38 +29,12 @@ namespace CCC.website
                 options.HandleSameSiteCookieCompatibility();
             });
 
+            services.AddOptions();
+
             services.AddMicrosoftIdentityWebAppAuthentication(Configuration, Constants.AzureAdB2C)
-                    .EnableTokenAcquisitionToCallDownstreamApi(Configuration.GetValue<string[]>("API:Scopes") ?? new string[] {string.Empty })
+                    .EnableTokenAcquisitionToCallDownstreamApi( new string[] { Configuration["API:Scope"] ?? throw new Exception("API:Scope is required!")})
                     .AddDownstreamApi("API", Configuration.GetSection("API"))            
                     .AddInMemoryTokenCaches();
-            //     .AddDistributedTokenCaches(); need this in app service?
-
-
-            //Configuring appsettings section AzureAdB2C, into IOptions
-            services.AddOptions();
-            services.Configure<OpenIdConnectOptions>(Configuration.GetSection("AzureAdB2C"));
-            // var scopes = new string[] { "api://catcam-api/api.access"};
-
-            // string clientSecret = Environment.GetEnvironmentVariable("AZUREAD_CLIENT_SECRET") ?? string.Empty;
-            // if(string.Equals("Development", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")))
-            // {
-            //     var _config = new ConfigurationBuilder().AddUserSecrets<Startup>().Build();
-            //     clientSecret = _config.GetValue<string>("AZUREAD_CLIENT_SECRET") ?? string.Empty;
-            // }
-            // services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-            //     .AddMicrosoftIdentityWebApp(options => 
-            //     {
-            //         options.Instance = Configuration.GetValue<string>("AzureAd:Instance") ?? throw new Exception("Config missing AzureAd:Instance");
-            //         options.Domain = Configuration.GetValue<string>("AzureAd:Domain") ?? throw new Exception("Config missing AzureAd:Domain");
-            //         options.ClientId = Configuration.GetValue<string>("AzureAd:ClientId") ?? throw new Exception("Config missing AzureAd:ClientId");
-            //         options.TenantId = Configuration.GetValue<string>("AzureAd:TenantId") ?? throw new Exception("Config missing AzureAd:TenantId");
-            //         options.ClientSecret = clientSecret;
-            //     })
-            //     .EnableTokenAcquisitionToCallDownstreamApi(scopes)
-            //     .AddDownstreamApi("API", Configuration.GetSection("API"))
-            //     .AddInMemoryTokenCaches()
-            //     .AddDistributedTokenCaches();
-
 
             // The following flag can be used to get more descriptive errors in development environments
             // Enable diagnostic logging to help with troubleshooting.  For more details, see https://aka.ms/IdentityModel/PII.
@@ -77,9 +50,11 @@ namespace CCC.website
             }).AddMicrosoftIdentityUI();
 
             services.AddRazorPages();
+
+            services.Configure<OpenIdConnectOptions>(Configuration.GetSection(Constants.AzureAdB2C));
+
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -95,28 +70,10 @@ namespace CCC.website
             }
 
             app.UseStaticFiles();
-            //app.UseCookiePolicy();
+            app.UseCookiePolicy();
 
             app.UseRouting();
             app.UseAuthentication();
-
-            // From MS sample, showing how to process a token
-            // app.Use(async (context, next) => {
-            //     if (context != null && context.User != null && context.User.Identity.IsAuthenticated)
-            //     {
-            //         // you can conduct any conditional processing for guest/homes user by inspecting the value of the 'acct' claim
-            //         // Read more about the 'acct' claim at aka.ms/optionalclaims
-            //         if (context.User.Claims.Any(x => x.Type == "acct"))
-            //         {
-            //             string claimvalue = context.User.Claims.FirstOrDefault(x => x.Type == "acct").Value;
-            //             string userType = claimvalue == "0" ? "Member" : "Guest";
-            //             Debug.WriteLine($"The type of the user account from this Azure AD tenant is-{userType}");
-            //         }
-            //     }
-            //     await next();
-            // });
-
-
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

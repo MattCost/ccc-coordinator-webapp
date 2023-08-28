@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Identity.Abstractions;
 
-namespace CCC.website.Areas.Hello.Pages
+namespace CCC.website.Pages.Hello
 {
-    public class IndexModel : PageModelBase
+    public class IndexPageModel : PageModelBase
     {
         public string APIStatus { get; private set; } = "unknown";
-        public IndexModel(ILogger<PageModelBase> logger, IDownstreamApi api) : base(logger, api)
+        public IndexPageModel(ILogger<IndexPageModel> logger, IDownstreamApi api) : base(logger, api)
         {
         }
 
