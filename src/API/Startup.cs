@@ -56,6 +56,7 @@ namespace CCC.API
                 options.Scopes = new Dictionary<string, string> {
                     [ Configuration.GetValue<string>("Swagger:Scope") ?? "scope" ] = Configuration.GetValue<string>("Swagger:ScopeDisplay") ?? "empty"
                 };
+                // This didn't work in the app service, even tho the config entry looked the same as appsettings entry
                 // options.Scopes = Configuration.GetSection("Swagger:Scopes").GetChildren().ToDictionary( x => $"https://{x.Key}", x => x.Value ?? string.Empty);
             });
             services.AddHttpClient();
@@ -103,6 +104,7 @@ namespace CCC.API
                     [ Configuration.GetValue<string>("Swagger:Scope") ?? "scope" ] = Configuration.GetValue<string>("Swagger:ScopeDisplay") ?? "empty"
                 };
 
+                // This didn't work in app service.
                 // options.Scopes = Configuration.GetSection("Swagger:Scopes").GetChildren().ToDictionary( x => $"https://{x.Key}", x => x.Value ?? string.Empty);
             });
 
