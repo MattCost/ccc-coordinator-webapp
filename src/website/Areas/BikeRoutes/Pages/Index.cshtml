@@ -1,0 +1,15 @@
+@page
+@model CCC.website.Areas.BikeRoutes.Pages.IndexPageModel
+@{
+    ViewData["Title"] = "Route Listing";
+}
+
+<h3>Hello World</h3>
+@foreach(var route in Model.Routes)
+{
+    @Html.DisplayFor(modelItem => route,"BikeRoutes/Overview")
+    <div class="row">
+        <a asp-page="Edit" asp-route-id="@route.Id">Edit</a><br>
+        <a asp-page="Details" asp-route-id="@route.Id">Details</a><br>
+    </div>
+}   
