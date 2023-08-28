@@ -4,6 +4,7 @@ using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace CCC.website
 {
@@ -34,7 +35,13 @@ namespace CCC.website
             services.AddMicrosoftIdentityWebAppAuthentication(Configuration, Constants.AzureAdB2C)
                     // .EnableTokenAcquisitionToCallDownstreamApi( Configuration.GetValue<List<string>>("API:Scopes") ?? throw new Exception("API:Scopes is required!") ) //ask for the scope right away
                     .EnableTokenAcquisitionToCallDownstreamApi()    // don't ask for the scope now.
-                    .AddDownstreamApi("API", Configuration.GetSection("API"))            
+                    .AddDownstreamApi("API", options =>
+                    {
+                        options.BaseUrl = "https://app-ccc-webapp-api-dev.azurewebsites.net/api/";
+                        options.Scopes = new List<string> { "https://cccwebapp.onmicrosoft.com/ccc-webapp-api/API.Access" };
+                    })
+                    // For some reason the list of strings is not working in appsettings.json with this configuration. no idea why
+                    // .AddDownstreamApi("API", Configuration.GetSection("API"))            
                     .AddInMemoryTokenCaches();
 
             // The following flag can be used to get more descriptive errors in development environments
@@ -53,6 +60,14 @@ namespace CCC.website
             services.AddRazorPages();
 
             services.Configure<OpenIdConnectOptions>(Configuration.GetSection(Constants.AzureAdB2C));
+
+            services.Configure<CookieAuthenticationOptions>(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                options =>
+                {
+                    options.Events = new RejectStaleSessionCookie();
+                }
+            );
 
         }
 
