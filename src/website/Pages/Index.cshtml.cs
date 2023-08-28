@@ -1,22 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CCC.website.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Identity.Abstractions;
 
 namespace website.Pages;
 
-public class IndexModel : PageModel
+public class IndexModel : PageModelBase
 {
-    private readonly ILogger<IndexModel> _logger;
-
-    public IndexModel(ILogger<IndexModel> logger)
+    public IndexModel(ILogger<IndexModel> logger, IDownstreamApi api) : base(logger, api)
     {
-        _logger = logger;
     }
 
     public void OnGet()
     {
-        _logger.LogTrace("Entering OnGet");
-        _logger.LogDebug("Entering OnGet");
-        _logger.LogInformation("Entering OnGet");
 
     }
 }

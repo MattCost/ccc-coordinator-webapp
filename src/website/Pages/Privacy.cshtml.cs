@@ -1,15 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CCC.website.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Identity.Abstractions;
 
 namespace website.Pages;
 
-public class PrivacyModel : PageModel
+public class PrivacyModel : PageModelBase
 {
-    private readonly ILogger<PrivacyModel> _logger;
-
-    public PrivacyModel(ILogger<PrivacyModel> logger)
+    public PrivacyModel(ILogger<PrivacyModel> logger, IDownstreamApi api) : base(logger, api)
     {
-        _logger = logger;
     }
 
     public void OnGet()
