@@ -22,17 +22,6 @@ namespace CCC.website.Pages.BikeRoutes
 
         public async Task OnGetAsync()
         {
-
-            try 
-            {
-                var accessToken = await _tokenAcquisition.GetAccessTokenForUserAsync(new[] { "https://cccwebapp.onmicrosoft.com/ccc-webapp-api/API.Access" });
-                Logger.LogDebug("access token-{accessToken}", accessToken);              
-            }
-            catch(Exception ex)
-            {
-                Logger.LogError(ex, "error in sandbox");
-            }
-            
             try
             {
                 var result = await API.GetForUserAsync<List<BikeRoute>>("API", options =>
