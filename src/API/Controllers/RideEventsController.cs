@@ -40,6 +40,12 @@ public class RideEventsController : EntityProviderBaseController
         return await EntityProviderActionHelper( async () => await EntityProvider.DeleteRideEvent(id), "Unable to delete ride event");
     }
 
+    [HttpPut("{id:guid}/restore")]
+    public async Task<ActionResult> Restore([FromRoute] Guid id)
+    {
+        return await EntityProviderActionHelper( async () => await EntityProvider.RestoreRideEvent(id), "Unable to restore ride event");
+    }    
+
 }
 
 

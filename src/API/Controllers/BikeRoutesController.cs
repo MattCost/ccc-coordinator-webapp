@@ -40,6 +40,12 @@ public class BikeRoutesController : EntityProviderBaseController
         return await EntityProviderActionHelper( async () => await EntityProvider.DeleteBikeRoute(id), "Unable to delete bike route");
     }
 
+    [HttpPut("{id:guid}/restore")]
+    public async Task<ActionResult> Restore([FromRoute] Guid id)
+    {
+        return await EntityProviderActionHelper( async () => await EntityProvider.RestoreBikeRoute(id), "Unable to restore bike route");
+    }
+
 }
 
 

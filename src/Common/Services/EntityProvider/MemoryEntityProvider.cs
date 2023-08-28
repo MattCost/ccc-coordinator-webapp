@@ -95,6 +95,21 @@ public class MemoryEntityProvider : IEntityProvider
             throw new EntityNotFoundException(typeof(RideEvent), eventId);
     }
 
+    public Task RestoreBikeRoute(Guid routeId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task RestoreGroupRide(Guid rideId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task RestoreRideEvent(Guid eventId)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task UpdateBikeRoute(BikeRoute bikeRoute)
     {
         _bikeRoutes[bikeRoute.Id] = bikeRoute;

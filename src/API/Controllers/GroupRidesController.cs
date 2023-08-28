@@ -39,7 +39,11 @@ public class GroupRidesController : EntityProviderBaseController
     {
         return await EntityProviderActionHelper( async () => await EntityProvider.DeleteGroupRide(id), "Unable to delete groupRide");
     }
-
+    [HttpPut("{id:guid}/restore")]
+    public async Task<ActionResult> Restore([FromRoute] Guid id)
+    {
+        return await EntityProviderActionHelper( async () => await EntityProvider.RestoreGroupRide(id), "Unable to restore groupRide");
+    }
 }
 
 
