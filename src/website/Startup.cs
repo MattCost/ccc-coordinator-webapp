@@ -33,15 +33,8 @@ namespace CCC.website
             services.AddOptions();
 
             services.AddMicrosoftIdentityWebAppAuthentication(Configuration, Constants.AzureAdB2C)
-                    // .EnableTokenAcquisitionToCallDownstreamApi( Configuration.GetValue<List<string>>("API:Scopes") ?? throw new Exception("API:Scopes is required!") ) //ask for the scope right away
-                    .EnableTokenAcquisitionToCallDownstreamApi()    // don't ask for the scope now.
-                    .AddDownstreamApi("API", options =>
-                    {
-                        options.BaseUrl = "https://app-ccc-webapp-api-dev.azurewebsites.net/api/";
-                        options.Scopes = new List<string> { "https://cccwebapp.onmicrosoft.com/ccc-webapp-api/API.Access" };
-                    })
-                    // For some reason the list of strings is not working in appsettings.json with this configuration. no idea why
-                    // .AddDownstreamApi("API", Configuration.GetSection("API"))            
+                    .EnableTokenAcquisitionToCallDownstreamApi()
+                    .AddDownstreamApi("API", Configuration.GetSection("API"))
                     .AddInMemoryTokenCaches();
 
             // The following flag can be used to get more descriptive errors in development environments
