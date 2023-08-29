@@ -32,12 +32,15 @@ namespace CCC.website
 
             services.AddOptions();
 
+            var initialScope = Configuration.GetValue<string>("API:Scope") ?? throw new Exception("API:Scope is required");
+            
             services.AddMicrosoftIdentityWebAppAuthentication(Configuration, Constants.AzureAdB2C)
-                    .EnableTokenAcquisitionToCallDownstreamApi()
-                    .AddDownstreamApi("API", options => 
+                    //Since we only have 1 downstream scope, we can request it now. 
+                    .EnableTokenAcquisitionToCallDownstreamApi(new string[] { initialScope })
+                    .AddDownstreamApi("API", options =>
                     {
                         options.BaseUrl = Configuration.GetValue<string>("API:BaseUrl");
-                        options.Scopes = new string[] { Configuration.GetValue<string>("API:Scope") ?? throw new Exception("API:Scope is required") };
+                        options.Scopes = new string[] { initialScope };
                     })
                     .AddInMemoryTokenCaches();
 
