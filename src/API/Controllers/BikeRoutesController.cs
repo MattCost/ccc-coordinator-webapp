@@ -14,8 +14,8 @@ public class BikeRoutesController : EntityProviderBaseController
     {
     }
 
-    [HttpGet("all")]
-    public async Task<ActionResult<IEnumerable<BikeRoute>>> Get()
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<BikeRoute>>> GetAll()
     {
         // var authResult = await _authorizationService.AuthorizeAsync(User, null, SiteOperations.ListSites);
         // if(!authResult.Succeeded) return Forbid();
@@ -23,24 +23,32 @@ public class BikeRoutesController : EntityProviderBaseController
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<BikeRoute>> Get([FromRoute] Guid id)
+    public async Task<ActionResult<BikeRoute>> GetById([FromRoute] Guid id)
     {
         return await EntityProviderActionHelper( async () => { return await EntityProvider.GetBikeRoute(id);}, "Unable to get Bike Route");
     }
 
-    // Full update / create with explicit id
-    [HttpPut("{id:guid}")]
-    public async Task<ActionResult> Put([FromRoute] Guid id, [FromBody] BikeRoute model)
+    [HttpPatch("{id:guid}")]
+    public async Task<ActionResult> Update([FromRoute] Guid id, [FromBody] BikeRouteUpdateModel updateModel)
     {
-        if(model.Id != id)
-        {
-            return BadRequest("Not able to change model id.");
-        }
+        var modelResult = await EntityProviderActionHelper( async () => await EntityProvider.GetBikeRoute(id),"Unable to get Bike Route");
+        
+        if(modelResult.Result is not null)
+            return modelResult.Result;
+
+        if(modelResult.Value is null) 
+            return Problem();
+
+        var model = modelResult.Value;      
+        model.Name = updateModel.Name ?? model.Name;
+        model.Distance = updateModel.Distance ?? model.Distance;
+        model.Description = updateModel.Description ?? model.Description;
+
         return await EntityProviderActionHelper( async () => await EntityProvider.UpdateBikeRoute(model), "Unable to update Bike Route");
     }
 
     [HttpPost]
-    public async Task<ActionResult> Post([FromBody] BikeRouteCreateModel createModel)
+    public async Task<ActionResult> Create([FromBody] BikeRouteCreateModel createModel)
     {
         var model = new BikeRoute
         {

@@ -1,5 +1,6 @@
 namespace CCC.Entities;
 
+// TODO rename to BikeRouteModel is vscode helps
 public class BikeRoute
 {
     public Guid Id { get; set;}
@@ -9,9 +10,3 @@ public class BikeRoute
     public double Distance {get; set;}
 }
 
-public class BikeRouteCreateModel
-{
-    public string Name {get;set; } = string.Empty;
-    public string Description {get;set; } = string.Empty;
-    public double Distance { get;set;}
-}
