@@ -58,6 +58,41 @@ public class BikeRoutesController : EntityProviderBaseController
         return await EntityProviderActionHelper( async () => await EntityProvider.RestoreBikeRoute(id), "Unable to restore bike route");
     }
 
+    [HttpPost("{id:guid}/cues")]
+    public async Task<ActionResult> AddCue([FromRoute] Guid id, [FromBody] CueEntry cueEntry)
+    {
+        var model = await EntityProvider.GetBikeRoute(id);
+        model.Cues.Add(cueEntry);
+        await EntityProvider.UpdateBikeRoute(model);
+        return Ok();
+    }
+
+    [HttpDelete("{id:guid}/cues/{index:int}")]
+    public async Task<ActionResult> DeleteCue([FromRoute] Guid id, [FromRoute] int index)
+    {
+        var model = await EntityProvider.GetBikeRoute(id);
+        if(index > model.Cues.Count)
+        {
+            return BadRequest("index is out of range");
+        }
+        model.Cues.RemoveAt(index);
+        await EntityProvider.UpdateBikeRoute(model);
+        return Ok();
+    }
+
+    [HttpPatch("{id:guid}/cues/{index:int}")]
+    public async Task<ActionResult> InsertCue([FromRoute] Guid id, [FromRoute] int index, [FromBody] CueEntry cue)
+    {
+        var model = await EntityProvider.GetBikeRoute(id);
+        if(index > model.Cues.Count)
+        {
+            return BadRequest("index is out of range");
+        }
+
+        model.Cues.Insert(index, cue);
+        await EntityProvider.UpdateBikeRoute(model);
+        return Ok();
+    }
 }
 
 
