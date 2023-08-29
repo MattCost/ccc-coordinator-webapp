@@ -42,6 +42,9 @@ namespace CCC.website
             {
                 Console.WriteLine("test is null");
             }
+
+            var test2 = Configuration.GetSection("API:Scopes");
+            Console.WriteLine($"Test2 {System.Text.Json.JsonSerializer.Serialize(test2)}");
             services.AddMicrosoftIdentityWebAppAuthentication(Configuration, Constants.AzureAdB2C)
                     .EnableTokenAcquisitionToCallDownstreamApi()
                     .AddDownstreamApi("API", Configuration.GetSection("API"))
