@@ -32,22 +32,13 @@ namespace CCC.website
 
             services.AddOptions();
 
-            var test = Configuration.GetSection("API:Scopes").Get<List<string>>();
-            if(test != null)
-            {
-                Console.WriteLine($"test has {test.Count} scopes");
-                Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(test));
-            }
-            else
-            {
-                Console.WriteLine("test is null");
-            }
-
-            var test2 = Configuration.GetSection("API:Scopes");
-            Console.WriteLine($"Test2 {System.Text.Json.JsonSerializer.Serialize(test2)}");
             services.AddMicrosoftIdentityWebAppAuthentication(Configuration, Constants.AzureAdB2C)
                     .EnableTokenAcquisitionToCallDownstreamApi()
-                    .AddDownstreamApi("API", Configuration.GetSection("API"))
+                    .AddDownstreamApi("API", options => 
+                    {
+                        options.BaseUrl = Configuration.GetValue<string>("API:BaseUrl");
+                        options.Scopes = new string[] { Configuration.GetValue<string>("API:Scope") ?? throw new Exception("API:Scope is required") };
+                    })
                     .AddInMemoryTokenCaches();
 
             // The following flag can be used to get more descriptive errors in development environments
