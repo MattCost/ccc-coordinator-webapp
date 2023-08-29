@@ -29,7 +29,7 @@ public class BikeRoutesController : EntityProviderBaseController
     }
 
     // Full update / create with explicit id
-    [HttpGet("{id:guid}")]
+    [HttpPut("{id:guid}")]
     public async Task<ActionResult> Put([FromRoute] Guid id, [FromBody] BikeRoute model)
     {
         if(model.Id != id)
@@ -39,11 +39,17 @@ public class BikeRoutesController : EntityProviderBaseController
         return await EntityProviderActionHelper( async () => await EntityProvider.UpdateBikeRoute(model), "Unable to update Bike Route");
     }
 
-    // todo - change to system generated id?
     [HttpPost]
-    public async Task<ActionResult> Post([FromBody] BikeRoute model)
+    public async Task<ActionResult> Post([FromBody] BikeRouteCreateModel createModel)
     {
-        return await EntityProviderActionHelper( async () => await EntityProvider.UpdateBikeRoute(model), "Unable to update Bike Route");
+        var model = new BikeRoute
+        {
+            Id = Guid.NewGuid(),
+            Name = createModel.Name,
+            Description = createModel.Description,
+            Distance = createModel.Distance
+        };
+        return await EntityProviderActionHelper( async () => await EntityProvider.UpdateBikeRoute(model), "Unable to create Bike Route");
     }
 
     [HttpDelete("{id:guid}")]
