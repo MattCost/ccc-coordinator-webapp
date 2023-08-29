@@ -28,6 +28,18 @@ public class BikeRoutesController : EntityProviderBaseController
         return await EntityProviderActionHelper( async () => { return await EntityProvider.GetBikeRoute(id);}, "Unable to get Bike Route");
     }
 
+    // Full update / create with explicit id
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult> Put([FromRoute] Guid id, [FromBody] BikeRoute model)
+    {
+        if(model.Id != id)
+        {
+            return BadRequest("Not able to change model id.");
+        }
+        return await EntityProviderActionHelper( async () => await EntityProvider.UpdateBikeRoute(model), "Unable to update Bike Route");
+    }
+
+    // todo - change to system generated id?
     [HttpPost]
     public async Task<ActionResult> Post([FromBody] BikeRoute model)
     {
