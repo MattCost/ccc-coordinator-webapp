@@ -50,10 +50,25 @@ public class EntityProviderTableStorage : IEntityProvider
     {
         // delete ride first, then you can delete events and routes
         await DeleteEntityAsync(GroupRides, rideId.ToString());
+        var parentEvent = await GetRideEvent(rideId);
+        if(parentEvent.Rides.Contains(rideId))
+        {
+            parentEvent.Rides.Remove(rideId);
+            await UpdateRideEvent(parentEvent);
+        }
     }
     public async Task RestoreGroupRide(Guid rideId) => await RestoreEntityAsync(GroupRides, rideId.ToString());
 
-    public async Task UpdateGroupRide(GroupRide groupRide) => await UpsertEntityAsync(groupRide, GroupRides, groupRide.Id.ToString());
+    public async Task UpdateGroupRide(GroupRide groupRide)
+    {
+        await UpsertEntityAsync(groupRide, GroupRides, groupRide.Id.ToString());
+        var parentEvent = await GetRideEvent(groupRide.RideEventId);
+        if(!parentEvent.Rides.Contains(groupRide.Id))
+        {
+            parentEvent.Rides.Add(groupRide.Id);
+            await UpdateRideEvent(parentEvent);
+        }
+    }
     public async Task<RideEvent> GetRideEvent(Guid eventId) => await GetEntityAsync<RideEvent>(eventId.ToString(), RideEvents);
 
     public async Task<IEnumerable<RideEvent>> GetAllRideEvents() => await GetAllEntitiesAsync<RideEvent>(RideEvents);
