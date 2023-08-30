@@ -1,0 +1,13 @@
+@page
+@model CCC.website.Pages.RideEvents.CreatePageModel
+@{
+}
+<div class="row">
+    Create a new ride event
+</div>
+@using (Html.BeginForm())
+{
+    @Html.EditorFor(model => model.CreateModel, "RideEventCreateModel")
+    ;
+    <input id="Submit" type="submit" value="submit" />
+}

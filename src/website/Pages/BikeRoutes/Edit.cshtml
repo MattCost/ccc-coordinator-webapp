@@ -1,0 +1,114 @@
+@page "{id:guid}"
+@using CCC.Entities
+@using CCC.website.Models
+@model CCC.website.Pages.BikeRoutes.EditPageModel
+
+@{
+    ViewData["Title"] = "Edit Route Listing";
+}
+
+@section Scripts
+{
+    <script>
+    function SayHello()
+    {
+        alert("hello world")
+    }
+    </script>
+}
+
+<div class="row">
+    Bike Route Details
+</div>
+<div class="row">
+    @Html.DisplayFor(model => model.BikeRoute,"BikeRouteDetails")
+</div>
+<div class="row">
+    Edit Route Metadata
+
+    @using (Html.BeginForm())
+    {
+        @Html.EditorFor(model => model.BikeRoute, "BikeRoute")
+        <input id = "Submit" type = "submit" value = "submit" />
+    }
+</div>
+
+<p> </p>
+
+<div class="row">
+    Delete Bike Route?
+</div>
+<div>
+    @using (Html.BeginForm())
+    {
+        <input asp-page-handler="Delete" id = "Delete" type="submit" value = "Delete Route" />
+    }
+</div>
+
+<p> </p>
+
+<div class="container">
+    Edit Route Cues
+    <div class="row">
+        <div class="col">
+            Operation
+        </div>       
+        <div class="col">
+            Street Name
+        </div>         
+        <div class="col">
+            Notes
+        </div>
+        <div class="col">
+            Mile Marker
+        </div>  
+        <div class="col">
+            Index
+        </div>
+        <div class="col">
+            Submit
+        </div>                 
+    </div>             
+    
+    @for(int index = 0 ; index < Model.BikeRoute.Cues.Count; index++)
+    {
+        <div class="row">
+            @Html.DisplayFor(modelItem => Model.BikeRoute.Cues[index], "CueSheetRowForEdit")
+            <div class="col">
+                @Html.DisplayFor( m => index)
+            </div>            
+            <div class="col">
+                <form asp-page-handler="DeleteCueRow" method="post">
+                    @Html.HiddenFor( m=> index)
+                    <input id = "Submit" type = "submit" value = "Delete Row" />
+                </form>
+            </div>
+        </div>
+    }
+    <form  method="post">    
+        <div class="row">
+            <div class="col">
+               <select name="CueRow.Operation" asp-items='EnumHelper.SelectListForEnum<CueOperation>()'>
+                    <option disabled selected value="">Select an operation </option>
+                </select>          
+            </div>
+            <div class="col">
+                <input asp-for="CueRow.StreetName" placeholder="street name" />
+            </div>
+            <div class="col">
+                <input asp-for="CueRow.MileMarker" placeholder="mile marker" />
+            </div>
+            <div class="col">
+                <select name="index" asp-items='Enumerable.Range(0,Model.BikeRoute.Cues.Count).Select( i=> new SelectListItem{ Text=i.ToString(), Value=i.ToString()})'>
+                    <option disabled selected>index</option>
+                </select>
+            </div>
+            <div class="col">
+                <input id = "Submit" type = "submit" value = "Add Row" asp-page-handler="AddCueRow" title="Add new row at end"/>
+                <input id = "SubmitInsert" type = "submit" value = "Insert" asp-page-handler="InsertCueRow" title="Insert new row before index"/>
+            </div>
+        </div>
+    </form>
+</div>
+
+

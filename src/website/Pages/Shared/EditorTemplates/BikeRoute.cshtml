@@ -1,0 +1,30 @@
+@model CCC.Entities.BikeRoute
+
+<div class="row">
+    <div class="col-1">
+        @Html.DisplayNameFor( m => m.Name)
+    </div>
+    <div class="col-2">
+        @Html.EditorFor( m => m.Name)
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-1">
+        @Html.DisplayNameFor( m => m.Description)
+    </div>
+    <div class="col-2">
+        @Html.EditorFor( m => m.Description)
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-1">
+        @Html.DisplayNameFor( m => m.Distance)
+    </div>
+    <div class="col-2">
+        @Html.EditorFor( m => m.Distance)
+    </div>
+</div>
+
+@* TODO Hide id *@

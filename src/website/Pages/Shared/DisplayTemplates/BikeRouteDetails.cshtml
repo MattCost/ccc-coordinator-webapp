@@ -1,0 +1,38 @@
+@model CCC.Entities.BikeRoute
+
+<div class="row">
+    <div class="col">
+        @Html.DisplayNameFor(model => model.Id): @Html.DisplayFor(model => model.Id)
+    </div>
+    <div class="col">
+        @Html.DisplayNameFor(model => model.Name): @Html.DisplayFor(model => model.Name)
+    </div>
+    <div class="col">
+        @Html.DisplayNameFor(model => model.Description): @Html.DisplayFor(model => model.Description)
+    </div>
+    <div class="col">
+        @Html.DisplayNameFor(model => model.Distance): @Html.DisplayFor(model => model.Distance)
+    </div>
+</div>
+<p></p>
+<div class="row">
+    <div class="col">
+        @Html.DisplayNameFor(model => model.Cues.First().Operation)
+    </div>
+    <div class="col">
+        @Html.DisplayNameFor(model => model.Cues.First().StreetName)
+    </div>
+    <div class="col">
+        @Html.DisplayNameFor(model => model.Cues.First().MileMarker)
+    </div>
+    <div class="col">
+        @Html.DisplayNameFor(model => model.Cues.First().Notes)
+    </div>
+         
+</div>
+        @foreach( var cueRow in Model.Cues)
+        {
+            <div class="row">
+                @Html.DisplayFor(modelItem => cueRow,"CueSheetRow")
+            </div>
+        }
