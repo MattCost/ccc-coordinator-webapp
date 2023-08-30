@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Abstractions;
 using Microsoft.Identity.Web;
 
-namespace CCC.website.Pages.RideEvents
+namespace CCC.website.Pages.GroupRides
 {
     public class EditPageModel : PageModelBase
     {
@@ -17,40 +17,40 @@ namespace CCC.website.Pages.RideEvents
         public Guid Id { get; set; }
 
         [BindProperty]
-        public RideEvent RideEvent { get; set; } = new();
+        public GroupRide GroupRide { get; set; } = new();
 
         public async Task OnGetAsync()
         {
             Logger.LogTrace("Entering OnGetAsync Id {Id}", Id);
             try
             {
-                RideEvent = await API.GetForUserAsync<RideEvent>("API", options => { options.RelativePath = $"RideEvents/{Id}"; }) ?? throw new Exception("API returned invalid data");
+                GroupRide = await API.GetForUserAsync<GroupRide>("API", options => { options.RelativePath = $"GroupRides/{Id}"; }) ?? throw new Exception("API returned invalid data");
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "Error getting RideEvent Id {id}",Id);
-                CurrentPageErrorMessage = "Unable to get RideEvent";
-                CurrentPageAction = "RideEvent/Edit/OnGet";
+                Logger.LogError(ex, "Error getting GroupRide Id {id}",Id);
+                CurrentPageErrorMessage = "Unable to get GroupRide";
+                CurrentPageAction = "GroupRide/Edit/OnGet";
             }
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
             Logger.LogTrace("Entering OnPostAsync");
-            if(RideEvent != null)
+            if(GroupRide != null)
             {
                 Logger.LogTrace("UpdateModel is not null");
                 try
                 {
-                    RideEvent.Id = Id;
+                    GroupRide.Id = Id;
                     // var updateModel = System.Text.Json.JsonSerializer.Deserialize<BikeRouteUpdateModel>( System.Text.Json.JsonSerializer.Serialize(BikeRoute));
-                    await API.PatchForUserAsync("API", RideEvent, options => { options.RelativePath = $"RideEvents/{Id}"; });
+                    await API.PatchForUserAsync("API", GroupRide, options => { options.RelativePath = $"GroupRides/{Id}"; });
                 }
                 catch(Exception ex)
                 {
-                    Logger.LogError(ex, "Exception trying to update RideEvent Id {Id}", Id);
-                    PreviousPageAction = "RideEvent/Edit/OnPost";
-                    PreviousPageErrorMessage = $"Error updating RideEvent";
+                    Logger.LogError(ex, "Exception trying to update GroupRide Id {Id}", Id);
+                    PreviousPageAction = "GroupRide/Edit/OnPost";
+                    PreviousPageErrorMessage = $"Error updating GroupRide";
                 }
             }
 
@@ -61,7 +61,7 @@ namespace CCC.website.Pages.RideEvents
         {
             Logger.LogTrace("Entering OnPostDeleteAsync");
             await API.DeleteForUserAsync("API", string.Empty, options => {
-                options.RelativePath = $"RideEvents/{Id}";
+                options.RelativePath = $"GroupRides/{Id}";
             });
             return RedirectToPage("Index");
         }

@@ -1,10 +1,10 @@
 @page "{id:guid}"
 @using CCC.Entities
 @using CCC.website.Models
-@model CCC.website.Pages.RideEvents.EditPageModel
+@model CCC.website.Pages.GroupRides.EditPageModel
 
 @{
-    ViewData["Title"] = "Edit RideEvent Listing";
+    ViewData["Title"] = "Edit GroupRide Listing";
 }
 
 @section Scripts
@@ -18,17 +18,17 @@
 }
 
 <div class="row">
-    Ride Event Details
+    GroupRide Details
 </div>
 <div class="row">
-    @Html.DisplayFor(model => model.RideEvent,"RideEventDetails")
+    @Html.DisplayFor(model => model.GroupRide,"GroupRideDetails")
 </div>
 <div class="row">
-    Edit Ride Event Metadata
+    Edit Group Ride Metadata
 
     @using (Html.BeginForm())
     {
-        @Html.EditorFor(model => model.RideEvent, "RideEvent")
+        @Html.EditorFor(model => model.GroupRide, "GroupRide")
         <input id = "Submit" type = "submit" value = "submit" />
     }
 </div>
@@ -36,11 +36,11 @@
 <p> </p>
 
 <div class="row">
-    Delete Event?
+    Delete GroupRide?
 </div>
 <div>
     @using (Html.BeginForm())
     {
-        <input asp-page-handler="Delete" id = "Delete" type="submit" value = "Delete Event" />
+        <input asp-page-handler="Delete" id = "Delete" type="submit" value = "Delete GroupRide" />
     }
 </div>

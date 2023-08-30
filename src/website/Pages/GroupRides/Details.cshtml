@@ -1,0 +1,13 @@
+@page "{id:guid}"
+@model CCC.website.Pages.GroupRides.DetailsPageModel
+@{
+    ViewData["Title"] = "Ride Event Details";
+}
+
+<h3>Details Page</h3>
+<div class="row">
+    Ride Event Details
+</div>
+<div class="row">
+    @Html.DisplayFor(model => model.GroupRide,"GroupRideDetails")
+</div>

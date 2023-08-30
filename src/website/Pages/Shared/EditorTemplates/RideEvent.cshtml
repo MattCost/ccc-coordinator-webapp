@@ -1,0 +1,38 @@
+@model CCC.Entities.RideEvent
+
+<div class="row">
+    <div class="col-1">
+        @Html.DisplayNameFor( m => m.Name)
+    </div>
+    <div class="col-2">
+        @Html.EditorFor( m => m.Name)
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-1">
+        @Html.DisplayNameFor( m => m.Description)
+    </div>
+    <div class="col-2">
+        @Html.EditorFor( m => m.Description)
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-1">
+        @Html.DisplayNameFor( m => m.StartTime)
+    </div>
+    <div class="col-2">
+        @Html.EditorFor( m => m.StartTime)
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-1">
+        @Html.DisplayNameFor( m => m.Location)
+    </div>
+    <div class="col-2">
+        @Html.EditorFor( m => m.Location)
+    </div>
+</div>
+

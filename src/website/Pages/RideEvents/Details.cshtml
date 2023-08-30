@@ -1,0 +1,24 @@
+@page "{id:guid}"
+@model CCC.website.Pages.RideEvents.DetailsPageModel
+@{
+    ViewData["Title"] = "Ride Event Details";
+}
+
+<h3>Details Page</h3>
+<div class="row">
+    Ride Event Details
+</div>
+<div class="row">
+    @Html.DisplayFor(model => model.RideEvent,"RideEventOverview")
+</div>
+
+<div class="row">
+    Group Rides taking place
+</div>
+
+<div class="row">
+    @foreach( var ride in Model.Rides)
+    {
+        @Html.DisplayFor( modelItem => ride, "GroupRideOverview")
+    }
+</div>
