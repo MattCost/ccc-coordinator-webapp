@@ -37,11 +37,8 @@ public class BikeRoutesController : EntityProviderBaseController
         Logger.LogTrace("Entering Update for Id {Id} with model {Model}", id, updateModel);
         var modelResult = await EntityProviderActionHelper( async () => await EntityProvider.GetBikeRoute(id),"Unable to get Bike Route");
         
-        if(modelResult.Result is not null)
-            return modelResult.Result;
-
-        if(modelResult.Value is null) 
-            return Problem();
+        if(modelResult.Value is null)
+            return modelResult.Result ?? Problem();
 
         
         var model = modelResult.Value;      
