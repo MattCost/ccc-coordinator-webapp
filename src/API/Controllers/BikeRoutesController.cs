@@ -17,6 +17,7 @@ public class BikeRoutesController : EntityProviderBaseController
     [HttpGet]
     public async Task<ActionResult<IEnumerable<BikeRoute>>> GetAll()
     {
+        Logger.LogTrace("Entering GetAll");
         // var authResult = await _authorizationService.AuthorizeAsync(User, null, SiteOperations.ListSites);
         // if(!authResult.Succeeded) return Forbid();
         return await EntityProviderActionHelper( async () => { return await EntityProvider.GetAllBikeRoutes();}, "Unable to get all bike routes");
@@ -25,6 +26,8 @@ public class BikeRoutesController : EntityProviderBaseController
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<BikeRoute>> GetById([FromRoute] Guid id)
     {
+        Logger.LogTrace("Entering GetById");
+
         return await EntityProviderActionHelper( async () => { return await EntityProvider.GetBikeRoute(id);}, "Unable to get Bike Route");
     }
 
@@ -55,25 +58,28 @@ public class BikeRoutesController : EntityProviderBaseController
     [HttpPost]
     public async Task<ActionResult> Create([FromBody] BikeRouteCreateModel createModel)
     {
+        Logger.LogTrace("Entering Create. Model {Model}", createModel);        
         var model = new BikeRoute
         {
             Id = Guid.NewGuid(),
             Name = createModel.Name,
             Description = createModel.Description,
             Distance = createModel.Distance
-        };
+        };  
         return await EntityProviderActionHelper( async () => await EntityProvider.UpdateBikeRoute(model), "Unable to create Bike Route");
     }
 
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> Delete([FromRoute] Guid id)
     {
+        Logger.LogTrace("Entering Delete");
         return await EntityProviderActionHelper( async () => await EntityProvider.DeleteBikeRoute(id), "Unable to delete bike route");
     }
 
     [HttpPut("{id:guid}/restore")]
     public async Task<ActionResult> Restore([FromRoute] Guid id)
     {
+        Logger.LogTrace("Entering Restore");
         return await EntityProviderActionHelper( async () => await EntityProvider.RestoreBikeRoute(id), "Unable to restore bike route");
     }
 
