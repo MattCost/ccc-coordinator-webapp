@@ -35,21 +35,18 @@ public class BikeRoutesController : EntityProviderBaseController
     public async Task<ActionResult> Update([FromRoute] Guid id, [FromBody] BikeRouteUpdateModel updateModel)
     {
         Logger.LogTrace("Entering Update for Id {Id} with model {Model}", id, updateModel);
-        var modelResult = await EntityProviderActionHelper( async () => await EntityProvider.GetBikeRoute(id),"Unable to get Bike Route");
-        
-        if(modelResult.Value is null)
-            return modelResult.Result ?? Problem();
 
-        
-        var model = modelResult.Value;      
-        Logger.LogDebug("Model: {Model}", model);        
-        model.Name = updateModel.Name ?? model.Name;
-        model.Distance = updateModel.Distance ?? model.Distance;
-        model.Description = updateModel.Description ?? model.Description;
-        Logger.LogDebug("Model: {Model}", model);        
+        return await EntityProviderActionHelper( async () =>
+        {
+            var model = await EntityProvider.GetBikeRoute(id);
+            Logger.LogDebug("Model: {Model}", model);        
+            model.Name = updateModel.Name ?? model.Name;
+            model.Distance = updateModel.Distance ?? model.Distance;
+            model.Description = updateModel.Description ?? model.Description;
+            Logger.LogDebug("Model: {Model}", model);        
+            await EntityProvider.UpdateBikeRoute(model);
+        },"error updating");
 
-
-        return await EntityProviderActionHelper( async () => await EntityProvider.UpdateBikeRoute(model), "Unable to update Bike Route");
     }
 
     [HttpPost]
