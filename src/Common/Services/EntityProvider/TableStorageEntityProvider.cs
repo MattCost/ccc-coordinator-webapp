@@ -163,6 +163,7 @@ public class EntityProviderTableStorage : IEntityProvider
         if (type == typeof(Guid)) return true;
         if (type == typeof(bool)) return true;
         if (type == typeof(DateTime)) return true;
+        if (type == typeof(DateTimeOffset)) return true;
         if (type == typeof(double)) return true;
         if (type == typeof(int)) return true;
         if (type == typeof(long)) return true;
