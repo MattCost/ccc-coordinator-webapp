@@ -61,6 +61,11 @@ namespace CCC.API
             });
             services.AddHttpClient();
 
+            services.Configure<RouteOptions>(options =>
+            {
+                options.ConstraintMap.Add("coordinatorRole", typeof(CoordinatorRoleConstraint));
+            });
+
         }
 
         public void ConfigureDevelopmentServices(IServiceCollection services)
