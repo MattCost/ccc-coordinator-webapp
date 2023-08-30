@@ -31,6 +31,7 @@ public class BikeRoutesController : EntityProviderBaseController
     [HttpPatch("{id:guid}")]
     public async Task<ActionResult> Update([FromRoute] Guid id, [FromBody] BikeRouteUpdateModel updateModel)
     {
+        Logger.LogTrace("Entering Update for Id {Id} with model {Model}", id, updateModel);
         var modelResult = await EntityProviderActionHelper( async () => await EntityProvider.GetBikeRoute(id),"Unable to get Bike Route");
         
         if(modelResult.Result is not null)
@@ -39,10 +40,14 @@ public class BikeRoutesController : EntityProviderBaseController
         if(modelResult.Value is null) 
             return Problem();
 
+        
         var model = modelResult.Value;      
+        Logger.LogDebug("Model: {Model}", model);        
         model.Name = updateModel.Name ?? model.Name;
         model.Distance = updateModel.Distance ?? model.Distance;
         model.Description = updateModel.Description ?? model.Description;
+        Logger.LogDebug("Model: {Model}", model);        
+
 
         return await EntityProviderActionHelper( async () => await EntityProvider.UpdateBikeRoute(model), "Unable to update Bike Route");
     }
