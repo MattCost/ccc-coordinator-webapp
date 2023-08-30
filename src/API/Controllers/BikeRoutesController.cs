@@ -39,14 +39,13 @@ public class BikeRoutesController : EntityProviderBaseController
         return await EntityProviderActionHelper( async () =>
         {
             var model = await EntityProvider.GetBikeRoute(id);
-            Logger.LogDebug("Model: {Model}", model);        
+            Logger.LogDebug("Model: {Model}", model); 
             model.Name = updateModel.Name ?? model.Name;
             model.Distance = updateModel.Distance ?? model.Distance;
             model.Description = updateModel.Description ?? model.Description;
-            Logger.LogDebug("Model: {Model}", model);        
+            Logger.LogDebug("Model: {Model}", model);
             await EntityProvider.UpdateBikeRoute(model);
-        },"error updating");
-
+        },"Unable to update Bike Route");
     }
 
     [HttpPost]

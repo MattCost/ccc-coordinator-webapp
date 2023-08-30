@@ -14,11 +14,9 @@ public class GroupRidesController : EntityProviderBaseController
     {
     }
 
-    [HttpGet("all")]
+    [HttpGet()]
     public async Task<ActionResult<IEnumerable<GroupRide>>> Get()
     {
-        // var authResult = await _authorizationService.AuthorizeAsync(User, null, SiteOperations.ListSites);
-        // if(!authResult.Succeeded) return Forbid();
         return await EntityProviderActionHelper( async () => { return await EntityProvider.GetAllGroupRides();}, "Unable to get all groupRides");
     }
 
@@ -29,9 +27,16 @@ public class GroupRidesController : EntityProviderBaseController
     }
 
     [HttpPost]
-    public async Task<ActionResult> Post([FromBody] GroupRide model)
+    public async Task<ActionResult> Create([FromBody] GroupRideCreateModel createModel)
     {
-        return await EntityProviderActionHelper( async () => await EntityProvider.UpdateGroupRide(model), "Unable to update groupRide");
+        var model = new GroupRide
+        {
+            Id = Guid.NewGuid(),
+            RideEventId = createModel.RideEventId,
+            RideType = createModel.RideType,
+            BikeRouteId = createModel.BikeRouteId,
+        };          
+        return await EntityProviderActionHelper( async () => await EntityProvider.UpdateGroupRide(model), "Unable to create groupRide");
     }
 
     [HttpDelete("{id:guid}")]
@@ -39,11 +44,28 @@ public class GroupRidesController : EntityProviderBaseController
     {
         return await EntityProviderActionHelper( async () => await EntityProvider.DeleteGroupRide(id), "Unable to delete groupRide");
     }
+
     [HttpPut("{id:guid}/restore")]
     public async Task<ActionResult> Restore([FromRoute] Guid id)
     {
         return await EntityProviderActionHelper( async () => await EntityProvider.RestoreGroupRide(id), "Unable to restore groupRide");
     }
+    
+    [HttpPatch("{id:guid}/coordinators/{role:CoordinatorRole}")] // signup. need userId, position
+    public async Task<ActionResult> Signup([FromRoute] Guid id, [FromRoute] CoordinatorRole role, [FromQuery] string coordinatorId)
+    {
+        return await EntityProviderActionHelper( async () =>
+        {
+            var model = await EntityProvider.GetGroupRide(id);
+            if(model.Coordinators[role].RequiredCountMet)
+            {
+                throw new InvalidOperationException("Ride is already full");
+            }
+            model.Coordinators[role].CoordinatorIds.Add(coordinatorId);
+            await EntityProvider.UpdateGroupRide(model);
+        },"Unable to signup");
+    }
 }
+
 
 
