@@ -51,7 +51,7 @@ public class GroupRidesController : EntityProviderBaseController
         return await EntityProviderActionHelper( async () => await EntityProvider.RestoreGroupRide(id), "Unable to restore groupRide");
     }
     
-    [HttpPatch("{id:guid}/coordinators/{role:CoordinatorRole}")] // signup. need userId, position
+    [HttpPatch("{id:guid}/coordinators/{role:coordinatorRole}")] // signup. need userId, position
     public async Task<ActionResult> Signup([FromRoute] Guid id, [FromRoute] CoordinatorRole role, [FromQuery] string coordinatorId)
     {
         return await EntityProviderActionHelper( async () =>
