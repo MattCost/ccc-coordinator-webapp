@@ -71,6 +71,11 @@ public abstract class EntityProviderBaseController : ControllerBase
             _logger.LogWarning(ex, "Entity locked");
             return new StatusCodeResult(StatusCodes.Status423Locked);
         }
+        catch(InvalidOperationException ex)
+        {
+            _logger.LogWarning(ex, "Invalid Operation");
+            return new BadRequestObjectResult(ex.Message);
+        }        
         catch(Exception ex)
         {
             _logger.LogError(ex, "Unexpected Exception. Error message: {Message}", errorMessage);

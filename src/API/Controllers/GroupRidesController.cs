@@ -65,6 +65,21 @@ public class GroupRidesController : EntityProviderBaseController
             await EntityProvider.UpdateGroupRide(model);
         },"Unable to signup");
     }
+
+    [HttpDelete("{id:guid}/coordinators/{role:coordinatorRole}")]
+    public async Task<ActionResult> DeleteSignup([FromRoute] Guid id, [FromRoute] CoordinatorRole role, [FromQuery] string coordinatorId)
+    {
+        return await EntityProviderActionHelper( async () =>
+        {
+            var model = await EntityProvider.GetGroupRide(id);
+            if(!model.Coordinators[role].CoordinatorIds.Contains(coordinatorId))
+            {
+                throw new InvalidOperationException("Coordinator is not signed up. Unable to delete");
+            }
+            model.Coordinators[role].CoordinatorIds.Remove(coordinatorId);
+            await EntityProvider.UpdateGroupRide(model);
+        },"Unable to remove signup");
+    }
 }
 
 
