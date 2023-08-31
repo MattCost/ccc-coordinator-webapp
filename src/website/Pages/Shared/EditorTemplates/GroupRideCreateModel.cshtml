@@ -1,11 +1,17 @@
 @model CCC.Entities.GroupRideCreateModel
+@using CCC.Entities
+@using CCC.website.Models
 
 <div class="row">
     <div class="col-1">
         @Html.DisplayNameFor( m => m.RideType)
     </div>
     <div class="col-2">
-        @Html.EditorFor( m => m.RideType)
+        <div class="col">
+            <select name="RideType" asp-items='EnumHelper.SelectListForEnum<RideType>()'>
+                <option disabled selected value="">Select an operation </option>
+            </select>
+        </div>
     </div>
 </div>
 
@@ -14,7 +20,20 @@
         @Html.DisplayNameFor( m => m.BikeRouteId)
     </div>
     <div class="col-2">
-        @Html.EditorFor( m => m.BikeRouteId)
+        @if(ViewData["BikeRoutes"] != null)
+        {
+            var list = (SelectList) (ViewData["BikeRoutes"] ?? new SelectList(new List<SelectListItem>(),"Value","Text"));
+
+            <div class="col-3">
+                <select id="BikeRouteId" name="BikeRouteId"  asp-items='list'>
+                <option value="">Select a Bike Route </option>
+                </select>        
+            </div>
+        }
+        else
+        {
+            @Html.EditorFor( m => m.BikeRouteId)
+        }        
     </div>
 </div>
 
@@ -23,7 +42,21 @@
         @Html.DisplayNameFor( m => m.RideEventId)
     </div>
     <div class="col-2">
-        @Html.EditorFor( m => m.RideEventId)
+        @if(ViewData["ParentEvents"] != null)
+        {
+            var list = (SelectList) (ViewData["ParentEvents"] ?? new SelectList(new List<SelectListItem>(),"Value","Text"));
+
+            <div class="col-3">
+                <select id="RideEventId" name="RideEventId"  asp-items='list'>
+                <option value="">Select a parent event </option>
+                </select>        
+            </div>
+        }
+        else
+        {
+            @Html.EditorFor( m => m.RideEventId)
+        }
     </div>
 </div>
+
 

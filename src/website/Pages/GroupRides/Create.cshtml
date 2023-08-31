@@ -7,7 +7,6 @@
 </div>
 @using (Html.BeginForm())
 {
-    @Html.EditorFor(model => model.CreateModel, "GroupRideCreateModel")
-    ;
+    @Html.EditorFor(model => model.CreateModel, "GroupRideCreateModel", Model.ExtraProperties)
     <input id="Submit" type="submit" value="submit" />
 }
