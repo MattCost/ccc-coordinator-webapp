@@ -31,6 +31,7 @@ public class RideEventsController : EntityProviderBaseController
     [HttpPost]
     public async Task<ActionResult> Create([FromBody] RideEventCreateModel createModel)
     {
+        Logger.LogDebug("Entering Create Ride Event. Generating model");
         var model = new RideEvent
         {
             Id = Guid.NewGuid(),
@@ -40,6 +41,7 @@ public class RideEventsController : EntityProviderBaseController
             Location = createModel.Location,
             Rides = createModel.Rides
         };
+        Logger.LogDebug("Generated Model {Json}", System.Text.Json.JsonSerializer.Serialize(model));
         return await EntityProviderActionHelper( async () => await EntityProvider.UpdateRideEvent(model), "Unable to create Ride Event");
     }
 

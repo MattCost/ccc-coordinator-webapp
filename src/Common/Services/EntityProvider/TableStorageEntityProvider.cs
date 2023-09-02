@@ -285,6 +285,7 @@ public class EntityProviderTableStorage : IEntityProvider
     }
     private async Task UpsertEntityAsync<TModel>(TModel model, string partitionKey, string rowKey)
     {
+        _logger.LogDebug("Entering Upsert Entity. Partition Key {Partition}. Row Key {Row}", partitionKey, rowKey);
         try
         {
             var tableEntity = new TableEntity(ModelToDict(model))
