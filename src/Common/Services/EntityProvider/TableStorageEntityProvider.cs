@@ -31,30 +31,27 @@ public class EntityProviderTableStorage : IEntityProvider
 
     #region PublicInterface
 
+    #region BikeRoutes
     public async Task<BikeRoute> GetBikeRoute(Guid routeId) => await GetEntityAsync<BikeRoute>(routeId.ToString(), BikeRoutes);
 
     public async Task<IEnumerable<BikeRoute>> GetAllBikeRoutes() => await GetAllEntitiesAsync<BikeRoute>(BikeRoutes);
     public async Task DeleteBikeRoute(Guid routeId)
     {
         var rides = await GetRidesUsingRoute(routeId);
-        if(rides.Any())
+        if (rides.Any())
         {
             throw new EntityLockedException("Bike Route is used by Rides. Can't be deleted");
         }
         await DeleteEntityAsync(BikeRoutes, routeId.ToString());
     }
 
-    private async Task<List<RideEvent>> GetRidesUsingRoute(Guid routeId)
-    {
-        var queryFilter = $"PartitionKey eq '{GroupRides}' and BikeRouteId eq '{routeId}' and not IsDeleted";
-
-        return await QueryHelper<RideEvent>(queryFilter);
-    }
-
     public async Task RestoreBikeRoute(Guid routeId) => await RestoreEntityAsync(BikeRoutes, routeId.ToString());
 
     public async Task UpdateBikeRoute(BikeRoute bikeRoute) => await UpsertEntityAsync(bikeRoute, BikeRoutes, bikeRoute.Id.ToString());
 
+    #endregion
+
+    #region GroupRides
     public async Task<GroupRide> GetGroupRide(Guid rideId) => await GetEntityAsync<GroupRide>(rideId.ToString(), GroupRides);
 
     public async Task<IEnumerable<GroupRide>> GetAllGroupRides() => await GetAllEntitiesAsync<GroupRide>(GroupRides);
@@ -74,14 +71,20 @@ public class EntityProviderTableStorage : IEntityProvider
 
     public async Task UpdateGroupRide(GroupRide groupRide)
     {
-        await UpsertEntityAsync(groupRide, GroupRides, groupRide.Id.ToString());
+        //try catch not found, return "invalid parent id" message
         var parentEvent = await GetRideEvent(groupRide.RideEventId);
         if (!parentEvent.Rides.Contains(groupRide.Id))
         {
             parentEvent.Rides.Add(groupRide.Id);
             await UpdateRideEvent(parentEvent);
         }
+        //Once we know the parent Id is valid, update/create the groupRide
+        await UpsertEntityAsync(groupRide, GroupRides, groupRide.Id.ToString());
     }
+
+    #endregion
+
+    #region RideEvents
     public async Task<RideEvent> GetRideEvent(Guid eventId) => await GetEntityAsync<RideEvent>(eventId.ToString(), RideEvents);
 
     public async Task<IEnumerable<RideEvent>> GetAllRideEvents() => await GetAllEntitiesAsync<RideEvent>(RideEvents);
@@ -103,6 +106,11 @@ public class EntityProviderTableStorage : IEntityProvider
 
     public async Task UpdateRideEvent(RideEvent rideEvent) => await UpsertEntityAsync(rideEvent, RideEvents, rideEvent.Id.ToString());
 
+    #endregion
+    
+    #region  Coordinators
+
+    //Will I get these from MSGraph api?
     public Task<IEnumerable<Coordinator>> GetCoordinators()
     {
         throw new NotImplementedException();
@@ -117,11 +125,18 @@ public class EntityProviderTableStorage : IEntityProvider
     {
         throw new NotImplementedException();
     }
+    #endregion
 
     #endregion
 
-
     #region PrivateMethods
+
+    private async Task<List<RideEvent>> GetRidesUsingRoute(Guid routeId)
+    {
+        var queryFilter = $"PartitionKey eq '{GroupRides}' and BikeRouteId eq '{routeId}' and not IsDeleted";
+
+        return await QueryHelper<RideEvent>(queryFilter);
+    }
     private static TModel CreateFromTableEntity<TModel>(TableEntity tableEntity) where TModel : class, new()
     {
         var output = new TModel();
