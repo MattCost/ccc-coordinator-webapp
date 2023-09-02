@@ -136,7 +136,7 @@ public class EntityProviderTableStorage : IEntityProvider
 
     private async Task<List<RideEvent>> GetRidesUsingRoute(Guid routeId)
     {
-        var queryFilter = $"PartitionKey eq '{GroupRides}' and BikeRouteId eq '{routeId}' and not IsDeleted";
+        var queryFilter = $"PartitionKey eq '{GroupRides}' and BikeRouteId eq guid'{routeId}' and not IsDeleted";
 
         return await QueryHelper<RideEvent>(queryFilter);
     }
@@ -216,7 +216,7 @@ public class EntityProviderTableStorage : IEntityProvider
     private async Task<List<GroupRide>> GetRidesAtEvent(Guid eventId)
     {
         _logger.LogDebug("Getting GroupRides at event {Id}", eventId);
-        var queryFilter = $"PartitionKey eq '{GroupRides}' and RideEventId eq '{eventId}' and not IsDeleted";
+        var queryFilter = $"PartitionKey eq '{GroupRides}' and RideEventId eq guid'{eventId}' and not IsDeleted";
         return await QueryHelper<GroupRide>(queryFilter);
     }
 
