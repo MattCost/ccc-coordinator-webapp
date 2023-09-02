@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Azure.Data.Tables;
 using CCC.Entities;
 using CCC.Exceptions;
@@ -35,9 +36,21 @@ public class EntityProviderTableStorage : IEntityProvider
     public async Task<IEnumerable<BikeRoute>> GetAllBikeRoutes() => await GetAllEntitiesAsync<BikeRoute>(BikeRoutes);
     public async Task DeleteBikeRoute(Guid routeId)
     {
-        //todo check if route is used first
+        var rides = await GetRidesUsingRoute(routeId);
+        if(rides.Any())
+        {
+            throw new EntityLockedException("Bike Route is used by Rides. Can't be deleted");
+        }
         await DeleteEntityAsync(BikeRoutes, routeId.ToString());
     }
+
+    private async Task<List<RideEvent>> GetRidesUsingRoute(Guid routeId)
+    {
+        var queryFilter = $"PartitionKey eq '{GroupRides}' and BikeRouteId eq '{routeId}' and not IsDeleted";
+
+        return await QueryHelper<RideEvent>(queryFilter);
+    }
+
     public async Task RestoreBikeRoute(Guid routeId) => await RestoreEntityAsync(BikeRoutes, routeId.ToString());
 
     public async Task UpdateBikeRoute(BikeRoute bikeRoute) => await UpsertEntityAsync(bikeRoute, BikeRoutes, bikeRoute.Id.ToString());
@@ -51,7 +64,7 @@ public class EntityProviderTableStorage : IEntityProvider
         // delete ride first, then you can delete events and routes
         await DeleteEntityAsync(GroupRides, rideId.ToString());
         var parentEvent = await GetRideEvent(rideId);
-        if(parentEvent.Rides.Contains(rideId))
+        if (parentEvent.Rides.Contains(rideId))
         {
             parentEvent.Rides.Remove(rideId);
             await UpdateRideEvent(parentEvent);
@@ -63,7 +76,7 @@ public class EntityProviderTableStorage : IEntityProvider
     {
         await UpsertEntityAsync(groupRide, GroupRides, groupRide.Id.ToString());
         var parentEvent = await GetRideEvent(groupRide.RideEventId);
-        if(!parentEvent.Rides.Contains(groupRide.Id))
+        if (!parentEvent.Rides.Contains(groupRide.Id))
         {
             parentEvent.Rides.Add(groupRide.Id);
             await UpdateRideEvent(parentEvent);
@@ -75,8 +88,16 @@ public class EntityProviderTableStorage : IEntityProvider
 
     public async Task DeleteRideEvent(Guid eventId)
     {
+        var rides = await GetRidesAtEvent(eventId);
+        if (rides.Any())
+        {
+            throw new EntityLockedException("Event has Group rides that must be deleted first");
+        }
         await DeleteEntityAsync(RideEvents, eventId.ToString());
     }
+
+
+
     public async Task RestoreRideEvent(Guid eventId) => await RestoreEntityAsync(RideEvents, eventId.ToString());
 
 
@@ -146,12 +167,50 @@ public class EntityProviderTableStorage : IEntityProvider
 
     private async Task<IEnumerable<TModel>> GetAllEntitiesAsync<TModel>(string partitionKey) where TModel : class, new()
     {
+        var queryFilter = $"PartitionKey eq '{partitionKey}' and not IsDeleted";
+        return await QueryHelper<TModel>(queryFilter);
+        // try
+        // {
+        //     await Task.CompletedTask;
+        //     var queryFilter = $"PartitionKey eq '{partitionKey}' and not IsDeleted";
+        //     var queryResults = TableClient.QueryAsync<TableEntity>(filter: queryFilter).ToBlockingEnumerable();
+        //     var output = queryResults.Select(CreateFromTableEntity<TModel>).ToList();
+        //     return output;
+        // }
+        // catch (Azure.RequestFailedException ex) when (ex.Status == 404)
+        // {
+        //     _logger.LogWarning("Table {TableName} not found", TableName);
+        //     throw new EntityNotFoundException($"{TableName} not found");
+        // }
+
+        // catch (Azure.RequestFailedException ex) when (ex.Status == 400)
+        // {
+        //     _logger.LogError(ex, "Bad Request generated");
+        //     throw;
+        // }
+        // catch (Exception ex)
+        // {
+        //     _logger.LogError(ex, "Exception");
+        //     throw;
+        // }
+    }
+
+    private async Task<List<GroupRide>> GetRidesAtEvent(Guid eventId)
+    {
+        var queryFilter = $"PartitionKey eq '{GroupRides}' and RideEventId eq '{eventId}' and not IsDeleted";
+        return await QueryHelper<GroupRide>(queryFilter);
+    }
+
+    private async Task<List<T>> QueryHelper<T>(string queryFilter) where T : class, new()
+    {
         try
         {
-            await Task.CompletedTask;
-            var queryFilter = $"PartitionKey eq '{partitionKey}' and not IsDeleted";
-            var queryResults = TableClient.QueryAsync<TableEntity>(filter: queryFilter).ToBlockingEnumerable();
-            var output = queryResults.Select(CreateFromTableEntity<TModel>).ToList();
+            var output = new List<T>();
+            var queryResults = TableClient.QueryAsync<TableEntity>(filter: queryFilter);
+            await foreach (var result in queryResults)
+            {
+                output.Add(CreateFromTableEntity<T>(result));
+            }
             return output;
         }
         catch (Azure.RequestFailedException ex) when (ex.Status == 404)
@@ -170,6 +229,11 @@ public class EntityProviderTableStorage : IEntityProvider
             _logger.LogError(ex, "Exception");
             throw;
         }
+
+
+
+
+
     }
 
     private static bool IsSupportedType(Type type)
