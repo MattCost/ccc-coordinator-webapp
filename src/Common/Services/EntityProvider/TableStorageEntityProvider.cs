@@ -91,14 +91,17 @@ public class EntityProviderTableStorage : IEntityProvider
 
     public async Task DeleteRideEvent(Guid eventId)
     {
+        _logger.LogDebug("Deleting Ride Event {EventId}", eventId);
         var rides = await GetRidesAtEvent(eventId);
+        _logger.LogDebug("Ride Event has {Count} rides", rides.Count());
         if (rides.Any())
         {
+            _logger.LogWarning("Event {Id} has rides, so event can't be deleted", eventId);
             throw new EntityLockedException("Event has Group rides that must be deleted first");
         }
+        _logger.LogDebug("Deleting Ride Event {Id}", eventId);
         await DeleteEntityAsync(RideEvents, eventId.ToString());
     }
-
 
 
     public async Task RestoreRideEvent(Guid eventId) => await RestoreEntityAsync(RideEvents, eventId.ToString());
@@ -212,12 +215,14 @@ public class EntityProviderTableStorage : IEntityProvider
 
     private async Task<List<GroupRide>> GetRidesAtEvent(Guid eventId)
     {
+        _logger.LogDebug("Getting GroupRides at event {Id}", eventId);
         var queryFilter = $"PartitionKey eq '{GroupRides}' and RideEventId eq '{eventId}' and not IsDeleted";
         return await QueryHelper<GroupRide>(queryFilter);
     }
 
     private async Task<List<T>> QueryHelper<T>(string queryFilter) where T : class, new()
     {
+        _logger.LogDebug("Entering Query Helper. Filter:`{Filter}`", queryFilter);
         try
         {
             var output = new List<T>();
@@ -226,6 +231,7 @@ public class EntityProviderTableStorage : IEntityProvider
             {
                 output.Add(CreateFromTableEntity<T>(result));
             }
+            _logger.LogDebug("Output has {Count} entries", output.Count);
             return output;
         }
         catch (Azure.RequestFailedException ex) when (ex.Status == 404)
