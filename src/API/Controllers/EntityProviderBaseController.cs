@@ -64,12 +64,16 @@ public abstract class EntityProviderBaseController : ControllerBase
         catch(EntityNotFoundException ex)
         {
             _logger.LogWarning(ex, "Entity not found.");
-            return NotFound();
+            return new NotFoundObjectResult(ex.Message);
         }
         catch(EntityLockedException ex)
         {
             _logger.LogWarning(ex, "Entity locked");
-            return new StatusCodeResult(StatusCodes.Status423Locked);
+            return new ObjectResult(ex.Message)
+            {
+                StatusCode = StatusCodes.Status423Locked
+            };
+            // return new StatusCodeResult(StatusCodes.Status423Locked);
         }
         catch(InvalidOperationException ex)
         {
