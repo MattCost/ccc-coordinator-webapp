@@ -58,11 +58,19 @@ public class EntityProviderTableStorage : IEntityProvider
 
     public async Task DeleteGroupRide(Guid rideId)
     {
+        _logger.LogDebug("Getting parent event id");
+        var groupRide = await GetGroupRide(rideId);
+        var parentEventId = groupRide.RideEventId;
+
         // delete ride first, then you can delete events and routes
+        _logger.LogDebug("Deleting group ride id {RideId}", rideId);
         await DeleteEntityAsync(GroupRides, rideId.ToString());
+        
+        _logger.LogDebug("Getting ride event with the wrong guid, this should fail?");
         var parentEvent = await GetRideEvent(rideId);
         if (parentEvent.Rides.Contains(rideId))
         {
+            _logger.LogDebug("ParentEvent.Rides does contain RideId. removing");
             parentEvent.Rides.Remove(rideId);
             await UpdateRideEvent(parentEvent);
         }
