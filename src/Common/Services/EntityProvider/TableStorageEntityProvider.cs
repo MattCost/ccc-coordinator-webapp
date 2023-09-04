@@ -127,8 +127,11 @@ public class EntityProviderTableStorage : IEntityProvider
     //Will I get these from MSGraph api?
     public async Task<IEnumerable<Coordinator>> GetCoordinators()
     {
-        var x = await _graphServiceClient.Users.Request().Select( u => u.Id).GetAsync();
-        return x.Select( x => new Coordinator {DisplayName = x.DisplayName, UserId = x.Id}).ToList();
+        var users = await _graphServiceClient.Users.GetAsync();
+        if(users == null || users.Value == null) throw new Exception("cant get users");
+        return users.Value.Select( user => new Coordinator{ DisplayName = user.DisplayName ?? "mystery", UserId = user.Id ?? user.UserPrincipalName ?? "fuck me",});
+        // var x = await _graphServiceClient.Users.Request().Select( u => u.Id).GetAsync();
+        // return x.Select( x => new Coordinator {DisplayName = x.DisplayName, UserId = x.Id}).ToList();
     }
 
     public Task DeleteCoordinator(Guid coordinatorId)
