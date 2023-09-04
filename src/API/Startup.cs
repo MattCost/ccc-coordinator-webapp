@@ -34,11 +34,13 @@ namespace CCC.API
 
             // Adds Microsoft Identity platform (AAD v2.0) support to protect this Api
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                    .AddMicrosoftIdentityWebApi(options =>
-            {
-                Configuration.Bind("AzureAdB2C", options);
-            },
-            options => { Configuration.Bind("AzureAdB2C", options); });
+                    .AddMicrosoftIdentityWebApi(options => {
+                            Configuration.Bind("AzureAdB2C", options);
+                        },
+                        options => { Configuration.Bind("AzureAdB2C", options); })
+                        .EnableTokenAcquisitionToCallDownstreamApi( options => {
+                            Configuration.Bind("AzureAdB2C", options);
+                        }).AddMicrosoftGraph();
 
             services.AddMvc(options =>
             {
@@ -49,12 +51,14 @@ namespace CCC.API
 
             services.AddEndpointsApiExplorer();
 
-            services.AddAzureAdB2CProtectedSwagger( options => {
+            services.AddAzureAdB2CProtectedSwagger(options =>
+            {
                 options.B2CDomain = Configuration.GetValue<string>("Swagger:B2CDomain") ?? string.Empty;
                 options.PolicyName = Configuration.GetValue<string>("Swagger:PolicyId") ?? "B2C_1_SignupSignin";
                 options.ClientId = Configuration.GetValue<Guid>("Swagger:ClientId");
-                options.Scopes = new Dictionary<string, string> {
-                    [ Configuration.GetValue<string>("Swagger:Scope") ?? "scope" ] = Configuration.GetValue<string>("Swagger:ScopeDisplay") ?? "empty"
+                options.Scopes = new Dictionary<string, string>
+                {
+                    [Configuration.GetValue<string>("Swagger:Scope") ?? "scope"] = Configuration.GetValue<string>("Swagger:ScopeDisplay") ?? "empty"
                 };
                 // This didn't work in the app service, even tho the config entry looked the same as appsettings entry
                 // options.Scopes = Configuration.GetSection("Swagger:Scopes").GetChildren().ToDictionary( x => $"https://{x.Key}", x => x.Value ?? string.Empty);
@@ -103,10 +107,12 @@ namespace CCC.API
             }
 
 
-            app.AddSwaggerUi(options => {
+            app.AddSwaggerUi(options =>
+            {
                 options.ClientId = Configuration.GetValue<Guid>("Swagger:ClientId");
-                options.Scopes = new Dictionary<string, string> {
-                    [ Configuration.GetValue<string>("Swagger:Scope") ?? "scope" ] = Configuration.GetValue<string>("Swagger:ScopeDisplay") ?? "empty"
+                options.Scopes = new Dictionary<string, string>
+                {
+                    [Configuration.GetValue<string>("Swagger:Scope") ?? "scope"] = Configuration.GetValue<string>("Swagger:ScopeDisplay") ?? "empty"
                 };
 
                 // This didn't work in app service.
