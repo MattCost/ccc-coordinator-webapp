@@ -4,6 +4,7 @@ using CCC.Entities;
 using CCC.Exceptions;
 using CCC.Services.Secrets;
 using Microsoft.Extensions.Logging;
+using Microsoft.Graph;
 
 namespace CCC.Services.EntityProvider;
 
@@ -18,7 +19,8 @@ public class EntityProviderTableStorage : IEntityProvider
 
     protected readonly ILogger<EntityProviderTableStorage> _logger;
     protected TableClient TableClient { get; private set; }
-    public EntityProviderTableStorage(ILogger<EntityProviderTableStorage> logger, ISecretsManager secretsManager)
+    private readonly GraphServiceClient _graphServiceClient;
+    public EntityProviderTableStorage(ILogger<EntityProviderTableStorage> logger, ISecretsManager secretsManager, GraphServiceClient graphServiceClient)
     {
         _logger = logger;
         _secretsManager = secretsManager;
@@ -27,6 +29,7 @@ public class EntityProviderTableStorage : IEntityProvider
         TableClient = new TableClient(connectionString, TableName);
 
         _secretsManager = secretsManager;
+        _graphServiceClient = graphServiceClient;
     }
 
     #region PublicInterface
@@ -65,7 +68,7 @@ public class EntityProviderTableStorage : IEntityProvider
         // delete ride first, then you can delete events and routes
         _logger.LogDebug("Deleting group ride id {RideId}", rideId);
         await DeleteEntityAsync(GroupRides, rideId.ToString());
-        
+
         _logger.LogDebug("Getting Ride Event for parentEventId");
         var parentEvent = await GetRideEvent(parentEventId);
         if (parentEvent.Rides.Contains(rideId))
@@ -118,13 +121,14 @@ public class EntityProviderTableStorage : IEntityProvider
     public async Task UpdateRideEvent(RideEvent rideEvent) => await UpsertEntityAsync(rideEvent, RideEvents, rideEvent.Id.ToString());
 
     #endregion
-    
+
     #region  Coordinators
 
     //Will I get these from MSGraph api?
-    public Task<IEnumerable<Coordinator>> GetCoordinators()
+    public async Task<IEnumerable<Coordinator>> GetCoordinators()
     {
-        throw new NotImplementedException();
+        var x = await _graphServiceClient.Users.Request().Select( u => u.Id).GetAsync();
+        return x.Select( x => new Coordinator {DisplayName = x.DisplayName, UserId = x.Id}).ToList();
     }
 
     public Task DeleteCoordinator(Guid coordinatorId)
@@ -258,11 +262,6 @@ public class EntityProviderTableStorage : IEntityProvider
             _logger.LogError(ex, "Exception");
             throw;
         }
-
-
-
-
-
     }
 
     private static bool IsSupportedType(Type type)
