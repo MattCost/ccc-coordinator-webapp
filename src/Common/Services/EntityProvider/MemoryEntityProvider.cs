@@ -118,7 +118,7 @@ public class MemoryEntityProvider : IEntityProvider
 
     public Task UpdateCoordinator(Coordinator coordinator)
     {
-        _coordinators[coordinator.Id] = coordinator;
+        // _coordinators[coordinator.Id] = coordinator;
         return Task.CompletedTask;
     }
 
