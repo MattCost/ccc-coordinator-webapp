@@ -44,10 +44,6 @@ public class GroupRidesController : EntityProviderBaseController
                 {
                     RequiredCount = 2
                 };
-                model.Coordinators[CoordinatorRole.Mid] = new()
-                {
-                    RequiredCount = 0
-                };
                 model.Coordinators[CoordinatorRole.Sweep] = new()
                 {
                     RequiredCount = 2
