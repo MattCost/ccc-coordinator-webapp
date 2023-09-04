@@ -17,13 +17,13 @@ public class GroupRidesController : EntityProviderBaseController
     [HttpGet()]
     public async Task<ActionResult<IEnumerable<GroupRide>>> Get()
     {
-        return await EntityProviderActionHelper( async () => { return await EntityProvider.GetAllGroupRides();}, "Unable to get all groupRides");
+        return await EntityProviderActionHelper(async () => { return await EntityProvider.GetAllGroupRides(); }, "Unable to get all groupRides");
     }
 
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<GroupRide>> Get([FromRoute] Guid id)
     {
-        return await EntityProviderActionHelper( async () => { return await EntityProvider.GetGroupRide(id);}, "Unable to get groupRide");
+        return await EntityProviderActionHelper(async () => { return await EntityProvider.GetGroupRide(id); }, "Unable to get groupRide");
     }
 
     [HttpPost]
@@ -35,50 +35,101 @@ public class GroupRidesController : EntityProviderBaseController
             RideEventId = createModel.RideEventId,
             RideType = createModel.RideType,
             BikeRouteId = createModel.BikeRouteId,
-        };          
-        return await EntityProviderActionHelper( async () => await EntityProvider.UpdateGroupRide(model), "Unable to create groupRide");
+        };
+
+        switch (model.RideType)
+        {
+            case RideType.A30:
+                model.Coordinators[CoordinatorRole.Lead] = new()
+                {
+                    RequiredCount = 2
+                };
+                model.Coordinators[CoordinatorRole.Mid] = new()
+                {
+                    RequiredCount = 0
+                };
+                model.Coordinators[CoordinatorRole.Sweep] = new()
+                {
+                    RequiredCount = 2
+                };
+
+                break;
+
+            case RideType.B25:
+            case RideType.B20:
+            case RideType.B15:
+                model.Coordinators[CoordinatorRole.Lead] = new()
+                {
+                    RequiredCount = 1
+                };
+                model.Coordinators[CoordinatorRole.Mid] = new()
+                {
+                    RequiredCount = 2
+                };
+                model.Coordinators[CoordinatorRole.Sweep] = new()
+                {
+                    RequiredCount = 1
+                };
+                break;
+
+            case RideType.C:
+                model.Coordinators[CoordinatorRole.Lead] = new()
+                {
+                    RequiredCount = 1
+                };
+                model.Coordinators[CoordinatorRole.Mid] = new()
+                {
+                    RequiredCount = 1
+                };
+                model.Coordinators[CoordinatorRole.Sweep] = new()
+                {
+                    RequiredCount = 1
+                };
+                break;
+        }
+        return await EntityProviderActionHelper(async () => await EntityProvider.UpdateGroupRide(model), "Unable to create groupRide");
     }
 
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> Delete([FromRoute] Guid id)
     {
-        return await EntityProviderActionHelper( async () => await EntityProvider.DeleteGroupRide(id), "Unable to delete groupRide");
+        return await EntityProviderActionHelper(async () => await EntityProvider.DeleteGroupRide(id), "Unable to delete groupRide");
     }
 
     [HttpPut("{id:guid}/restore")]
     public async Task<ActionResult> Restore([FromRoute] Guid id)
     {
-        return await EntityProviderActionHelper( async () => await EntityProvider.RestoreGroupRide(id), "Unable to restore groupRide");
+        return await EntityProviderActionHelper(async () => await EntityProvider.RestoreGroupRide(id), "Unable to restore groupRide");
     }
-    
+
     [HttpPatch("{id:guid}/coordinators/{role:coordinatorRole}")] // signup. need userId, position
-    public async Task<ActionResult> Signup([FromRoute] Guid id, [FromRoute] CoordinatorRole role, [FromQuery] string coordinatorId)
+    public async Task<ActionResult> Signup([FromRoute] Guid id, [FromRoute] CoordinatorRole role, [FromBody] string coordinatorId)
     {
-        return await EntityProviderActionHelper( async () =>
+        return await EntityProviderActionHelper(async () =>
         {
             var model = await EntityProvider.GetGroupRide(id);
-            if(model.Coordinators[role].RequiredCountMet)
+            if (model.Coordinators[role].RequiredCountMet)
             {
                 throw new InvalidOperationException("Ride is already full");
             }
             model.Coordinators[role].CoordinatorIds.Add(coordinatorId);
             await EntityProvider.UpdateGroupRide(model);
-        },"Unable to signup");
+        }, "Unable to signup");
     }
 
     [HttpDelete("{id:guid}/coordinators/{role:coordinatorRole}")]
-    public async Task<ActionResult> DeleteSignup([FromRoute] Guid id, [FromRoute] CoordinatorRole role, [FromQuery] string coordinatorId)
+    public async Task<ActionResult> DeleteSignup([FromRoute] Guid id, [FromRoute] CoordinatorRole role, [FromBody] string coordinatorId)
     {
-        return await EntityProviderActionHelper( async () =>
+        return await EntityProviderActionHelper(async () =>
         {
             var model = await EntityProvider.GetGroupRide(id);
-            if(!model.Coordinators[role].CoordinatorIds.Contains(coordinatorId))
+            if (!model.Coordinators[role].CoordinatorIds.Contains(coordinatorId))
             {
                 throw new InvalidOperationException("Coordinator is not signed up. Unable to delete");
             }
             model.Coordinators[role].CoordinatorIds.Remove(coordinatorId);
             await EntityProvider.UpdateGroupRide(model);
-        },"Unable to remove signup");
+        }, "Unable to remove signup");
     }
 }
 
