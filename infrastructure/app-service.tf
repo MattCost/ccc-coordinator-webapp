@@ -36,6 +36,8 @@ resource "azurerm_linux_web_app" "api" {
     AzureAdB2C__Instance = "https://cccwebapp.b2clogin.com"
     AzureAdB2C__Domain = "cccwebapp.onmicrosoft.com"
     AzureAdB2C__ClientId = azuread_application.api.application_id
+    AzureAdB2C__ClientSecret = azuread_application_password.api.value
+    
     AzureAdB2C__SignUpSignInPolicyId = "B2C_1_SignupSignin"
 
     Swagger__B2CDomain = "cccwebapp"
