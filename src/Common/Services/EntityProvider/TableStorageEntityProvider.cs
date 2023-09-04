@@ -66,8 +66,8 @@ public class EntityProviderTableStorage : IEntityProvider
         _logger.LogDebug("Deleting group ride id {RideId}", rideId);
         await DeleteEntityAsync(GroupRides, rideId.ToString());
         
-        _logger.LogDebug("Getting ride event with the wrong guid, this should fail?");
-        var parentEvent = await GetRideEvent(rideId);
+        _logger.LogDebug("Getting Ride Event for parentEventId");
+        var parentEvent = await GetRideEvent(parentEventId);
         if (parentEvent.Rides.Contains(rideId))
         {
             _logger.LogDebug("ParentEvent.Rides does contain RideId. removing");
