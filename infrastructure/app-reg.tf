@@ -6,8 +6,8 @@ resource "random_uuid" "apiaccess_scope_id" {}
 resource "random_uuid" "apiadmin_scope_id" {}
 
 resource "azuread_application" "api" {
-  display_name = "CCC Webapp API"
-  identifier_uris  = [ local.api_uri ]
+  display_name     = "CCC Webapp API"
+  identifier_uris  = [local.api_uri]
   owners           = [data.azuread_client_config.current.object_id]
   sign_in_audience = "AzureADandPersonalMicrosoftAccount"
 
@@ -46,14 +46,22 @@ resource "azuread_application" "api" {
   required_resource_access {
     resource_app_id = data.azuread_application_published_app_ids.well_known.result.MicrosoftGraph
 
+    # openid
     resource_access {
-      id   = "37f7f235-527c-4136-accd-4a02d197296e" # openid
+      id   = "37f7f235-527c-4136-accd-4a02d197296e" 
       type = "Scope"
     }
 
+    # offline_access
     resource_access {
-      id   = "7427e0e9-2fba-42fe-b0c0-848c9e6a8182" # offline_access
+      id   = "7427e0e9-2fba-42fe-b0c0-848c9e6a8182" 
       type = "Scope"
+    }
+
+    #User.ReadWrite.All
+    resource_access {             
+      id   = "741f803b-c850-494e-b5df-cde7c675a1ca"
+      type = "Role"
     }
   }
 }
@@ -62,6 +70,9 @@ resource "azuread_service_principal" "api" {
   application_id = azuread_application.api.application_id
 }
 
+resource "azuread_application_password" "api" {
+  application_object_id = azuread_application.api.object_id
+}
 
 resource "azuread_application" "website" {
   display_name     = "CCC Webapp Website"
@@ -70,7 +81,7 @@ resource "azuread_application" "website" {
   sign_in_audience = "AzureADandPersonalMicrosoftAccount"
 
   api {
-    mapped_claims_enabled          = true     # what does this do?
+    mapped_claims_enabled          = true # what does this do?
     requested_access_token_version = 2
   }
 
@@ -79,24 +90,24 @@ resource "azuread_application" "website" {
       access_token_issuance_enabled = true
       id_token_issuance_enabled     = true
     }
-    redirect_uris = [ 
-      "https://${azurecaf_name.website.result}.azurewebsites.net/signin-oidc", # Cloud website
+    redirect_uris = [
+      "https://${azurecaf_name.website.result}.azurewebsites.net/signin-oidc",              # Cloud website
       "https://${azurecaf_name.api.result}.azurewebsites.net/swagger/oauth2-redirect.html", # Cloud swagger
-      
-      "http://localhost:5005/signin-oidc", # Local website
+
+      "http://localhost:5005/signin-oidc",  # Local website
       "https://localhost:7011/signin-oidc", # Local website
-      
-      "http://localhost:5128/swagger/oauth2-redirect.html", # Local swagger
+
+      "http://localhost:5128/swagger/oauth2-redirect.html",  # Local swagger
       "https://localhost:7043/swagger/oauth2-redirect.html", # Local swagger
     ]
-    
+
     logout_url = "https://${azurecaf_name.website.result}.azurewebsites.net/signout-oidc"
-    
+
   }
 
   required_resource_access {
     resource_app_id = azuread_application.api.application_id
-    
+
     resource_access {
       id   = random_uuid.apiaccess_scope_id.result
       type = "Scope"
