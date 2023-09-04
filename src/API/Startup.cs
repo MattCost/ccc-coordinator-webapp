@@ -40,7 +40,7 @@ namespace CCC.API
                         options => { Configuration.Bind("AzureAdB2C", options); })
                         .EnableTokenAcquisitionToCallDownstreamApi( options => {
                             Configuration.Bind("AzureAdB2C", options);
-                        }).AddMicrosoftGraph();
+                        }).AddMicrosoftGraph().AddInMemoryTokenCaches();
 
             services.AddMvc(options =>
             {
