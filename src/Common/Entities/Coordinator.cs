@@ -2,8 +2,6 @@ namespace CCC.Entities;
 
 public class Coordinator
 {
-    public Guid Id {get;set;}
+    public string UserId {get;set;} = string.Empty;
     public string DisplayName {get;set;} = string.Empty;
-    
-    // email from b2c?
 }
