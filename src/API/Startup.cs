@@ -48,13 +48,13 @@ namespace CCC.API
                 options.AddPolicy(Common.Authorization.Enums.CoordinatorPolicy, policy => policy.RequireClaim(Common.Authorization.Enums.IsCoordinatorClaim, new string[] { "true" }));
                 options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
             });
-            var scopes = new[] { "https://graph.microsoft.com/.default" };
-
+            
+            var msGraphScopes = new[] { "https://graph.microsoft.com/.default" };
             var clientSecretCredential = new ClientSecretCredential(
                 Configuration.GetValue<string>("AzureAdB2C:Domain"),
                 Configuration.GetValue<string>("AzureAdB2C:ClientId"),
                 Configuration.GetValue<string>("AzureAdB2C:ClientSecret"));
-            var graphClient = new GraphServiceClient(clientSecretCredential, scopes);
+            var graphClient = new GraphServiceClient(clientSecretCredential, msGraphScopes);
 
             services.AddSingleton(graphClient);
             services.AddMvc(options =>
