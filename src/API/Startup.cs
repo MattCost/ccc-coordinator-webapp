@@ -1,9 +1,11 @@
 
 using System.IdentityModel.Tokens.Jwt;
+using Azure.Identity;
 using CCC.Services.EntityProvider;
 using CCC.Services.Secrets;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Graph;
 using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.OpenApi.Models;
@@ -37,11 +39,19 @@ namespace CCC.API
                     .AddMicrosoftIdentityWebApi(options => {
                             Configuration.Bind("AzureAdB2C", options);
                         },
-                        options => { Configuration.Bind("AzureAdB2C", options); })
-                        .EnableTokenAcquisitionToCallDownstreamApi( options => {
-                            Configuration.Bind("AzureAdB2C", options);
-                        }).AddMicrosoftGraph().AddInMemoryTokenCaches();
+                        options => { Configuration.Bind("AzureAdB2C", options); });
 
+            /////////////
+            ///
+            var scopes = new[] { "https://graph.microsoft.com/.default" };
+
+            var clientSecretCredential = new ClientSecretCredential(
+                Configuration.GetValue<string>("AzureAdB2C:Domain"),
+                Configuration.GetValue<string>("AzureAdB2C:ClientId"),
+                Configuration.GetValue<string>("AzureAdB2C:ClientSecret"));
+            var graphClient = new GraphServiceClient(clientSecretCredential, scopes);            
+
+            services.AddSingleton(graphClient);
             services.AddMvc(options =>
             {
                 // options.Filters.Add<CustomExceptionFilter>();
@@ -75,8 +85,9 @@ namespace CCC.API
         public void ConfigureDevelopmentServices(IServiceCollection services)
         {
             ConfigureCommonServices(services);
-            services.AddSingleton<IEntityProvider, MemoryEntityProvider>();
-            // services.AddSingleton<ISecretsManager, UserSecretsSecretManager>();
+            // services.AddSingleton<IEntityProvider, MemoryEntityProvider>();
+            services.AddSingleton<IEntityProvider, EntityProviderTableStorage>();
+            services.AddSingleton<ISecretsManager, UserSecretsSecretManager>();
             // services.AddSingleton<IAuthorizationHandler, AlwaysAllowAuthHandler>();
         }
 

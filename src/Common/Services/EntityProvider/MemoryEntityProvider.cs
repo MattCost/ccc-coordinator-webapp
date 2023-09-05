@@ -9,6 +9,12 @@ public class MemoryEntityProvider : IEntityProvider
     private Dictionary<Guid, GroupRide> _groupRides = new();
     private Dictionary<Guid, RideEvent> _rideEvents = new();
     private Dictionary<Guid, Coordinator> _coordinators = new();
+
+    public Task AssignCoordinator(string userId)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task DeleteBikeRoute(Guid routeId)
     {      
         if(!_bikeRoutes.ContainsKey(routeId))  
@@ -29,6 +35,11 @@ public class MemoryEntityProvider : IEntityProvider
     {
         _coordinators.Remove(coordinatorId);
         return Task.CompletedTask;
+    }
+
+    public Task DeleteCoordinator(string userId)
+    {
+        throw new NotImplementedException();
     }
 
     public Task DeleteGroupRide(Guid rideId)

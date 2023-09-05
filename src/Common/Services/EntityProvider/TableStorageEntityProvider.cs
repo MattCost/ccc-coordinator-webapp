@@ -14,6 +14,8 @@ public class EntityProviderTableStorage : IEntityProvider
     private static string GroupRides => nameof(GroupRides);
     private static string RideEvents => nameof(RideEvents);
 
+    private static string isCoordinatorAttribute = "extension_eea4730478fb41f1941cd85c3fb8ba03_IsCoordinator";
+
     protected readonly ISecretsManager _secretsManager;
     private static string TableName => "Entities";
 
@@ -24,12 +26,11 @@ public class EntityProviderTableStorage : IEntityProvider
     {
         _logger = logger;
         _secretsManager = secretsManager;
+        _graphServiceClient = graphServiceClient;
 
         var connectionString = _secretsManager.GetSecret("STORAGE_ACT_CONNECTION_STRING");
         TableClient = new TableClient(connectionString, TableName);
 
-        _secretsManager = secretsManager;
-        _graphServiceClient = graphServiceClient;
     }
 
     #region PublicInterface
@@ -127,21 +128,32 @@ public class EntityProviderTableStorage : IEntityProvider
     //Will I get these from MSGraph api?
     public async Task<IEnumerable<Coordinator>> GetCoordinators()
     {
-        var users = await _graphServiceClient.Users.GetAsync();
-        if(users == null || users.Value == null) throw new Exception("cant get users");
-        return users.Value.Select( user => new Coordinator{ DisplayName = user.DisplayName ?? "mystery", UserId = user.Id ?? user.UserPrincipalName ?? "fuck me",});
+        var users = await _graphServiceClient.Users.GetAsync( (requestConfig) => 
+        {
+            requestConfig.QueryParameters.Select = new string[] { "displayName", "id", isCoordinatorAttribute};
+            requestConfig.QueryParameters.Filter = $"{isCoordinatorAttribute} eq true";
+        });
+        if (users == null || users.Value == null) throw new Exception("cant get users");
+        return users.Value.Select(user => new Coordinator { DisplayName = user.DisplayName ?? "mystery", UserId = user.Id ?? user.UserPrincipalName ?? "fuck me", });
         // var x = await _graphServiceClient.Users.Request().Select( u => u.Id).GetAsync();
         // return x.Select( x => new Coordinator {DisplayName = x.DisplayName, UserId = x.Id}).ToList();
     }
 
-    public Task DeleteCoordinator(Guid coordinatorId)
+    public async Task DeleteCoordinator(string userId)
     {
-        throw new NotImplementedException();
+        var user = await _graphServiceClient.Users[userId].GetAsync();
+        if (user is null) throw new EntityNotFoundException($"UserId {userId} not found");
+        user.AdditionalData[isCoordinatorAttribute] = false;
+        await _graphServiceClient.Users[userId].PatchAsync(user);
     }
 
-    public Task UpdateCoordinator(Coordinator coordinator)
+    public async Task AssignCoordinator(string userId)
     {
-        throw new NotImplementedException();
+        var user = await _graphServiceClient.Users[userId].GetAsync();
+        if (user is null) throw new EntityNotFoundException($"UserId {userId} not found");
+        user.AdditionalData[isCoordinatorAttribute] = true;
+        await _graphServiceClient.Users[userId].PatchAsync(user);
+
     }
     #endregion
 
