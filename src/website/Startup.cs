@@ -19,12 +19,13 @@ namespace CCC.website
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDistributedMemoryCache();
+            // services.AddDistributedMemoryCache();
+            services.AddMemoryCache();
 
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
+                // options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.Unspecified;
                 // Handling SameSite cookie according to https://docs.microsoft.com/en-us/aspnet/core/security/samesite?view=aspnetcore-3.1
                 options.HandleSameSiteCookieCompatibility();
@@ -57,7 +58,8 @@ namespace CCC.website
                 options.Filters.Add(new AuthorizeFilter(policy));
             }).AddMicrosoftIdentityUI();
 
-            services.AddRazorPages();
+            services.AddRazorPages().AddSessionStateTempDataProvider();
+            services.AddSession();
 
             services.Configure<OpenIdConnectOptions>(Configuration.GetSection(Constants.AzureAdB2C));
 
@@ -86,11 +88,14 @@ namespace CCC.website
             }
 
             app.UseStaticFiles();
+            app.UseSession();
+            
             app.UseCookiePolicy();
 
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+
 
             app.UseEndpoints(endpoints =>
             {

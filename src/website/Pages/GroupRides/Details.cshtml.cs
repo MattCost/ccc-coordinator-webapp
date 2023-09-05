@@ -15,6 +15,7 @@ namespace CCC.website.Pages.GroupRides
         public DetailsPageModel(ILogger<PageModelBase> logger, IDownstreamApi api) : base(logger, api)
         {
         }
+
         public async Task OnGetAsync()
         {
             Logger.LogTrace("Entering OnGetAsync Id {Id}", Id);
@@ -31,6 +32,13 @@ namespace CCC.website.Pages.GroupRides
                 CurrentPageErrorMessage = $"Unable to get GroupRide";
                 CurrentPageAction = "GroupRide/Details/OnGet";
             }
+        }
+
+        public async Task<ActionResult> OnPostSignupAsync(CoordinatorRole role, string coordinatorId)
+        {
+            Logger.LogTrace("Entering OnPostSignupAsync");
+            await API.PatchForUserAsync("API", coordinatorId, options => { options.RelativePath = $"GroupRides/{Id}/coordinators/{role}";});
+            return RedirectToPage(); //do I need to pass id?
         }
     }
 }

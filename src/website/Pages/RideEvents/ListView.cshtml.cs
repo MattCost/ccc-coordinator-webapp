@@ -7,13 +7,13 @@ using Microsoft.Identity.Web;
 
 namespace CCC.website.Pages.RideEvents
 {
-    public class IndexPageModel : PageModelBase
+    public class ListViewPageModel : PageModelBase
     {
-        public IndexPageModel(ILogger<IndexPageModel> logger, IDownstreamApi api) : base(logger, api)
+        public ListViewPageModel(ILogger<ListViewPageModel> logger, IDownstreamApi api) : base(logger, api)
         {
         }
 
-        // public List<RideEvent> RideEvents { get; set; } = new ();
+        public List<RideEvent> RideEvents { get; set; } = new ();
 
         public async Task OnGetAsync()
         {
@@ -24,7 +24,7 @@ namespace CCC.website.Pages.RideEvents
                     options.RelativePath = "RideEvents";
                 });
                 Logger.LogDebug("Result from API {Result}", result);
-                ViewData["RideEvents"] = result ?? new List<RideEvent>();
+                RideEvents = result ?? new();
             }
             catch (Exception ex)
             {

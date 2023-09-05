@@ -28,7 +28,7 @@ namespace CCC.website.Pages.RideEvents
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "Error getting RideEvent Id {id}",Id);
+                Logger.LogError(ex, "Error getting RideEvent Id {id}", Id);
                 CurrentPageErrorMessage = "Unable to get RideEvent";
                 CurrentPageAction = "RideEvent/Edit/OnGet";
             }
@@ -37,16 +37,15 @@ namespace CCC.website.Pages.RideEvents
         public async Task<IActionResult> OnPostAsync()
         {
             Logger.LogTrace("Entering OnPostAsync");
-            if(RideEvent != null)
+            if (RideEvent != null)
             {
                 Logger.LogTrace("UpdateModel is not null");
                 try
                 {
                     RideEvent.Id = Id;
-                    // var updateModel = System.Text.Json.JsonSerializer.Deserialize<BikeRouteUpdateModel>( System.Text.Json.JsonSerializer.Serialize(BikeRoute));
                     await API.PatchForUserAsync("API", RideEvent, options => { options.RelativePath = $"RideEvents/{Id}"; });
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Logger.LogError(ex, "Exception trying to update RideEvent Id {Id}", Id);
                     PreviousPageAction = "RideEvent/Edit/OnPost";
@@ -55,14 +54,26 @@ namespace CCC.website.Pages.RideEvents
             }
 
             return RedirectToPage();
-        }             
+        }
 
         public async Task<IActionResult> OnPostDeleteAsync()
         {
             Logger.LogTrace("Entering OnPostDeleteAsync");
-            await API.DeleteForUserAsync("API", string.Empty, options => {
-                options.RelativePath = $"RideEvents/{Id}";
-            });
+            try
+            {
+                var result = await API.CallApiForUserAsync("API", options =>
+                {
+                    options.RelativePath = $"RideEvents/{Id}";
+                    options.HttpMethod = HttpMethod.Delete;
+                });
+                result.EnsureSuccessStatusCode();
+            }
+            catch(Exception ex)
+            {
+                Logger.LogError(ex, "Exception trying to delete RideEvent Id {Id}", Id);
+                PreviousPageAction = "RideEvent/Edit/OnPostDelete";
+                PreviousPageErrorMessage = $"Error deleting RideEvent. {ex.Message}";
+            }
             return RedirectToPage("Index");
         }
     }

@@ -1,4 +1,5 @@
 using CCC.Entities;
+using CCC.Common.Authorization;
 using CCC.website.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Abstractions;
@@ -11,14 +12,18 @@ namespace CCC.website.Pages.RideEvents
         public Guid Id { get; set; }
 
         public RideEvent RideEvent { get; set; } = new();
-
         public List<GroupRide> Rides {get;set;} = new();
+
+        public Dictionary<string, object> ExtraData {get;set;} = new();
+
         public DetailsPageModel(ILogger<PageModelBase> logger, IDownstreamApi api) : base(logger, api)
         {
         }
         public async Task OnGetAsync()
         {
             Logger.LogTrace("Entering OnGetAsync Id {Id}", Id);
+            ExtraData["ShowSignupButton"] = User.IsCoordinator();
+            
             try
             {
                 RideEvent = await API.GetForUserAsync<RideEvent>("API", options =>
@@ -42,5 +47,20 @@ namespace CCC.website.Pages.RideEvents
                 }
             }
         }
+
+        public async Task<EmptyResult> OnPostSignupAsync(Guid rideId, CoordinatorRole role)
+        {
+            Logger.LogTrace("Entering OnPostSignupAsync. RideId: {RideId}. Role: {Role}", rideId, role);
+            var userDisplayName = HttpContext.User.Claims.Where( claim => claim.Type == "name").First().Value;
+            Logger.LogTrace("UserName: {UserName}", userDisplayName);
+
+            await API.PatchForUserAsync("API", userDisplayName, options =>
+            {
+                options.RelativePath = $"GroupRides/{rideId}/coordinators/{role}";
+            });
+            Logger.LogTrace("API Call Complete");
+            return new EmptyResult();
+        }
+
     }
 }

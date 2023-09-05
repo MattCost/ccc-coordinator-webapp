@@ -1,5 +1,5 @@
 @model CCC.Entities.GroupRide
-Details ;)
+
 <div class="row">
     <div class="col">
         @Html.DisplayNameFor(model => model.Id): @Html.DisplayFor(model => model.Id)
@@ -14,3 +14,24 @@ Details ;)
         @Html.DisplayNameFor(model => model.RideEventId): @Html.DisplayFor(model => model.RideEventId)
     </div>
 </div>
+@foreach (var key in Model.Coordinators.Keys)
+{
+
+    <div class="row">
+    <div class="col">
+        <div class="col">
+            Role: @Html.DisplayFor( modelItem => key)
+        </div>
+        @if( (bool)(ViewData["ShowSignupButton"] ?? false))
+        {
+            <div class="col">
+                <button onclick="signup('@key', '@Model.Id')" @(Model.Coordinators[key].RequiredCountMet ? "disabled" : "") >Signup</button>
+            </div>
+        }
+    </div>
+    <div class="col">
+        @Html.DisplayFor( modelItem => Model.Coordinators[key], "CoordinatorEntryDetails")
+    </div>
+</div>
+}
+ 

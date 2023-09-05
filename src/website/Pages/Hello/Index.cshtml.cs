@@ -8,12 +8,14 @@ namespace CCC.website.Pages.Hello
     public class IndexPageModel : PageModelBase
     {
         public string APIStatus { get; private set; } = "unknown";
+        public string DisplayName {get;set;} = string.Empty;
         public IndexPageModel(ILogger<IndexPageModel> logger, IDownstreamApi api) : base(logger, api)
         {
         }
 
         public async Task OnGetAsync()
         {
+            DisplayName = HttpContext.User.Claims.Where( claim => claim.Type == "name").First().Value;
             try
             {
                 var result = await API.GetForUserAsync<string>("API", options =>

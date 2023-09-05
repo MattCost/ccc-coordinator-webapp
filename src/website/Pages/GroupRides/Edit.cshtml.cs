@@ -28,7 +28,7 @@ namespace CCC.website.Pages.GroupRides
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "Error getting GroupRide Id {id}",Id);
+                Logger.LogError(ex, "Error getting GroupRide Id {id}", Id);
                 CurrentPageErrorMessage = "Unable to get GroupRide";
                 CurrentPageAction = "GroupRide/Edit/OnGet";
             }
@@ -37,7 +37,7 @@ namespace CCC.website.Pages.GroupRides
         public async Task<IActionResult> OnPostAsync()
         {
             Logger.LogTrace("Entering OnPostAsync");
-            if(GroupRide != null)
+            if (GroupRide != null)
             {
                 Logger.LogTrace("UpdateModel is not null");
                 try
@@ -46,7 +46,7 @@ namespace CCC.website.Pages.GroupRides
                     // var updateModel = System.Text.Json.JsonSerializer.Deserialize<BikeRouteUpdateModel>( System.Text.Json.JsonSerializer.Serialize(BikeRoute));
                     await API.PatchForUserAsync("API", GroupRide, options => { options.RelativePath = $"GroupRides/{Id}"; });
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Logger.LogError(ex, "Exception trying to update GroupRide Id {Id}", Id);
                     PreviousPageAction = "GroupRide/Edit/OnPost";
@@ -55,14 +55,33 @@ namespace CCC.website.Pages.GroupRides
             }
 
             return RedirectToPage();
-        }             
+        }
 
         public async Task<IActionResult> OnPostDeleteAsync()
         {
-            Logger.LogTrace("Entering OnPostDeleteAsync");
-            await API.DeleteForUserAsync("API", string.Empty, options => {
-                options.RelativePath = $"GroupRides/{Id}";
-            });
+            try
+            {
+                Logger.LogTrace("Entering OnPostDeleteAsync");
+                var response = await API.CallApiForUserAsync("API", options =>
+                {
+                    options.HttpMethod = HttpMethod.Delete;
+                    options.RelativePath = $"GroupRides/{Id}";
+                });
+
+                response.EnsureSuccessStatusCode();
+
+                // await API.DeleteForUserAsync<string>("API", string.Empty, options =>
+                // {
+                //     options.RelativePath = $"GroupRides/{Id}";
+                // });
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error deleting group ride");
+                PreviousPageErrorMessage = ex.Message;
+                PreviousPageAction = "GroupRide/Delete/OnPost";
+            }
+
             return RedirectToPage("Index");
         }
     }
