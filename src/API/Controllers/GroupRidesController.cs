@@ -5,9 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CCC.API.Controllers;
 
-[Authorize]
-[ApiController]
-[Route("api/[controller]")]
 public class GroupRidesController : EntityProviderBaseController
 {
     public GroupRidesController(ILogger<GroupRidesController> logger, IEntityProvider entityProvider) : base(logger, entityProvider)
@@ -98,7 +95,9 @@ public class GroupRidesController : EntityProviderBaseController
         return await EntityProviderActionHelper(async () => await EntityProvider.RestoreGroupRide(id), "Unable to restore groupRide");
     }
 
-    [HttpPatch("{id:guid}/coordinators/{role:coordinatorRole}")] // signup. need userId, position
+    [Authorize(Policy = Common.Authorization.Enums.CoordinatorPolicy)]
+    [Authorize(Policy = Common.Authorization.Enums.CoordinatorAdminPolicy)]
+    [HttpPatch("{id:guid}/coordinators/{role:coordinatorRole}")]
     public async Task<ActionResult> Signup([FromRoute] Guid id, [FromRoute] CoordinatorRole role, [FromBody] string coordinatorId)
     {
         return await EntityProviderActionHelper(async () =>
@@ -113,6 +112,8 @@ public class GroupRidesController : EntityProviderBaseController
         }, "Unable to signup");
     }
 
+    [Authorize(Policy = Common.Authorization.Enums.CoordinatorPolicy)]
+    [Authorize(Policy = Common.Authorization.Enums.CoordinatorAdminPolicy)]
     [HttpDelete("{id:guid}/coordinators/{role:coordinatorRole}")]
     public async Task<ActionResult> DeleteSignup([FromRoute] Guid id, [FromRoute] CoordinatorRole role, [FromBody] string coordinatorId)
     {

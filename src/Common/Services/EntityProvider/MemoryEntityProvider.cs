@@ -15,6 +15,11 @@ public class MemoryEntityProvider : IEntityProvider
         throw new NotImplementedException();
     }
 
+    public Task AssignCoordinatorAdmin(string userId)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task DeleteBikeRoute(Guid routeId)
     {      
         if(!_bikeRoutes.ContainsKey(routeId))  
@@ -37,7 +42,7 @@ public class MemoryEntityProvider : IEntityProvider
         return Task.CompletedTask;
     }
 
-    public Task DeleteCoordinator(string userId)
+    public Task RemoveCoordinator(string userId)
     {
         throw new NotImplementedException();
     }
@@ -143,5 +148,15 @@ public class MemoryEntityProvider : IEntityProvider
     {
         _rideEvents[rideEvent.Id] = rideEvent;
         return Task.CompletedTask;
+    }
+
+    public Task RemoveCoordinatorAdmin(string userId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<IEnumerable<Coordinator>> GetCoordinatorAdmins()
+    {
+        throw new NotImplementedException();
     }
 }

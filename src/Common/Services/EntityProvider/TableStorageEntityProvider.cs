@@ -14,7 +14,6 @@ public class EntityProviderTableStorage : IEntityProvider
     private static string GroupRides => nameof(GroupRides);
     private static string RideEvents => nameof(RideEvents);
 
-    private static string isCoordinatorAttribute = "extension_eea4730478fb41f1941cd85c3fb8ba03_IsCoordinator";
 
     protected readonly ISecretsManager _secretsManager;
     private static string TableName => "Entities";
@@ -125,36 +124,60 @@ public class EntityProviderTableStorage : IEntityProvider
 
     #region  Coordinators
 
-    //Will I get these from MSGraph api?
     public async Task<IEnumerable<Coordinator>> GetCoordinators()
     {
-        var users = await _graphServiceClient.Users.GetAsync( (requestConfig) => 
+        var users = await _graphServiceClient.Users.GetAsync((requestConfig) =>
         {
-            requestConfig.QueryParameters.Select = new string[] { "displayName", "id", isCoordinatorAttribute};
-            requestConfig.QueryParameters.Filter = $"{isCoordinatorAttribute} eq true";
+            requestConfig.QueryParameters.Select = new string[] { "displayName", "id", Common.Authorization.Enums.IsCoordinatorAttribute, Common.Authorization.Enums.IsCoordinatorAdminAttribute };
+            requestConfig.QueryParameters.Filter = $"{Common.Authorization.Enums.IsCoordinatorAttribute} eq true";
         });
         if (users == null || users.Value == null) throw new Exception("cant get users");
-        return users.Value.Select(user => new Coordinator { DisplayName = user.DisplayName ?? "mystery", UserId = user.Id ?? user.UserPrincipalName ?? "fuck me", });
-        // var x = await _graphServiceClient.Users.Request().Select( u => u.Id).GetAsync();
-        // return x.Select( x => new Coordinator {DisplayName = x.DisplayName, UserId = x.Id}).ToList();
+        return users.Value.Select(user => new Coordinator { DisplayName = user.DisplayName ?? "mystery", UserId = user.Id ?? user.UserPrincipalName ?? "fuck me", AdditionalData = user.AdditionalData});            
     }
 
-    public async Task DeleteCoordinator(string userId)
+    public async Task<IEnumerable<Coordinator>> GetCoordinatorAdmins()
     {
-        var user = await _graphServiceClient.Users[userId].GetAsync();
-        if (user is null) throw new EntityNotFoundException($"UserId {userId} not found");
-        user.AdditionalData[isCoordinatorAttribute] = false;
-        await _graphServiceClient.Users[userId].PatchAsync(user);
+        var users = await _graphServiceClient.Users.GetAsync((requestConfig) =>
+        {
+            requestConfig.QueryParameters.Select = new string[] { "displayName", "id", Common.Authorization.Enums.IsCoordinatorAttribute, Common.Authorization.Enums.IsCoordinatorAdminAttribute };
+            requestConfig.QueryParameters.Filter = $"{Common.Authorization.Enums.IsCoordinatorAdminAttribute} eq true";
+        });
+        if (users == null || users.Value == null) throw new Exception("cant get users");
+        return users.Value.Select(user => new Coordinator { DisplayName = user.DisplayName ?? "mystery", UserId = user.Id ?? user.UserPrincipalName ?? "fuck me", AdditionalData = user.AdditionalData});
     }
 
     public async Task AssignCoordinator(string userId)
     {
         var user = await _graphServiceClient.Users[userId].GetAsync();
         if (user is null) throw new EntityNotFoundException($"UserId {userId} not found");
-        user.AdditionalData[isCoordinatorAttribute] = true;
+        user.AdditionalData[Common.Authorization.Enums.IsCoordinatorAttribute] = true;
         await _graphServiceClient.Users[userId].PatchAsync(user);
-
     }
+
+    public async Task RemoveCoordinator(string userId)
+    {
+        var user = await _graphServiceClient.Users[userId].GetAsync();
+        if (user is null) throw new EntityNotFoundException($"UserId {userId} not found");
+        user.AdditionalData[Common.Authorization.Enums.IsCoordinatorAttribute] = false;
+        await _graphServiceClient.Users[userId].PatchAsync(user);
+    }
+
+    public async Task AssignCoordinatorAdmin(string userId)
+    {
+        var user = await _graphServiceClient.Users[userId].GetAsync();
+        if (user is null) throw new EntityNotFoundException($"UserId {userId} not found");
+        user.AdditionalData[Common.Authorization.Enums.IsCoordinatorAdminAttribute] = true;
+        await _graphServiceClient.Users[userId].PatchAsync(user);
+    }
+
+    public async Task RemoveCoordinatorAdmin(string userId)
+    {
+        var user = await _graphServiceClient.Users[userId].GetAsync();
+        if (user is null) throw new EntityNotFoundException($"UserId {userId} not found");
+        user.AdditionalData[Common.Authorization.Enums.IsCoordinatorAdminAttribute] = false;
+        await _graphServiceClient.Users[userId].PatchAsync(user);
+    }
+
     #endregion
 
     #endregion

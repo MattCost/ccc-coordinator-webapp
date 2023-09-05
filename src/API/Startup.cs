@@ -36,20 +36,25 @@ namespace CCC.API
 
             // Adds Microsoft Identity platform (AAD v2.0) support to protect this Api
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                    .AddMicrosoftIdentityWebApi(options => {
-                            Configuration.Bind("AzureAdB2C", options);
-                        },
+                    .AddMicrosoftIdentityWebApi(options =>
+                    {
+                        Configuration.Bind("AzureAdB2C", options);
+                    },
                         options => { Configuration.Bind("AzureAdB2C", options); });
 
-            /////////////
-            ///
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(Common.Authorization.Enums.CoordinatorAdminPolicy, policy => policy.RequireClaim(Common.Authorization.Enums.IsCoordinatorAdminClaim, new string[] { "true" }));
+                options.AddPolicy(Common.Authorization.Enums.CoordinatorPolicy, policy => policy.RequireClaim(Common.Authorization.Enums.IsCoordinatorClaim, new string[] { "true" }));
+                options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+            });
             var scopes = new[] { "https://graph.microsoft.com/.default" };
 
             var clientSecretCredential = new ClientSecretCredential(
                 Configuration.GetValue<string>("AzureAdB2C:Domain"),
                 Configuration.GetValue<string>("AzureAdB2C:ClientId"),
                 Configuration.GetValue<string>("AzureAdB2C:ClientSecret"));
-            var graphClient = new GraphServiceClient(clientSecretCredential, scopes);            
+            var graphClient = new GraphServiceClient(clientSecretCredential, scopes);
 
             services.AddSingleton(graphClient);
             services.AddMvc(options =>

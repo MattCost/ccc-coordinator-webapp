@@ -24,7 +24,10 @@ public interface IEntityProvider
     Task UpdateRideEvent(RideEvent rideEvent);
 
     Task<IEnumerable<Coordinator>> GetCoordinators();
-    Task DeleteCoordinator(string userId);
+    Task<IEnumerable<Coordinator>> GetCoordinatorAdmins();
     Task AssignCoordinator(string userId);
+    Task RemoveCoordinator(string userId);
+    Task AssignCoordinatorAdmin(string userId);
+    Task RemoveCoordinatorAdmin(string userId);
 
 }

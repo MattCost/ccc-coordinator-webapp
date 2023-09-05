@@ -5,9 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CCC.API.Controllers;
 
-[Authorize]
-[ApiController]
-[Route("api/[controller]")]
 public class RideEventsController : EntityProviderBaseController
 {
     public RideEventsController(ILogger<RideEventsController> logger, IEntityProvider entityProvider) : base(logger, entityProvider)

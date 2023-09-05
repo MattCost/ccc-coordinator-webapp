@@ -5,9 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CCC.API.Controllers;
 
-[Authorize]
-[ApiController]
-[Route("api/[controller]")]
 public class BikeRoutesController : EntityProviderBaseController
 {
     public BikeRoutesController(ILogger<BikeRoutesController> logger, IEntityProvider entityProvider) : base(logger, entityProvider)
