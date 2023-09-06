@@ -36,7 +36,7 @@ public class RideEventsController : EntityProviderBaseController
             Description = createModel.Description,
             StartTime = createModel.StartTime,
             Location = createModel.Location,
-            Rides = createModel.Rides
+            RideIds = createModel.Rides
         };
         Logger.LogDebug("Generated Model {Json}", System.Text.Json.JsonSerializer.Serialize(model));
         return await EntityProviderActionHelper( async () => await EntityProvider.UpdateRideEvent(model), "Unable to create Ride Event");
@@ -64,7 +64,7 @@ public class RideEventsController : EntityProviderBaseController
     public async Task<ActionResult> RemoveRide([FromRoute] Guid id, [FromRoute] Guid rideId)
     {
         var model = await EntityProvider.GetRideEvent(id);
-        model.Rides.Remove(rideId);
+        model.RideIds.Remove(rideId);
         await EntityProvider.UpdateRideEvent(model);
         return Ok();
     }
@@ -72,7 +72,7 @@ public class RideEventsController : EntityProviderBaseController
     public async Task<ActionResult> AddRide([FromRoute] Guid id, [FromRoute] Guid rideId)
     {
         var model = await EntityProvider.GetRideEvent(id);
-        model.Rides.Add(rideId);
+        model.RideIds.Add(rideId);
         await EntityProvider.UpdateRideEvent(model);
         return Ok();
     }
