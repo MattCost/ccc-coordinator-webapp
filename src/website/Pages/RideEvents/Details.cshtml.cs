@@ -38,7 +38,7 @@ namespace CCC.website.Pages.RideEvents
                 CurrentPageAction = "RideEvent/Details/OnGet";
             }
             Logger.LogTrace("Fetching child rides");
-            foreach(var rideId in RideEvent.Rides)
+            foreach(var rideId in RideEvent.RideIds)
             {
                 var ride = await API.GetForUserAsync<GroupRide>("API", options => { options.RelativePath = $"GroupRides/{rideId}";});
                 if(ride != null)

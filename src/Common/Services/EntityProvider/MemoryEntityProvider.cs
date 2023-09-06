@@ -54,7 +54,7 @@ public class MemoryEntityProvider : IEntityProvider
         
         _groupRides.Remove(rideId);
 
-        _rideEvents.Where( rideEvent => rideEvent.Value.Rides.Contains(rideId)).ToList().ForEach( rideEvent => rideEvent.Value.Rides.Remove(rideId));
+        _rideEvents.Where( rideEvent => rideEvent.Value.RideIds.Contains(rideId)).ToList().ForEach( rideEvent => rideEvent.Value.RideIds.Remove(rideId));
 
         return Task.CompletedTask;
     }
@@ -64,7 +64,7 @@ public class MemoryEntityProvider : IEntityProvider
         if(!_rideEvents.ContainsKey(eventId))
             throw new EntityNotFoundException(typeof(RideEvent), eventId);
         
-        if(_rideEvents[eventId].Rides.Any())
+        if(_rideEvents[eventId].RideIds.Any())
         {
             throw new EntityLockedException($"Ride Event {eventId} has rides listed. Delete rides first");
         }

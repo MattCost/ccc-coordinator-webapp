@@ -71,10 +71,10 @@ public class EntityProviderTableStorage : IEntityProvider
 
         _logger.LogDebug("Getting Ride Event for parentEventId");
         var parentEvent = await GetRideEvent(parentEventId);
-        if (parentEvent.Rides.Contains(rideId))
+        if (parentEvent.RideIds.Contains(rideId))
         {
             _logger.LogDebug("ParentEvent.Rides does contain RideId. removing");
-            parentEvent.Rides.Remove(rideId);
+            parentEvent.RideIds.Remove(rideId);
             await UpdateRideEvent(parentEvent);
         }
     }
@@ -84,9 +84,9 @@ public class EntityProviderTableStorage : IEntityProvider
     {
         //try catch not found, return "invalid parent id" message
         var parentEvent = await GetRideEvent(groupRide.RideEventId);
-        if (!parentEvent.Rides.Contains(groupRide.Id))
+        if (!parentEvent.RideIds.Contains(groupRide.Id))
         {
-            parentEvent.Rides.Add(groupRide.Id);
+            parentEvent.RideIds.Add(groupRide.Id);
             await UpdateRideEvent(parentEvent);
         }
         //Once we know the parent Id is valid, update/create the groupRide

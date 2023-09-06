@@ -7,6 +7,6 @@ public class RideEvent
     public string Description { get; set; } = string.Empty;
     public DateTimeOffset StartTime { get; set; }
     public string Location { get; set; } = string.Empty;
-    public List<Guid> Rides { get; set; } = new();
+    public List<Guid> RideIds { get; set; } = new();
 
 }

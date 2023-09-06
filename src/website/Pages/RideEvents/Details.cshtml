@@ -33,6 +33,8 @@
     @Html.DisplayFor(model => model.RideEvent,"RideEventDetails")
 </div>
 
+<p></p>
+
 <div class="row">
     Group Rides taking place
 </div>
@@ -40,6 +42,6 @@
 <div class="row">
     @foreach( var ride in Model.Rides)
     {
-        @Html.DisplayFor( modelItem => ride, "GroupRideDetails", Model.ExtraData)
+        @Html.DisplayFor( modelItem => ride, "RideEvent_GroupRide", Model.ExtraData)
     }
 </div>
