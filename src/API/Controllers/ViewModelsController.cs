@@ -32,7 +32,7 @@ public class ViewModelsController : EntityProviderBaseController
         var bikeRouteTasks = viewModel.GroupRides.Select( ride => EntityProvider.GetBikeRoute(ride.BikeRouteId)).ToList();
         await Task.WhenAll(bikeRouteTasks);
 
-        viewModel.BikeRoutes = bikeRouteTasks.ToDictionary( task => task.Result.Id, task => task.Result);
+        viewModel.BikeRoutes = bikeRouteTasks.Select( task => task.Result).ToList().Distinct().ToDictionary( route => route.Id, route => route);
         
         return Ok(viewModel);
     }
