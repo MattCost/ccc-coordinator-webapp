@@ -9,9 +9,9 @@ using Microsoft.Graph.Models;
 
 namespace CCC.API.Controllers;
 
-public class FrontEndController : EntityProviderBaseController
+public class ViewModelsController : EntityProviderBaseController
 {
-    public FrontEndController(ILogger<EntityProviderBaseController> logger, IEntityProvider entityProvider) : base(logger, entityProvider)
+    public ViewModelsController(ILogger<EntityProviderBaseController> logger, IEntityProvider entityProvider) : base(logger, entityProvider)
     {
     }
 
