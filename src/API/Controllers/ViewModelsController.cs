@@ -15,7 +15,7 @@ public class FrontEndController : EntityProviderBaseController
     {
     }
 
-    [HttpGet("{id:guid}")]
+    [HttpGet("RideEvents/{id:guid}")]
     public async Task<ActionResult> GetRideEvent([FromRoute] Guid id)
     {
         var rideEvent = await EntityProvider.GetRideEvent(id);
