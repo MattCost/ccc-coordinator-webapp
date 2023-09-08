@@ -4,7 +4,77 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+@section Scripts
+    {
+    @* https://github.com/nggepe/calendar-gc/tree/master *@
+    <!-- GC-Calendar Plugin Files -->
+    <link rel="stylesheet" href="~/css/calendar-gc.min.css" />
+    <script src="~/js/calendar-gc.min.js"></script>
+
+    <script>
+        function populateCalendar() {
+            var rideEvents = @Html.Raw(Json.Serialize(ViewData["RideEvents"]));
+            rideEvents.forEach(rideEvent => {
+                rideEvent['datejs'] = new Date(rideEvent.startTime);
+            })
+            console.log("rideEvents: ", rideEvents);
+
+            var calendar = $("#calendar").calendarGC({
+                onclickDate: function (e, data) {
+                    console.log(e, data);
+
+                    var userClicked = new Date(data.datejs.getUTCFullYear(), data.datejs.getUTCMonth(), data.datejs.getUTCDate());
+                    console.log("userClicked: ", userClicked);
+
+                    var rides = rideEvents.filter(rideEvent => new Date(rideEvent.datejs.getUTCFullYear(), rideEvent.datejs.getUTCMonth(), rideEvent.datejs.getUTCDate()).getTime() == userClicked.getTime());
+
+                    if (rides.length == 0) {
+                        //noop
+                    } else if (rides.length == 1) {
+                        location.href = `EventDetails/${rides[0].id}`;
+                    }
+                    else {
+                        alert("opening multi-ride select modal");
+                    }
+                }
+            });
+
+            //Convert rideEvents into calendarEvents
+            var calendarEvents = [];
+
+            rideEvents.forEach((ride) => {
+                console.log(ride);
+                calendarEvents.push({
+                    date: new Date(ride.startTime),
+                    eventName: "Group Ride",
+                    className: "road-ride",
+                    dateColor: "#eb34ba",
+                    ride: ride,
+                    onclick(e, data) {
+        @* alert("Open modal for rideId" + data.ride.id); *@
+                            console.log(data.ride);
+                        location.href = `RideEvents/Details/${data.ride.id}`;
+
+                    }
+                })
+            });
+
+            console.log("calendarEvents: ", calendarEvents)
+
+            calendar.setEvents(calendarEvents);
+            calendar.setDate(new Date());
+        }
+
+        $(document).ready(function () {
+            console.log("ready!");
+            populateCalendar();
+        });
+    </script>
+}
+
+<h3>Hello World</h3>
+<div id="calendar">
+
+
 </div>

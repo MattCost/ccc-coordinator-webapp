@@ -1,9 +1,5 @@
 @model CCC.Entities.CoordinatorEntry
-<div class="row">
-    <div class="col">
-        Required: @Html.DisplayFor(model => model.RequiredCount)
+
+    <div class="col-md-4">
+        Signed Up: @Html.DisplayFor(model => model.CoordinatorIds.Count) / Required: @Html.DisplayFor(model => model.RequiredCount) - All Set?: @Html.DisplayFor(model => model.RequiredCountMet)
     </div>
-    <div class="col">
-        Met: @Html.DisplayFor(model => model.RequiredCountMet)
-    </div>
-</div>

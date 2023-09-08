@@ -1,0 +1,29 @@
+@page "{id:guid}"
+@model CCC.website.Pages.EventDetailsPageModel
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery antiforgery
+@{
+    var token = antiforgery.GetAndStoreTokens(HttpContext).RequestToken;
+    ViewData["Title"] = "Ride Event Details";
+}
+@section Scripts
+    {
+    <script>
+        document.addEventListener("signup", (e) => {
+            console.log(e);
+            var postSubmit = $.ajax({
+                type: "POST",
+                headers: { "RequestVerificationToken": '@token' },
+                url: "?handler=Signup",
+                data: { rideId: e.detail.rideId, role: e.detail.role }
+
+            }).done(function (response) {
+                console.log(response);
+                location.reload();
+            });
+        })
+    </script>
+}
+
+<h3>The Event Details!</h3>
+
+@Html.DisplayFor(model => model.RideEvent,"RideEventViewModelDetails", Model.ExtraData)

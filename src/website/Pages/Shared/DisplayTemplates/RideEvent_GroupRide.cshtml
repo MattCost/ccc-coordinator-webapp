@@ -1,0 +1,41 @@
+@model CCC.Entities.GroupRide
+<div class="container">
+
+<div class="row mb-3">
+    <div class="col">
+        @Html.DisplayFor(model => model.RideType) Ride
+    </div>
+    <div class="col">
+        Bike Route <a  asp-page="/BikeRoutes/Details" asp-route-id=@Model.BikeRouteId>@Html.DisplayFor(model => model.BikeRouteId)</a>
+    </div>
+    <div class="col">
+        @Html.DisplayNameFor(model => model.Id): @Html.DisplayFor(model => model.Id)
+    </div>
+</div>
+@foreach (var key in Model.Coordinators.Keys)
+{
+
+    <div class="row ml-2">
+
+        <div class="col-md-2 mb-2 offset-sm-1">
+            Role: @Html.DisplayFor( modelItem => key)
+        </div>
+
+        <div class="col-md-4 mb-2">
+            Signed Up: @Html.DisplayFor(modelItem => Model.Coordinators[key].CoordinatorIds.Count) / Required: @Html.DisplayFor(modelItem => Model.Coordinators[key].RequiredCount) - All Set?: @Html.DisplayFor(modelItem => Model.Coordinators[key].RequiredCountMet)
+        </div>
+        
+        @if( (bool)(ViewData["ShowSignupButton"] ?? false))
+        {
+            <div class="col-md-2 mb-2">
+                <button onclick="signup('@key', '@Model.Id')" @(Model.Coordinators[key].RequiredCountMet ? "disabled" : "") >Signup</button>
+            </div>
+        }
+
+
+        @* @Html.DisplayFor( modelItem => Model.Coordinators[key], "CoordinatorEntryDetails") *@
+    </div>
+
+}
+</div>
+ 

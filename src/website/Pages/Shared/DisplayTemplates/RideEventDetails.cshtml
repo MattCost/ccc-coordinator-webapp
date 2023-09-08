@@ -1,19 +1,23 @@
 @model CCC.Entities.RideEvent
-Details ;)
+
 <div class="row">
-    <div class="col">
-        @Html.DisplayNameFor(model => model.Id): @Html.DisplayFor(model => model.Id)
-    </div>
     <div class="col">
         @Html.DisplayNameFor(model => model.Name): @Html.DisplayFor(model => model.Name)
     </div>
     <div class="col">
         @Html.DisplayNameFor(model => model.Description): @Html.DisplayFor(model => model.Description)
     </div>
+</div>
+<div class="row">
     <div class="col">
         @Html.DisplayNameFor(model => model.StartTime): @Html.DisplayFor(model => model.StartTime)
     </div>
     <div class="col">
         @Html.DisplayNameFor(model => model.Location): @Html.DisplayFor(model => model.Location)
-    </div>        
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        @Html.DisplayNameFor(model => model.Id): @Html.DisplayFor(model => model.Id)
+    </div>
 </div>

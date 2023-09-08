@@ -1,38 +1,52 @@
 @model CCC.Entities.BikeRoute
 
-<div class="row">
-    <div class="col">
-        @Html.DisplayNameFor(model => model.Id): @Html.DisplayFor(model => model.Id)
-    </div>
-    <div class="col">
-        @Html.DisplayNameFor(model => model.Name): @Html.DisplayFor(model => model.Name)
-    </div>
-    <div class="col">
-        @Html.DisplayNameFor(model => model.Description): @Html.DisplayFor(model => model.Description)
-    </div>
-    <div class="col">
-        @Html.DisplayNameFor(model => model.Distance): @Html.DisplayFor(model => model.Distance)
-    </div>
-</div>
-<p></p>
-<div class="row">
-    <div class="col">
-        @Html.DisplayNameFor(model => model.Cues.First().Operation)
-    </div>
-    <div class="col">
-        @Html.DisplayNameFor(model => model.Cues.First().StreetName)
-    </div>
-    <div class="col">
-        @Html.DisplayNameFor(model => model.Cues.First().MileMarker)
-    </div>
-    <div class="col">
-        @Html.DisplayNameFor(model => model.Cues.First().Notes)
-    </div>
-         
-</div>
-        @foreach( var cueRow in Model.Cues)
-        {
-            <div class="row">
-                @Html.DisplayFor(modelItem => cueRow,"CueSheetRow")
+<div class="container p-3 m-0 ccc-grid text-center">
+    <div class="row">
+        <div class="col">
+            <div>
+                @Html.DisplayNameFor(model => model.Name): @Html.DisplayFor(model => model.Name)
             </div>
+            <div>
+                @Html.DisplayNameFor(model => model.Distance): @Html.DisplayFor(model => model.Distance) miles
+            </div>
+            <div>
+                @Html.DisplayNameFor(model => model.Description): @Html.DisplayFor(model => model.Description)
+            </div>
+        </div>
+
+        @* <div class="col">
+        @Html.DisplayNameFor(model => model.Id): @Html.DisplayFor(model => model.Id)
+        </div>
+        <div class="col">
+        @Html.DisplayNameFor(model => model.Name): @Html.DisplayFor(model => model.Name)
+        </div>
+        <div class="col">
+        @Html.DisplayNameFor(model => model.Distance): @Html.DisplayFor(model => model.Distance) miles
+        </div>
+        <div class="col">
+        @Html.DisplayNameFor(model => model.Description): @Html.DisplayFor(model => model.Description)
+        </div> *@
+    </div>
+    <p></p>
+    <div class="row">
+        <div class="col">
+            @Html.DisplayNameFor(model => model.Cues.First().Operation)
+        </div>
+        <div class="col">
+            @Html.DisplayNameFor(model => model.Cues.First().StreetName)
+        </div>
+        <div class="col">
+            @Html.DisplayNameFor(model => model.Cues.First().MileMarker)
+        </div>
+        <div class="col">
+            @Html.DisplayNameFor(model => model.Cues.First().Notes)
+        </div>
+
+    </div>
+    <div class="row ccc-cue-listing">
+        @foreach (var cueRow in Model.Cues)
+        {
+            @Html.DisplayFor(modelItem => cueRow,"CueSheetRow")
         }
+    </div>
+</div>

@@ -34,11 +34,11 @@ namespace CCC.website.Pages.GroupRides
             }
         }
 
-        public async Task<ActionResult> OnPostSignupAsync(CoordinatorRole role, string coordinatorId)
-        {
-            Logger.LogTrace("Entering OnPostSignupAsync");
-            await API.PatchForUserAsync("API", coordinatorId, options => { options.RelativePath = $"GroupRides/{Id}/coordinators/{role}";});
-            return RedirectToPage(); //do I need to pass id?
-        }
+        // public async Task<ActionResult> OnPostSignupAsync(CoordinatorRole role, string coordinatorId)
+        // {
+        //     Logger.LogTrace("Entering OnPostSignupAsync");
+        //     await API.PatchForUserAsync("API", coordinatorId, options => { options.RelativePath = $"GroupRides/{Id}/coordinators/{role}";});
+        //     return RedirectToPage(); //do I need to pass id?
+        // }
     }
 }

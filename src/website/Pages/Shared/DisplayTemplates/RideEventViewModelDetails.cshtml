@@ -1,0 +1,35 @@
+@model CCC.Common.ViewModels.RideEventViewModel
+
+<div class="container p-3 m-0 ccc-grid text-center">
+    <div class="row">
+        <div class="col">
+            @* Event header info here *@
+            @Html.DisplayFor(model => model.RideEvent, "RideEventDetails")
+        </div>
+    </div>
+    @foreach(var groupRide in Model.GroupRides)
+    {
+    <div class="row">
+        <div class="col">
+            <div>@Html.DisplayFor(modelItem => groupRide.RideType) Ride</div>
+            <div>Route - <a asp-page="BikeRoutes/Details" asp-route-id=@groupRide.BikeRouteId>@Html.DisplayFor(modelItem => Model.BikeRoutes[groupRide.BikeRouteId].Name)</a></div>
+            <div>@Html.DisplayFor(modelItem => Model.BikeRoutes[groupRide.BikeRouteId].Distance) miles</div>
+            <div>@Html.DisplayFor(modelItem => Model.BikeRoutes[groupRide.BikeRouteId].Description)</div>
+        </div>
+
+        <div class="col-sm-9">
+            @foreach(var coordinatorRole in groupRide.Coordinators.Keys)
+            {
+                <div class="row">
+                    <div class="col-2 col-sm-2">@Html.DisplayFor(modelItem => coordinatorRole)</div>
+                    <div class="col-5 col-sm-5">Signed Up @Html.DisplayFor(modelItem => groupRide.Coordinators[coordinatorRole].CoordinatorIds.Count) : Required @Html.DisplayFor(modelItem => groupRide.Coordinators[coordinatorRole].RequiredCount)</div>
+                    @if( (bool)(ViewData["ShowSignupButton"] ?? false))
+                    {
+                        <div class="col-5 col-sm-5"><button onclick="signup('@coordinatorRole', '@groupRide.Id')" @(groupRide.Coordinators[coordinatorRole].RequiredCountMet ? "disabled" : "") >Signup</button></div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+    }
+</div>

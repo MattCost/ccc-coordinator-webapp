@@ -20,3 +20,169 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+
+.bd-example {
+  --bd-example-padding: 1rem;
+  position: relative;
+  padding: var(--bd-example-padding);
+  margin: 0 -1.5rem 1rem;
+  border: solid var(--bs-border-color);
+  border-width: 1px 0
+}
+
+.bd-example::after {
+  display: block;
+  clear: both;
+  content: ""
+}
+
+@media (min-width: 768px) {
+  .bd-example {
+      --bd-example-padding: 1.5rem;
+      margin-right: 0;
+      margin-left: 0;
+      border-width: 3px;
+  }
+}
+
+:root {
+  --ccc-green:rgb(44, 236, 19);
+  --ccc-green-alpha: rgba(44,236, 19, 0.8);
+  --ccc-pink: rgb(238, 26, 245);
+  --ccc-pink-alpha: rgba(238, 26,245, 0.8);
+  --pink-to-green: linear-gradient(to right, var(--ccc-pink), var(--ccc-pink), var(--ccc-green));
+  --green-to-pink: linear-gradient(to right, var(--ccc-green), var(--ccc-pink));
+}
+
+.party-time {
+  background:  var(--pink-to-green);
+}
+
+.party-time > [class^="row"] {
+  background:  var(--green-to-pink);
+}
+
+.ccc-grid [class^="col"]
+{
+  padding-top: .75rem;
+  padding-bottom: .75rem;
+  background-color: var(--ccc-green-alpha);
+  border: 1px solid var(--ccc-pink);
+}
+
+/* this puts a margin on any row that follows another row */
+/* .ccc-grid .row+ .row {
+  margin-top: 1rem
+} */
+
+/* Only put a margin on the bottom of top level rows */
+.ccc-grid > [class~="row"] {
+  margin-bottom: 1rem;
+}
+
+.ccc-cue-listing > .row:nth-child(even) {
+  background-color: var(--ccc-pink);
+}
+
+.ccc-cue-listing > .row:nth-child(odd) {
+  background-color: var(--ccc-green);
+}
+/*
+
+From the docs.css bootstrap examples file
+.bd-example-row [class^="col"],
+.bd-example-cols [class^="col"]>*,
+.bd-example-cssgrid [class*="grid"]>* {
+    padding-top: .75rem;
+    padding-bottom: .75rem;
+    background-color: var(--bg-ccc-green);
+    border: 2px solid var(--bg-ccc-pink);
+}
+
+.bd-example-row .row+.row,
+.bd-example-cssgrid .grid+.grid {
+    margin-top: 1rem
+} 
+
+
+
+
+.bd-example+p {
+  margin-top: 2rem
+}
+
+.bd-example>.form-control+.form-control {
+  margin-top: .5rem
+}
+
+.bd-example>.nav+.nav,
+.bd-example>.alert+.alert,
+.bd-example>.navbar+.navbar,
+.bd-example>.progress+.progress {
+    margin-top: 1rem
+}
+
+.bd-example>.dropdown-menu {
+  position: static;
+  display: block
+}
+
+.bd-example>:last-child,
+.bd-example>nav:last-child .breadcrumb {
+    margin-bottom: 0
+}
+
+.bd-example>hr:last-child {
+    margin-bottom: 1rem
+}
+
+.bd-example>svg+svg,
+.bd-example>img+img {
+    margin-left: .5rem
+}
+
+.bd-example>.btn,
+.bd-example>.btn-group {
+    margin: .25rem .125rem
+}
+
+.bd-example>.btn-toolbar+.btn-toolbar {
+    margin-top: .5rem
+}
+
+.bd-example>.list-group {
+    max-width: 400px
+}
+
+.bd-example>[class*="list-group-horizontal"] {
+    max-width: 100%
+}
+
+.bd-example .fixed-top,
+.bd-example .sticky-top {
+    position: static;
+    margin: calc(var(--bd-example-padding) * -1) calc(var(--bd-example-padding) * -1) var(--bd-example-padding)
+}
+
+.bd-example .fixed-bottom,
+.bd-example .sticky-bottom {
+    position: static;
+    margin: var(--bd-example-padding) calc(var(--bd-example-padding) * -1) calc(var(--bd-example-padding) * -1)
+}
+
+.bd-example .pagination {
+    margin-bottom: 0
+}
+
+
+
+.bd-example-row-flex-cols .row {
+    min-height: 10rem;
+    background-color: rgba(var(--bd-violet-rgb), 0.15)
+}
+
+.bd-example-flex div:not(.vr) {
+    background-color: rgba(var(--bd-violet-rgb), 0.15);
+    border: 1px solid rgba(var(--bd-violet-rgb), 0.3)
+} */
