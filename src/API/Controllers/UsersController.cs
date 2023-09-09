@@ -112,7 +112,7 @@ public class UsersController : ControllerBase
     }
 
     // [Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
-    [HttpPatch("{userId}/admin")]
+    [HttpDelete("{userId}/admin")]
     public async Task<ActionResult> RemoveAdmin(string userId)
     {
         await _userProvider.RemoveContributor(userId);
