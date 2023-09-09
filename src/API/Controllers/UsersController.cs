@@ -28,6 +28,10 @@ public class UsersController : ControllerBase
         // return await EntityProviderActionHelper( EntityProvider.GetCoordinators, "Unable to get all coordinators");
     }
 
+    // I could turn this into 2 endpoints AssignAttribute / RemoveAttribute, and take in a string/enum for the attribute name. 
+    // But then I would need an auth handler to check the different auth requirements. 
+    // Maybe if we add more roles (attributes) we will do that.
+
     [Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
     [Authorize(Policy = Common.Authorization.Enums.CoordinatorAdminPolicy)]
     [HttpGet("coordinatorAdmins")]
