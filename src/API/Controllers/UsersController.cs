@@ -52,7 +52,7 @@ public class UsersController : ControllerBase
 
     [Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
     [Authorize(Policy = Common.Authorization.Enums.CoordinatorAdminPolicy)]
-    [HttpDelete("coordinators/{userId}")]
+    [HttpDelete("{userId}/coordinator")]
     public async Task<ActionResult> RemoveCoordinator(string userId)
     {
         await _userProvider.RemoveCoordinator(userId);
@@ -93,7 +93,7 @@ public class UsersController : ControllerBase
     }
 
     [Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
-    [HttpPatch("{userId}/contributor")]
+    [HttpDelete("{userId}/contributor")]
     public async Task<ActionResult> RemoveContributor(string userId)
     {
         await _userProvider.RemoveContributor(userId);
