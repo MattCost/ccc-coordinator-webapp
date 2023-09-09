@@ -45,11 +45,21 @@ namespace CCC.API
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy(Common.Authorization.Enums.CoordinatorAdminPolicy, policy => policy.RequireClaim(Common.Authorization.Enums.IsCoordinatorAdminClaim, new string[] { "true" }));
-                options.AddPolicy(Common.Authorization.Enums.CoordinatorPolicy, policy => policy.RequireClaim(Common.Authorization.Enums.IsCoordinatorClaim, new string[] { "true" }));
+                options.AddPolicy(Common.Authorization.Enums.CoordinatorAdminPolicy,
+                    policy => policy.RequireClaim(Common.Authorization.Enums.IsCoordinatorAdminClaim, new string[] { "true" }));
+
+                options.AddPolicy(Common.Authorization.Enums.CoordinatorPolicy,
+                    policy => policy.RequireClaim(Common.Authorization.Enums.IsCoordinatorClaim, new string[] { "true" }));
+
+                options.AddPolicy(Common.Authorization.Enums.ContributorPolicy,
+                    policy => policy.RequireClaim(Common.Authorization.Enums.IsContributorClaim, new string[] { "true" }));
+
+                options.AddPolicy(Common.Authorization.Enums.AdminPolicy,
+                    policy => policy.RequireClaim(Common.Authorization.Enums.IsAdminClaim, new string[] { "true" }));
+
                 options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
             });
-            
+
             var msGraphScopes = new[] { "https://graph.microsoft.com/.default" };
             var clientSecretCredential = new ClientSecretCredential(
                 Configuration.GetValue<string>("AzureAdB2C:Domain"),
