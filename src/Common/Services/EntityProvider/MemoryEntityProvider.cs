@@ -8,17 +8,7 @@ public class MemoryEntityProvider : IEntityProvider
     private Dictionary<Guid, BikeRoute> _bikeRoutes = new();
     private Dictionary<Guid, GroupRide> _groupRides = new();
     private Dictionary<Guid, RideEvent> _rideEvents = new();
-    private Dictionary<Guid, Coordinator> _coordinators = new();
-
-    public Task AssignCoordinator(string userId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task AssignCoordinatorAdmin(string userId)
-    {
-        throw new NotImplementedException();
-    }
+    private Dictionary<Guid, User> _coordinators = new();
 
     public Task DeleteBikeRoute(Guid routeId)
     {      
@@ -34,17 +24,6 @@ public class MemoryEntityProvider : IEntityProvider
         
         return Task.CompletedTask;
 
-    }
-
-    public Task DeleteCoordinator(Guid coordinatorId)
-    {
-        _coordinators.Remove(coordinatorId);
-        return Task.CompletedTask;
-    }
-
-    public Task RemoveCoordinator(string userId)
-    {
-        throw new NotImplementedException();
     }
 
     public Task DeleteGroupRide(Guid rideId)
@@ -94,11 +73,6 @@ public class MemoryEntityProvider : IEntityProvider
             throw new EntityNotFoundException(typeof(BikeRoute), routeId);
     }
 
-    public Task<IEnumerable<Coordinator>> GetCoordinators()
-    {
-        return Task.FromResult<IEnumerable<Coordinator>>(_coordinators.Values.ToList());
-    }
-
     public Task<GroupRide> GetGroupRide(Guid rideId)
     {
         return _groupRides.ContainsKey(rideId) ? Task.FromResult(_groupRides[rideId]) :
@@ -132,12 +106,6 @@ public class MemoryEntityProvider : IEntityProvider
         return Task.CompletedTask;
     }
 
-    public Task UpdateCoordinator(Coordinator coordinator)
-    {
-        // _coordinators[coordinator.Id] = coordinator;
-        return Task.CompletedTask;
-    }
-
     public Task UpdateGroupRide(GroupRide groupRide)
     {
         _groupRides[groupRide.Id] = groupRide;
@@ -148,15 +116,5 @@ public class MemoryEntityProvider : IEntityProvider
     {
         _rideEvents[rideEvent.Id] = rideEvent;
         return Task.CompletedTask;
-    }
-
-    public Task RemoveCoordinatorAdmin(string userId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<IEnumerable<Coordinator>> GetCoordinatorAdmins()
-    {
-        throw new NotImplementedException();
     }
 }

@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Azure.Identity;
 using CCC.Services.EntityProvider;
 using CCC.Services.Secrets;
+using CCC.Services.UserProvider;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Graph;
@@ -100,6 +101,7 @@ namespace CCC.API
         {
             ConfigureCommonServices(services);
             services.AddSingleton<IEntityProvider, EntityProviderTableStorage>();
+            services.AddSingleton<IUserProvider, GraphAPIUserProvider>();
             services.AddSingleton<ISecretsManager, EnvVarSecretManager>();
             // Auth handlers after app roles are defined and worked out
         }

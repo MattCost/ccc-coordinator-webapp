@@ -20,12 +20,10 @@ public class EntityProviderTableStorage : IEntityProvider
 
     protected readonly ILogger<EntityProviderTableStorage> _logger;
     protected TableClient TableClient { get; private set; }
-    private readonly GraphServiceClient _graphServiceClient;
-    public EntityProviderTableStorage(ILogger<EntityProviderTableStorage> logger, ISecretsManager secretsManager, GraphServiceClient graphServiceClient)
+    public EntityProviderTableStorage(ILogger<EntityProviderTableStorage> logger, ISecretsManager secretsManager)
     {
         _logger = logger;
         _secretsManager = secretsManager;
-        _graphServiceClient = graphServiceClient;
 
         var connectionString = _secretsManager.GetSecret("STORAGE_ACT_CONNECTION_STRING");
         TableClient = new TableClient(connectionString, TableName);
@@ -122,64 +120,7 @@ public class EntityProviderTableStorage : IEntityProvider
 
     #endregion
 
-    #region  Coordinators
-
-    public async Task<IEnumerable<Coordinator>> GetCoordinators()
-    {
-        var users = await _graphServiceClient.Users.GetAsync((requestConfig) =>
-        {
-            requestConfig.QueryParameters.Select = new string[] { "displayName", "id", Common.Authorization.Enums.IsCoordinatorAttribute, Common.Authorization.Enums.IsCoordinatorAdminAttribute };
-            requestConfig.QueryParameters.Filter = $"{Common.Authorization.Enums.IsCoordinatorAttribute} eq true";
-        });
-        if (users == null || users.Value == null) throw new Exception("cant get users");
-        return users.Value.Select(user => new Coordinator { DisplayName = user.DisplayName ?? "mystery", UserId = user.Id ?? user.UserPrincipalName ?? "fuck me", AdditionalData = user.AdditionalData});            
-    }
-
-    public async Task<IEnumerable<Coordinator>> GetCoordinatorAdmins()
-    {
-        var users = await _graphServiceClient.Users.GetAsync((requestConfig) =>
-        {
-            requestConfig.QueryParameters.Select = new string[] { "displayName", "id", Common.Authorization.Enums.IsCoordinatorAttribute, Common.Authorization.Enums.IsCoordinatorAdminAttribute };
-            requestConfig.QueryParameters.Filter = $"{Common.Authorization.Enums.IsCoordinatorAdminAttribute} eq true";
-        });
-        if (users == null || users.Value == null) throw new Exception("cant get users");
-        return users.Value.Select(user => new Coordinator { DisplayName = user.DisplayName ?? "mystery", UserId = user.Id ?? user.UserPrincipalName ?? "fuck me", AdditionalData = user.AdditionalData});
-    }
-
-    public async Task AssignCoordinator(string userId)
-    {
-        var user = await _graphServiceClient.Users[userId].GetAsync();
-        if (user is null) throw new EntityNotFoundException($"UserId {userId} not found");
-        user.AdditionalData[Common.Authorization.Enums.IsCoordinatorAttribute] = true;
-        await _graphServiceClient.Users[userId].PatchAsync(user);
-    }
-
-    public async Task RemoveCoordinator(string userId)
-    {
-        var user = await _graphServiceClient.Users[userId].GetAsync();
-        if (user is null) throw new EntityNotFoundException($"UserId {userId} not found");
-        user.AdditionalData[Common.Authorization.Enums.IsCoordinatorAttribute] = false;
-        await _graphServiceClient.Users[userId].PatchAsync(user);
-    }
-
-    public async Task AssignCoordinatorAdmin(string userId)
-    {
-        var user = await _graphServiceClient.Users[userId].GetAsync();
-        if (user is null) throw new EntityNotFoundException($"UserId {userId} not found");
-        user.AdditionalData[Common.Authorization.Enums.IsCoordinatorAdminAttribute] = true;
-        await _graphServiceClient.Users[userId].PatchAsync(user);
-    }
-
-    public async Task RemoveCoordinatorAdmin(string userId)
-    {
-        var user = await _graphServiceClient.Users[userId].GetAsync();
-        if (user is null) throw new EntityNotFoundException($"UserId {userId} not found");
-        user.AdditionalData[Common.Authorization.Enums.IsCoordinatorAdminAttribute] = false;
-        await _graphServiceClient.Users[userId].PatchAsync(user);
-    }
-
-    #endregion
-
+    
     #endregion
 
     #region PrivateMethods
