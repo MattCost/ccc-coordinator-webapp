@@ -7,6 +7,7 @@ public static class Enums
     /// </summary>
     private const string _appId = "eea4730478fb41f1941cd85c3fb8ba03";
 
+    public const string ReadOnlyPolicy = nameof(ReadOnlyPolicy);
     public const string CoordinatorAdminPolicy = nameof(CoordinatorAdminPolicy);
     public const string CoordinatorPolicy = nameof(CoordinatorPolicy);
     public const string ContributorPolicy = nameof(ContributorPolicy);
