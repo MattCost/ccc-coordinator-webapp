@@ -1,0 +1,8 @@
+@model CCC.Entities.CueEntry
+
+<tr>
+    <th scope="row">@Html.DisplayFor(model => model.Operation)</th>
+    <td>@Html.DisplayFor(model => model.StreetName)</td>
+    <td>@(Model.MileMarker > 0 ? @Html.DisplayFor(model => model.MileMarker) :"")</td>
+    <td>@Html.DisplayFor(model => model.Notes)</td>
+</tr>

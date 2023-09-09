@@ -55,14 +55,16 @@ body {
   --green-to-pink: linear-gradient(to right, var(--ccc-green), var(--ccc-pink));
 }
 
-.party-time {
-  background:  var(--pink-to-green);
+/*
+    Classes used on the calendar to show different rides
+*/
+.road-ride {
+  color: var(--ccc-green);
 }
 
-.party-time > [class^="row"] {
-  background:  var(--green-to-pink);
-}
-
+/* 
+    Generate grid formatting
+*/
 .ccc-grid [class^="col"]
 {
   padding-top: .75rem;
@@ -71,6 +73,9 @@ body {
   border: 1px solid var(--ccc-pink);
 }
 
+.ccc-green {
+  background-color: var(--ccc-green);
+}
 /* this puts a margin on any row that follows another row */
 /* .ccc-grid .row+ .row {
   margin-top: 1rem
@@ -88,6 +93,17 @@ body {
 .ccc-cue-listing > .row:nth-child(odd) {
   background-color: var(--ccc-green);
 }
+
+/* Experimental  */
+.party-time {
+  background:  var(--pink-to-green);
+}
+
+.party-time > [class^="row"] {
+  background:  var(--green-to-pink);
+}
+
+
 /*
 
 From the docs.css bootstrap examples file

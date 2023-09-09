@@ -13,3 +13,18 @@ function signup(role, id)
 
     // alert(message);
 }
+
+
+function toggleClass(id, className)
+{
+    var element = document.getElementById(id);
+    if(element.classList.contains(className))
+    {
+        element.classList.remove(className);
+    }
+    else
+    {
+        element.classList.add(className);
+    }
+    
+}

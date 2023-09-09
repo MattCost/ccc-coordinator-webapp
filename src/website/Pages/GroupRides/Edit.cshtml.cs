@@ -62,18 +62,18 @@ namespace CCC.website.Pages.GroupRides
             try
             {
                 Logger.LogTrace("Entering OnPostDeleteAsync");
-                var response = await API.CallApiForUserAsync("API", options =>
-                {
-                    options.HttpMethod = HttpMethod.Delete;
-                    options.RelativePath = $"GroupRides/{Id}";
-                });
-
-                response.EnsureSuccessStatusCode();
-
-                // await API.DeleteForUserAsync<string>("API", string.Empty, options =>
+                // var response = await API.CallApiForUserAsync("API", options =>
                 // {
+                //     options.HttpMethod = HttpMethod.Delete;
                 //     options.RelativePath = $"GroupRides/{Id}";
                 // });
+
+                // response.EnsureSuccessStatusCode();
+
+                await API.DeleteForUserAsync("API", string.Empty, options =>
+                {
+                    options.RelativePath = $"GroupRides/{Id}";
+                });
             }
             catch (Exception ex)
             {
