@@ -1,4 +1,5 @@
 using CCC.Entities;
+using CCC.Exceptions;
 using CCC.Services.EntityProvider;
 using CCC.Services.UserProvider;
 using Microsoft.AspNetCore.Authorization;
@@ -20,26 +21,80 @@ public class UsersController : ControllerBase
     }
 
     //for now anyone can get coordinators, to fill out view models. todo - only coordinators can see coordinators?
+
     [HttpGet("coordinators")]
     public async Task<ActionResult<IEnumerable<User>>> GetCoordinators()
     {
-        _logger.LogTrace("Entering GetAll");
-        return Ok(await _userProvider.GetCoordinators());
-        // return await EntityProviderActionHelper( EntityProvider.GetCoordinators, "Unable to get all coordinators");
+        _logger.LogTrace("Entering GetCoordinators");
+        try
+        {
+            return Ok(await _userProvider.GetCoordinators());
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unable to get all coordinators");
+            return Problem(ex.Message);
+        }
     }
 
-    // I could turn this into 2 endpoints AssignAttribute / RemoveAttribute, and take in a string/enum for the attribute name. 
-    // But then I would need an auth handler to check the different auth requirements. 
-    // Maybe if we add more roles (attributes) we will do that.
 
     [Authorize(Policy = Common.Authorization.Enums.CoordinatorAdminPolicy)]
     [HttpGet("coordinatorAdmins")]
     public async Task<ActionResult<IEnumerable<User>>> GetCoordinatorAdmins()
     {
-        _logger.LogTrace("Entering GetAll");
-        return Ok(await _userProvider.GetCoordinatorAdmins());
-        // return await EntityProviderActionHelper( EntityProvider.GetCoordinatorAdmins, "Unable to get all coordinators");
+        _logger.LogTrace("Entering GetCoordinatorAdmins");
+        try
+        {
+            return Ok(await _userProvider.GetCoordinatorAdmins());
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unable to get all coordinatorAdmins");
+            return Problem(ex.Message);
+        }
     }
+
+    [Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
+    [HttpGet()]
+    public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
+    {
+        try
+        {
+            return Ok(await _userProvider.GetUsers());
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unable to get all users");
+            return Problem(ex.Message);
+        }
+    }
+
+    // I could turn all the following endpoints into just 2 endpoints AssignAttribute / RemoveAttribute, and take in a string/enum for the attribute name. 
+    // But then I would need an auth handler to check the different auth requirements, or a more complex policy
+    // Maybe if we add more roles (attributes) we will do that.
+
+    private async Task<ActionResult> UserProviderActionHelper(Func<Task> action, string errorMessage)
+    {
+        try
+        {
+            await action();
+            return Ok();
+        }
+        catch (UserNotFoundException ex)
+        {
+            _logger.LogWarning(ex, "User not found.");
+            return new NotFoundObjectResult(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected Exception. Error message: {Message}", errorMessage);
+            return Problem(errorMessage);
+        }
+    }
+
+
 
     #region Coordinator
 
@@ -47,18 +102,14 @@ public class UsersController : ControllerBase
     [HttpPatch("{userId}/coordinator")]
     public async Task<ActionResult> AssignCoordinator(string userId)
     {
-        await _userProvider.AssignCoordinator(userId);
-        return Ok();
-        // return await EntityProviderActionHelper( async () => await EntityProvider.AssignCoordinator(userId), "Unable to assign coordinator to user");
+        return await UserProviderActionHelper(() => _userProvider.AssignCoordinator(userId), "Unable to assign coordinator to user");
     }
 
     [Authorize(Policy = Common.Authorization.Enums.CoordinatorAdminPolicy)]
     [HttpDelete("{userId}/coordinator")]
     public async Task<ActionResult> RemoveCoordinator(string userId)
     {
-        await _userProvider.RemoveCoordinator(userId);
-        return Ok();
-        // return await EntityProviderActionHelper( async () => await EntityProvider.RemoveCoordinator(userId), "Unable to remove coordinator from user");
+        return await UserProviderActionHelper(() => _userProvider.RemoveCoordinator(userId), "Unable to remove coordinator from user");
     }
     #endregion
 
@@ -68,18 +119,14 @@ public class UsersController : ControllerBase
     [HttpPatch("{userId}/coordinatorAdmin")]
     public async Task<ActionResult> AssignCoordinatorAdmin(string userId)
     {
-        await _userProvider.AssignCoordinatorAdmin(userId);
-        return Ok();
-        // return await EntityProviderActionHelper( async () => await EntityProvider.AssignCoordinatorAdmin(userId), "Unable to assign coordinator admin to user");
+        return await UserProviderActionHelper(() => _userProvider.AssignCoordinatorAdmin(userId), "Unable to assign coordinator admin to user");
     }
 
     [Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
     [HttpDelete("{userId}/coordinatorAdmin")]
     public async Task<ActionResult> RemoveCoordinatorAdmin(string userId)
     {
-        await _userProvider.RemoveCoordinatorAdmin(userId);
-        return Ok();
-        // return await EntityProviderActionHelper( async () => await EntityProvider.AssignCoordinatorAdmin(userId), "Unable to remove coordinator admin from user");
+        return await UserProviderActionHelper(() => _userProvider.RemoveCoordinatorAdmin(userId), "Unable to remove coordinator admin from user");
     }
     #endregion
 
@@ -89,37 +136,32 @@ public class UsersController : ControllerBase
     [HttpPatch("{userId}/contributor")]
     public async Task<ActionResult> AssignContributor(string userId)
     {
-        await _userProvider.AssignContributor(userId);
-        return Ok();
+        return await UserProviderActionHelper(() => _userProvider.AssignContributor(userId), "Unable to assign contributor to user");
     }
 
     [Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
     [HttpDelete("{userId}/contributor")]
     public async Task<ActionResult> RemoveContributor(string userId)
     {
-        await _userProvider.RemoveContributor(userId);
-        return Ok();
+        return await UserProviderActionHelper(() => _userProvider.RemoveContributor(userId), "Unable to remove contributor from user");
     }
     #endregion
 
     #region Admin
 
-    // [Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
+    [Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
     [HttpPatch("{userId}/admin")]
     public async Task<ActionResult> AssignAdmin(string userId)
     {
-        await _userProvider.AssignAdmin(userId);
-        return Ok();
+        return await UserProviderActionHelper(() => _userProvider.AssignAdmin(userId), "Unable to assign admin from user");
     }
 
-    // [Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
+    [Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
     [HttpDelete("{userId}/admin")]
     public async Task<ActionResult> RemoveAdmin(string userId)
     {
-        await _userProvider.RemoveAdmin(userId);
-        return Ok();
+        return await UserProviderActionHelper(() => _userProvider.RemoveAdmin(userId), "Unable to remove admin from user");
     }
-
 
     #endregion
 
