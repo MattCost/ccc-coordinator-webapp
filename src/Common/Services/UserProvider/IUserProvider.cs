@@ -4,6 +4,7 @@ namespace CCC.Services.UserProvider;
 
 public interface IUserProvider
 {
+    Task<IEnumerable<User>> GetUsers();
     Task<IEnumerable<User>> GetCoordinators();
     Task AssignCoordinator(string userId);
     Task RemoveCoordinator(string userId);

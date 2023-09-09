@@ -40,6 +40,17 @@ public class GraphAPIUserProvider : IUserProvider
         return users.Value.Select(user => new User { DisplayName = user.DisplayName ?? "mystery", UserId = user.Id ?? user.UserPrincipalName ?? "fuck me", AdditionalData = user.AdditionalData });
     }
 
+    public async Task<IEnumerable<User>> GetUsers()
+    {
+        var users = await _graphServiceClient.Users.GetAsync((requestConfig) =>
+        {
+            requestConfig.QueryParameters.Select = _userSelectParameters;  
+            // requestConfig.QueryParameters.Filter = $"{Common.Authorization.Enums.IsCoordinatorAdminAttribute} eq true";
+        });
+        if (users == null || users.Value == null) throw new Exception("cant get users");
+        return users.Value.Select(user => new User { DisplayName = user.DisplayName ?? "mystery", UserId = user.Id ?? user.UserPrincipalName ?? "fuck me", AdditionalData = user.AdditionalData });
+    }    
+
     private async Task SetAdditionalDataAttribute(string userId, string attribute, bool value)
     {
         var user = await _graphServiceClient.Users[userId].GetAsync();
