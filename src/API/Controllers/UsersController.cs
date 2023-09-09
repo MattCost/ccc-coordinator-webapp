@@ -107,7 +107,7 @@ public class UsersController : ControllerBase
     [HttpPatch("{userId}/admin")]
     public async Task<ActionResult> AssignAdmin(string userId)
     {
-        await _userProvider.AssignContributor(userId);
+        await _userProvider.AssignAdmin(userId);
         return Ok();
     }
 
@@ -115,7 +115,7 @@ public class UsersController : ControllerBase
     [HttpDelete("{userId}/admin")]
     public async Task<ActionResult> RemoveAdmin(string userId)
     {
-        await _userProvider.RemoveContributor(userId);
+        await _userProvider.RemoveAdmin(userId);
         return Ok();
     }
 
