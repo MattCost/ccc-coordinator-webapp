@@ -5,12 +5,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CCC.API.Controllers;
 
+[Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
+[Authorize(Policy = Common.Authorization.Enums.ContributorPolicy)]
 public class BikeRoutesController : EntityProviderBaseController
 {
     public BikeRoutesController(ILogger<BikeRoutesController> logger, IEntityProvider entityProvider) : base(logger, entityProvider)
     {
     }
 
+    [Authorize(Policy = Common.Authorization.Enums.ReadOnlyPolicy)]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<BikeRoute>>> GetAll()
     {
@@ -20,6 +23,7 @@ public class BikeRoutesController : EntityProviderBaseController
         return await EntityProviderActionHelper( async () => { return await EntityProvider.GetAllBikeRoutes();}, "Unable to get all bike routes");
     }
 
+    [Authorize(Policy = Common.Authorization.Enums.ReadOnlyPolicy)]
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<BikeRoute>> GetById([FromRoute] Guid id)
     {
