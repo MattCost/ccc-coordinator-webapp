@@ -58,9 +58,6 @@ namespace CCC.API
                 options.AddPolicy(Common.Authorization.Enums.ContributorPolicy,
                     policy => policy.RequireAssertion( context => context.User.HasClaim( c => (c.Type == Common.Authorization.Enums.IsAdminClaim || c.Type == Common.Authorization.Enums.IsContributorClaim) && c.Value == "true")));
 
-                options.AddPolicy(Common.Authorization.Enums.ReadOnlyPolicy,
-                    policy => policy.RequireAuthenticatedUser());
-
                 options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
             });
 

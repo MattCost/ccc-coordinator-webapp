@@ -23,6 +23,7 @@ public class GroupRidesController : EntityProviderBaseController
         return await EntityProviderActionHelper(async () => { return await EntityProvider.GetGroupRide(id); }, "Unable to get groupRide");
     }
 
+    [Authorize(Policy = Common.Authorization.Enums.ContributorPolicy)]
     [HttpPost]
     public async Task<ActionResult> Create([FromBody] GroupRideCreateModel createModel)
     {
@@ -83,12 +84,14 @@ public class GroupRidesController : EntityProviderBaseController
         return await EntityProviderActionHelper(async () => await EntityProvider.UpdateGroupRide(model), "Unable to create groupRide");
     }
 
+    [Authorize(Policy = Common.Authorization.Enums.ContributorPolicy)]
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> Delete([FromRoute] Guid id)
     {
         return await EntityProviderActionHelper(async () => await EntityProvider.DeleteGroupRide(id), "Unable to delete groupRide");
     }
 
+    [Authorize(Policy = Common.Authorization.Enums.ContributorPolicy)]
     [HttpPut("{id:guid}/restore")]
     public async Task<ActionResult> Restore([FromRoute] Guid id)
     {
@@ -96,7 +99,6 @@ public class GroupRidesController : EntityProviderBaseController
     }
 
     [Authorize(Policy = Common.Authorization.Enums.CoordinatorPolicy)]
-    [Authorize(Policy = Common.Authorization.Enums.CoordinatorAdminPolicy)]
     [HttpPatch("{id:guid}/coordinators/{role:coordinatorRole}")]
     public async Task<ActionResult> Signup([FromRoute] Guid id, [FromRoute] CoordinatorRole role, [FromBody] string coordinatorId)
     {
@@ -113,7 +115,6 @@ public class GroupRidesController : EntityProviderBaseController
     }
 
     [Authorize(Policy = Common.Authorization.Enums.CoordinatorPolicy)]
-    [Authorize(Policy = Common.Authorization.Enums.CoordinatorAdminPolicy)]
     [HttpDelete("{id:guid}/coordinators/{role:coordinatorRole}")]
     public async Task<ActionResult> DeleteSignup([FromRoute] Guid id, [FromRoute] CoordinatorRole role, [FromBody] string coordinatorId)
     {

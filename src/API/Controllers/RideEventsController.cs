@@ -25,6 +25,7 @@ public class RideEventsController : EntityProviderBaseController
         return await EntityProviderActionHelper( async () => { return await EntityProvider.GetRideEvent(id);}, "Unable to get Ride Event");
     }
 
+    [Authorize(Policy = Common.Authorization.Enums.ContributorPolicy)]
     [HttpPost]
     public async Task<ActionResult> Create([FromBody] RideEventCreateModel createModel)
     {
@@ -42,6 +43,7 @@ public class RideEventsController : EntityProviderBaseController
         return await EntityProviderActionHelper( async () => await EntityProvider.UpdateRideEvent(model), "Unable to create Ride Event");
     }
 
+    [Authorize(Policy = Common.Authorization.Enums.ContributorPolicy)]
     [HttpPatch("{id:guid}")]
     public async Task<ActionResult> Update([FromRoute] Guid id, [FromBody] RideEventUpdateModel updateModel)
     {
@@ -60,6 +62,7 @@ public class RideEventsController : EntityProviderBaseController
         },"Unable to update Ride Event");
     }
 
+    [Authorize(Policy = Common.Authorization.Enums.ContributorPolicy)]
     [HttpDelete("{id:guid}/groupRides/{rideId:guid}")]
     public async Task<ActionResult> RemoveRide([FromRoute] Guid id, [FromRoute] Guid rideId)
     {
@@ -68,6 +71,8 @@ public class RideEventsController : EntityProviderBaseController
         await EntityProvider.UpdateRideEvent(model);
         return Ok();
     }
+
+    [Authorize(Policy = Common.Authorization.Enums.ContributorPolicy)]    
     [HttpPatch("{id:guid}/groupRides/{rideId:guid}")]
     public async Task<ActionResult> AddRide([FromRoute] Guid id, [FromRoute] Guid rideId)
     {
@@ -77,12 +82,14 @@ public class RideEventsController : EntityProviderBaseController
         return Ok();
     }
 
+    [Authorize(Policy = Common.Authorization.Enums.ContributorPolicy)]
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> Delete([FromRoute] Guid id)
     {
         return await EntityProviderActionHelper( async () => await EntityProvider.DeleteRideEvent(id), "Unable to delete ride event");
     }
 
+    [Authorize(Policy = Common.Authorization.Enums.ContributorPolicy)]
     [HttpPut("{id:guid}/restore")]
     public async Task<ActionResult> Restore([FromRoute] Guid id)
     {
