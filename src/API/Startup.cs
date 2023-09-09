@@ -57,6 +57,10 @@ namespace CCC.API
                 options.AddPolicy(Common.Authorization.Enums.AdminPolicy,
                     policy => policy.RequireClaim(Common.Authorization.Enums.IsAdminClaim, new string[] { "true" }));
 
+                //Basically a dupe of fallback policy
+                options.AddPolicy(Common.Authorization.Enums.ReadOnlyPolicy,
+                    policy => policy.RequireAuthenticatedUser());
+
                 options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
             });
 
