@@ -32,7 +32,6 @@ public class UsersController : ControllerBase
     // But then I would need an auth handler to check the different auth requirements. 
     // Maybe if we add more roles (attributes) we will do that.
 
-    [Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
     [Authorize(Policy = Common.Authorization.Enums.CoordinatorAdminPolicy)]
     [HttpGet("coordinatorAdmins")]
     public async Task<ActionResult<IEnumerable<User>>> GetCoordinatorAdmins()
@@ -44,7 +43,6 @@ public class UsersController : ControllerBase
 
     #region Coordinator
 
-    [Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
     [Authorize(Policy = Common.Authorization.Enums.CoordinatorAdminPolicy)]
     [HttpPatch("{userId}/coordinator")]
     public async Task<ActionResult> AssignCoordinator(string userId)
@@ -54,7 +52,6 @@ public class UsersController : ControllerBase
         // return await EntityProviderActionHelper( async () => await EntityProvider.AssignCoordinator(userId), "Unable to assign coordinator to user");
     }
 
-    [Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
     [Authorize(Policy = Common.Authorization.Enums.CoordinatorAdminPolicy)]
     [HttpDelete("{userId}/coordinator")]
     public async Task<ActionResult> RemoveCoordinator(string userId)

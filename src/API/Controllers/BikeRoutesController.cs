@@ -5,15 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CCC.API.Controllers;
 
-[Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
-[Authorize(Policy = Common.Authorization.Enums.ContributorPolicy)]
 public class BikeRoutesController : EntityProviderBaseController
 {
     public BikeRoutesController(ILogger<BikeRoutesController> logger, IEntityProvider entityProvider) : base(logger, entityProvider)
     {
     }
 
-    [Authorize(Policy = Common.Authorization.Enums.ReadOnlyPolicy)]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<BikeRoute>>> GetAll()
     {
@@ -23,7 +20,6 @@ public class BikeRoutesController : EntityProviderBaseController
         return await EntityProviderActionHelper( async () => { return await EntityProvider.GetAllBikeRoutes();}, "Unable to get all bike routes");
     }
 
-    [Authorize(Policy = Common.Authorization.Enums.ReadOnlyPolicy)]
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<BikeRoute>> GetById([FromRoute] Guid id)
     {
@@ -32,6 +28,7 @@ public class BikeRoutesController : EntityProviderBaseController
         return await EntityProviderActionHelper( async () => { return await EntityProvider.GetBikeRoute(id);}, "Unable to get Bike Route");
     }
 
+    [Authorize(Policy = Common.Authorization.Enums.ContributorPolicy)]
     [HttpPatch("{id:guid}")]
     public async Task<ActionResult> Update([FromRoute] Guid id, [FromBody] BikeRouteUpdateModel updateModel)
     {
@@ -48,7 +45,8 @@ public class BikeRoutesController : EntityProviderBaseController
             await EntityProvider.UpdateBikeRoute(model);
         },"Unable to update Bike Route");
     }
-
+    
+    [Authorize(Policy = Common.Authorization.Enums.ContributorPolicy)]
     [HttpPost]
     public async Task<ActionResult> Create([FromBody] BikeRouteCreateModel createModel)
     {
@@ -63,6 +61,7 @@ public class BikeRoutesController : EntityProviderBaseController
         return await EntityProviderActionHelper( async () => await EntityProvider.UpdateBikeRoute(model), "Unable to create Bike Route");
     }
 
+    [Authorize(Policy = Common.Authorization.Enums.ContributorPolicy)]
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> Delete([FromRoute] Guid id)
     {
@@ -70,6 +69,7 @@ public class BikeRoutesController : EntityProviderBaseController
         return await EntityProviderActionHelper( async () => await EntityProvider.DeleteBikeRoute(id), "Unable to delete bike route");
     }
 
+    [Authorize(Policy = Common.Authorization.Enums.ContributorPolicy)]
     [HttpPut("{id:guid}/restore")]
     public async Task<ActionResult> Restore([FromRoute] Guid id)
     {
@@ -77,6 +77,7 @@ public class BikeRoutesController : EntityProviderBaseController
         return await EntityProviderActionHelper( async () => await EntityProvider.RestoreBikeRoute(id), "Unable to restore bike route");
     }
 
+    [Authorize(Policy = Common.Authorization.Enums.ContributorPolicy)]
     [HttpPost("{id:guid}/cues")]
     public async Task<ActionResult> AddCue([FromRoute] Guid id, [FromBody] CueEntry cueEntry)
     {
@@ -86,6 +87,7 @@ public class BikeRoutesController : EntityProviderBaseController
         return Ok();
     }
 
+    [Authorize(Policy = Common.Authorization.Enums.ContributorPolicy)]
     [HttpDelete("{id:guid}/cues/{index:int}")]
     public async Task<ActionResult> DeleteCue([FromRoute] Guid id, [FromRoute] int index)
     {
@@ -99,6 +101,7 @@ public class BikeRoutesController : EntityProviderBaseController
         return Ok();
     }
 
+    [Authorize(Policy = Common.Authorization.Enums.ContributorPolicy)]
     [HttpPatch("{id:guid}/cues/{index:int}")]
     public async Task<ActionResult> InsertCue([FromRoute] Guid id, [FromRoute] int index, [FromBody] CueEntry cue)
     {

@@ -1,5 +1,6 @@
 
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using Azure.Identity;
 using CCC.Services.EntityProvider;
 using CCC.Services.Secrets;
@@ -45,17 +46,32 @@ namespace CCC.API
 
             services.AddAuthorization(options =>
             {
+                options.AddPolicy(Common.Authorization.Enums.AdminPolicy,
+                    policy => policy.RequireClaim(Common.Authorization.Enums.IsAdminClaim, new string[] { "true" }));
+
+                // options.AddPolicy(Common.Authorization.Enums.CoordinatorAdminPolicy,
+                //     policy => policy.RequireClaim(Common.Authorization.Enums.IsCoordinatorAdminClaim, new string[] { "true" }));
+
                 options.AddPolicy(Common.Authorization.Enums.CoordinatorAdminPolicy,
-                    policy => policy.RequireClaim(Common.Authorization.Enums.IsCoordinatorAdminClaim, new string[] { "true" }));
+                    policy => policy.RequireAssertion( context => context.User.HasClaim( c => (c.Type == Common.Authorization.Enums.IsAdminClaim || c.Type == Common.Authorization.Enums.IsCoordinatorAdminClaim) && c.Value == "true")));
 
                 options.AddPolicy(Common.Authorization.Enums.CoordinatorPolicy,
                     policy => policy.RequireClaim(Common.Authorization.Enums.IsCoordinatorClaim, new string[] { "true" }));
 
-                options.AddPolicy(Common.Authorization.Enums.ContributorPolicy,
-                    policy => policy.RequireClaim(Common.Authorization.Enums.IsContributorClaim, new string[] { "true" }));
+                // options.AddPolicy(Common.Authorization.Enums.ContributorPolicy,
+                    // policy => policy.RequireClaim(Common.Authorization.Enums.IsContributorClaim, new string[] { "true" }));
 
-                options.AddPolicy(Common.Authorization.Enums.AdminPolicy,
-                    policy => policy.RequireClaim(Common.Authorization.Enums.IsAdminClaim, new string[] { "true" }));
+                options.AddPolicy(Common.Authorization.Enums.ContributorPolicy,
+                    policy => policy.RequireAssertion( context => context.User.HasClaim( c => (c.Type == Common.Authorization.Enums.IsAdminClaim || c.Type == Common.Authorization.Enums.IsContributorClaim) && c.Value == "true")));
+
+
+
+
+    options.AddPolicy("BadgeEntry", policy =>
+        policy.RequireAssertion(context => context.User.HasClaim(c =>
+            (c.Type == "BadgeId" || c.Type == "TemporaryBadgeId")
+            && c.Issuer == "https://microsoftsecurity")));
+
 
                 //Basically a dupe of fallback policy
                 options.AddPolicy(Common.Authorization.Enums.ReadOnlyPolicy,
