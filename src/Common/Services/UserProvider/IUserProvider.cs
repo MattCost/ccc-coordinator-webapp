@@ -12,5 +12,11 @@ public interface IUserProvider
     Task AssignCoordinatorAdmin(string userId);
     Task RemoveCoordinatorAdmin(string userId);
 
+    Task AssignContributor(string userId);
+    Task RemoveContributor(string userId);
+
+    Task AssignAdmin(string userId);
+    Task RemoveAdmin(string userId);
+
 }
 

@@ -19,60 +19,107 @@ public class UsersController : ControllerBase
         _userProvider = userProvider;
     }
 
-
+    //for now anyone can get coordinators, to fill out view models. todo - only coordinators can see coordinators?
     [HttpGet("coordinators")]
-    public async Task<ActionResult<IEnumerable<User>>> GetAll()
+    public async Task<ActionResult<IEnumerable<User>>> GetCoordinators()
     {
         _logger.LogTrace("Entering GetAll");
         return Ok(await _userProvider.GetCoordinators());
         // return await EntityProviderActionHelper( EntityProvider.GetCoordinators, "Unable to get all coordinators");
     }
 
+    [Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
     [Authorize(Policy = Common.Authorization.Enums.CoordinatorAdminPolicy)]
-    [HttpGet("coordinators/admins")]
-    public async Task<ActionResult<IEnumerable<User>>> GetAllAdmins()
+    [HttpGet("coordinatorAdmins")]
+    public async Task<ActionResult<IEnumerable<User>>> GetCoordinatorAdmins()
     {
         _logger.LogTrace("Entering GetAll");
         return Ok(await _userProvider.GetCoordinatorAdmins());
-
         // return await EntityProviderActionHelper( EntityProvider.GetCoordinatorAdmins, "Unable to get all coordinators");
-    }    
+    }
 
+    #region Coordinator
+
+    [Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
     [Authorize(Policy = Common.Authorization.Enums.CoordinatorAdminPolicy)]
-    [HttpPatch("coordinators/{userId}")]
-    public async Task<ActionResult> Assign(string userId)
+    [HttpPatch("{userId}/coordinator")]
+    public async Task<ActionResult> AssignCoordinator(string userId)
     {
         await _userProvider.AssignCoordinator(userId);
         return Ok();
         // return await EntityProviderActionHelper( async () => await EntityProvider.AssignCoordinator(userId), "Unable to assign coordinator to user");
     }
 
+    [Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
     [Authorize(Policy = Common.Authorization.Enums.CoordinatorAdminPolicy)]
-   
-    [HttpPatch("coordinators/admin/{userId}")]
-    public async Task<ActionResult> AssignAdmin(string userId)
+    [HttpDelete("coordinators/{userId}")]
+    public async Task<ActionResult> RemoveCoordinator(string userId)
+    {
+        await _userProvider.RemoveCoordinator(userId);
+        return Ok();
+        // return await EntityProviderActionHelper( async () => await EntityProvider.RemoveCoordinator(userId), "Unable to remove coordinator from user");
+    }
+    #endregion
+
+    #region CoordinatorAdmin
+
+    [Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
+    [HttpPatch("{userId}/coordinatorAdmin")]
+    public async Task<ActionResult> AssignCoordinatorAdmin(string userId)
     {
         await _userProvider.AssignCoordinatorAdmin(userId);
         return Ok();
         // return await EntityProviderActionHelper( async () => await EntityProvider.AssignCoordinatorAdmin(userId), "Unable to assign coordinator admin to user");
     }
 
-    [Authorize(Policy = Common.Authorization.Enums.CoordinatorAdminPolicy)]
-    [HttpDelete("coordinators/{userId}")]
-    public async Task<ActionResult> Remove(string userId)
-    {
-        await _userProvider.RemoveCoordinator(userId);
-        return Ok();
-        // return await EntityProviderActionHelper( async () => await EntityProvider.RemoveCoordinator(userId), "Unable to remove coordinator from user");
-    }
-
-    [Authorize(Policy = Common.Authorization.Enums.CoordinatorAdminPolicy)]
-    [HttpDelete("coordinators/admin/{userId}")]
-    public async Task<ActionResult> RemoveAdmin(string userId)
+    [Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
+    [HttpDelete("{userId}/coordinatorAdmin")]
+    public async Task<ActionResult> RemoveCoordinatorAdmin(string userId)
     {
         await _userProvider.RemoveCoordinatorAdmin(userId);
         return Ok();
         // return await EntityProviderActionHelper( async () => await EntityProvider.AssignCoordinatorAdmin(userId), "Unable to remove coordinator admin from user");
-    }    
+    }
+    #endregion
+
+    #region Contributor
+
+    [Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
+    [HttpPatch("{userId}/contributor")]
+    public async Task<ActionResult> AssignContributor(string userId)
+    {
+        await _userProvider.AssignContributor(userId);
+        return Ok();
+    }
+
+    [Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
+    [HttpPatch("{userId}/contributor")]
+    public async Task<ActionResult> RemoveContributor(string userId)
+    {
+        await _userProvider.RemoveContributor(userId);
+        return Ok();
+    }
+    #endregion
+
+    #region Admin
+
+    // [Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
+    [HttpPatch("{userId}/admin")]
+    public async Task<ActionResult> AssignAdmin(string userId)
+    {
+        await _userProvider.AssignContributor(userId);
+        return Ok();
+    }
+
+    // [Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
+    [HttpPatch("{userId}/admin")]
+    public async Task<ActionResult> RemoveAdmin(string userId)
+    {
+        await _userProvider.RemoveContributor(userId);
+        return Ok();
+    }
+
+
+    #endregion
 
 }
