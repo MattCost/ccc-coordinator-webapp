@@ -3,62 +3,110 @@
 
 <div class="container p-3 m-0">
     <div class="row">
-        <div class="col-2">
+        <div class="col-3 col-lg-2">
             <div class="list-group" id="list-tab" role="tablist">
-                <a class="list-group-item list-group-item-action active" id="list-details-list" data-bs-toggle="list" href="#list-details" role="tab" aria-controls="list-details">Details</a>
-                @foreach(var groupRide in Model.GroupRides)
+                <a class="list-group-item list-group-item-action active" id="list-details-list" data-bs-toggle="list"
+                    href="#list-details" role="tab" aria-controls="list-details">Details</a>
+                @foreach (var groupRide in Model.GroupRides)
                 {
-                    <a class="list-group-item list-group-item-action" id=@($"list-{groupRide.Id}-list") data-bs-toggle="list" href="#@($"list-{groupRide.Id}")" role="tab" aria-controls="@($"list-{groupRide.Id}")">@groupRide.RideType Ride</a>
+                    <a class="list-group-item list-group-item-action" id=@($"list-{groupRide.Id}-list")
+                        data-bs-toggle="list" href="#@($"list-{groupRide.Id}")" role="tab"
+                        aria-controls="@($"list-{groupRide.Id}")">@groupRide.RideType Ride</a>
                 }
-                @* <a class="list-group-item list-group-item-action" id="list-profile-list" data-bs-toggle="list" href="#list-profile" role="tab" aria-controls="list-profile">ride 1</a>
-                <a class="list-group-item list-group-item-action" id="list-messages-list" data-bs-toggle="list" href="#list-messages" role="tab" aria-controls="list-messages">ride 2</a>
-                <a class="list-group-item list-group-item-action" id="list-settings-list" data-bs-toggle="list" href="#list-settings" role="tab" aria-controls="list-settings">ride 3</a> *@
             </div>
         </div>
-        <div class="col-10">
+        <div class="col">
             <div class="tab-content" id="nav-tabContent">
-                <div class="tab-pane fade show active" id="list-details" role="tabpanel" aria-labelledby="list-details-list">
-                <ul>
-                    <li>@Html.DisplayFor(model => model.RideEvent.Name)</li>
-                    <li>@Html.DisplayFor(model => model.RideEvent.Location)</li>
-                    <li>@Html.DisplayFor(model => model.RideEvent.StartTime)</li>
-                    <li>@Html.DisplayFor(model => model.RideEvent.Description)</li>
-                </ul>
-            </div>
-            @foreach(var groupRide in Model.GroupRides)
-            {
-                <div class="tab-pane fade ccc-grid" id=@($"list-{groupRide.Id}") role="tabpanel" aria-labelledby=@($"list-{groupRide.Id}-list")>
+                <div class="tab-pane fade show active" id="list-details" role="tabpanel"
+                    aria-labelledby="list-details-list">
                     <div class="row">
-                        <div class="col">
-                            <div>@Html.DisplayFor(modelItem => groupRide.RideType) Ride</div>
-                            <div>Route - <a asp-page="BikeRoutes/Details" asp-route-id=@groupRide.BikeRouteId>@Html.DisplayFor(modelItem => Model.BikeRoutes[groupRide.BikeRouteId].Name)</a></div>
-                            <div>@Html.DisplayFor(modelItem => Model.BikeRoutes[groupRide.BikeRouteId].Distance) miles</div>
-                            <div>@Html.DisplayFor(modelItem => Model.BikeRoutes[groupRide.BikeRouteId].Description)</div>
-                        </div>
-
-                        <div class="col-sm-9">
-                            @foreach(var coordinatorRole in groupRide.Coordinators.Keys)
-                            {
-                                <div class="row">
-                                    <div class="col-2 col-sm-2">@Html.DisplayFor(modelItem => coordinatorRole)</div>
-                                    <div class="col-5 col-sm-5">Signed Up @Html.DisplayFor(modelItem => groupRide.Coordinators[coordinatorRole].CoordinatorIds.Count) : Required @Html.DisplayFor(modelItem => groupRide.Coordinators[coordinatorRole].RequiredCount)</div>
-                                    @if( (bool)(ViewData["ShowSignupButton"] ?? false))
-                                    {
-                                        <div class="col-5 col-sm-5"><button onclick="signup('@coordinatorRole', '@groupRide.Id')" @(groupRide.Coordinators[coordinatorRole].RequiredCountMet ? "disabled" : "") >Signup</button></div>
-                                    }
-                                </div>
-                            }
+                        <div class="col-6">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">@Html.DisplayFor(model => model.RideEvent.Name)</li>
+                                <li class="list-group-item">@Html.DisplayFor(model => model.RideEvent.Location)</li>
+                                <li class="list-group-item">@Html.DisplayFor(model => model.RideEvent.StartTime)</li>
+                                <li class="list-group-item">@Html.DisplayFor(model => model.RideEvent.Description)</li>
+                            </ul>
                         </div>
                     </div>
-                    @Html.DisplayFor(modelItem => Model.BikeRoutes[groupRide.BikeRouteId],"CueTableView")  
                 </div>
-            }
-            @* <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">ride 1 info</div>
-            <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">ride 2 info</div>
-            <div class="tab-pane fade" id="list-settings" role="tabpanel" aria-labelledby="list-settings-list">ride 3 info</div> *@
+                @foreach (var groupRide in Model.GroupRides)
+                {
+                    <div class="tab-pane fade" id=@($"list-{groupRide.Id}") role="tabpanel"
+                        aria-labelledby=@($"list-{groupRide.Id}-list")>
+                        <div class="row">
+                            <div class="col">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">@Html.DisplayFor(modelItem => groupRide.RideType) Ride</li>
+                                    <li class="list-group-item">Route - <a asp-page="BikeRoutes/Details"
+                                            asp-route-id=@groupRide.BikeRouteId>@Html.DisplayFor(modelItem =>
+                                        Model.BikeRoutes[groupRide.BikeRouteId].Name)</a> - @Html.DisplayFor(modelItem
+                                    => Model.BikeRoutes[groupRide.BikeRouteId].Distance) miles</li>
+                                    <li class="list-group-item">@Html.DisplayFor(modelItem =>
+                                    Model.BikeRoutes[groupRide.BikeRouteId].Description)</li>
+                            </div>
+
+                            <div class="col-sm-9">
+                                <ul class="list-group list-group-flush">
+                                    @foreach (var coordinatorRole in groupRide.Coordinators.Keys)
+                                    {
+                                        <li class="list-group-item">
+                                            @Html.DisplayFor(modelItem => coordinatorRole) - <span
+                                                class="badge @(groupRide.Coordinators[coordinatorRole].RequiredCountMet ? "bg-success" : "bg-warning") rounded-pill">@Html.DisplayFor(modelItem
+                                        => groupRide.Coordinators[coordinatorRole].CoordinatorIds.Count) /
+                                                @Html.DisplayFor(modelItem =>
+                                        groupRide.Coordinators[coordinatorRole].RequiredCount)</span>
+                                            @if ((bool)(ViewData["ShowSignupButton"] ?? false))
+                                            {
+                                                <button onclick="signup('@coordinatorRole', '@groupRide.Id')"
+                                                @(groupRide.Coordinators[coordinatorRole].RequiredCountMet ? "disabled" :
+                                                    "")>Signup</button>
+                                            }
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="row mt-5">
+                            <div class="col">
+                                @Html.DisplayFor(modelItem => Model.BikeRoutes[groupRide.BikeRouteId],"CueTableView")
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @* <div class="tab-pane fade ccc-grid" id=@($"list-{groupRide.Id}") role="tabpanel"
+                aria-labelledby=@($"list-{groupRide.Id}-list")>
+                <div class="row">
+                <div class="col">
+                <div>@Html.DisplayFor(modelItem => groupRide.RideType) Ride</div>
+                <div>Route - <a asp-page="BikeRoutes/Details"
+                asp-route-id=@groupRide.BikeRouteId>@Html.DisplayFor(modelItem =>
+                Model.BikeRoutes[groupRide.BikeRouteId].Name)</a></div>
+                <div>@Html.DisplayFor(modelItem => Model.BikeRoutes[groupRide.BikeRouteId].Distance) miles</div>
+                <div>@Html.DisplayFor(modelItem => Model.BikeRoutes[groupRide.BikeRouteId].Description)</div>
+                </div>
+
+                <div class="col-sm-9">
+                @foreach(var coordinatorRole in groupRide.Coordinators.Keys)
+                {
+                <div class="row">
+                <div class="col-2 col-sm-2">@Html.DisplayFor(modelItem => coordinatorRole)</div>
+                <div class="col-5 col-sm-5">Signed Up @Html.DisplayFor(modelItem =>
+                groupRide.Coordinators[coordinatorRole].CoordinatorIds.Count) : Required @Html.DisplayFor(modelItem =>
+                groupRide.Coordinators[coordinatorRole].RequiredCount)</div>
+                @if( (bool)(ViewData["ShowSignupButton"] ?? false))
+                {
+                <div class="col-5 col-sm-5"><button onclick="signup('@coordinatorRole', '@groupRide.Id')"
+                @(groupRide.Coordinators[coordinatorRole].RequiredCountMet ? "disabled" : "") >Signup</button></div>
+                }
+                </div>
+                }
+                </div>
+                </div>
+                @Html.DisplayFor(modelItem => Model.BikeRoutes[groupRide.BikeRouteId],"CueTableView")
+                </div> *@
+            </div>
         </div>
     </div>
-    </div>
 </div>
-
-
