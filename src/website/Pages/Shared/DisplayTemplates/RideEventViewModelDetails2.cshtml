@@ -45,10 +45,10 @@
                                     => Model.BikeRoutes[groupRide.BikeRouteId].Distance) miles</li>
                                     <li class="list-group-item">@Html.DisplayFor(modelItem =>
                                     Model.BikeRoutes[groupRide.BikeRouteId].Description)</li>
-                            </div>
+                            @* </div> *@
 
-                            <div class="col-sm-9">
-                                <ul class="list-group list-group-flush">
+                            @* <div class="col-sm-9"> *@
+                                @* <ul class="list-group list-group-flush"> *@
                                     @foreach (var coordinatorRole in groupRide.Coordinators.Keys)
                                     {
                                         <li class="list-group-item">

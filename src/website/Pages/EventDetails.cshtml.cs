@@ -58,4 +58,18 @@ public class EventDetailsPageModel : PageModelBase
             Logger.LogTrace("API Call Complete");
             return new EmptyResult();
         }
+
+        public async Task<EmptyResult> OnPostDropoutAsync(Guid rideId, CoordinatorRole role)
+        {
+            Logger.LogTrace("Entering OnPostSignupAsync. RideId: {RideId}. Role: {Role}", rideId, role);
+            var userIdentifier = User.NameIdentifier();
+            Logger.LogTrace("User: {UserId}", userIdentifier);
+
+            await API.DeleteForUserAsync("API", userIdentifier, options =>
+            {
+                options.RelativePath = $"GroupRides/{rideId}/coordinators/{role}";
+            });
+            Logger.LogTrace("API Call Complete");
+            return new EmptyResult();
+        }        
 }

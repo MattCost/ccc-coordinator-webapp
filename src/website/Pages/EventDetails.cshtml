@@ -8,23 +8,34 @@
 @section Scripts
     {
     <script>
-        document.addEventListener("signup", (e) => {
-            console.log(e);
-            var postSubmit = $.ajax({
-                type: "POST",
-                headers: { "RequestVerificationToken": '@token' },
-                url: "?handler=Signup",
-                data: { rideId: e.detail.rideId, role: e.detail.role }
-
-            }).done(function (response) {
-                window.location.href = window.location.pathname+"?"+$.param({'activeTab':`list-${e.detail.rideId}`});
-            });
-        })
-    </script>
-
-    <script>
         $(
             function () {
+                document.addEventListener("signup", (e) => {
+                    console.log(e);
+                    var postSubmit = $.ajax({
+                        type: "POST",
+                        headers: { "RequestVerificationToken": '@token' },
+                        url: "?handler=Signup",
+                        data: { rideId: e.detail.rideId, role: e.detail.role }
+
+                    }).done(function (response) {
+                        window.location.href = window.location.pathname+"?"+$.param({'activeTab':`list-${e.detail.rideId}`});
+                    });
+                })
+
+                document.addEventListener("dropout", (e) => {
+                    console.log(e);
+                    var postSubmit = $.ajax({
+                        type: "POST",
+                        headers: { "RequestVerificationToken": '@token' },
+                        url: "?handler=Dropout",
+                        data: { rideId: e.detail.rideId, role: e.detail.role }
+
+                    }).done(function (response) {
+                        window.location.href = window.location.pathname+"?"+$.param({'activeTab':`list-${e.detail.rideId}`});
+                    });
+                })
+
                 const triggerTabList = document.querySelectorAll('#list-tab a')
                 triggerTabList.forEach(triggerEl => {
                     const tabTrigger = new bootstrap.Tab(triggerEl)

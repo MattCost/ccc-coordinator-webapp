@@ -5,13 +5,19 @@
 
 function signup(role, id)
 {
-    var message = `Will sign up for ${role} in ride ${id}`;
- // create a look event that bubbles up and cannot be canceled
+    // var message = `Will sign up for ${role} in ride ${id}`;
+    // alert(message);
 
     const event = new CustomEvent("signup", {  detail: {role: role, rideId: id }});
     document.dispatchEvent(event);
 
-    // alert(message);
+}
+
+function dropout(role, id)
+{
+    const event = new CustomEvent("dropout", {  detail: {role: role, rideId: id }});
+    document.dispatchEvent(event);
+
 }
 
 
