@@ -32,4 +32,9 @@ public static class AuthorizationExtensions
         }
         return string.Empty;
     }
+
+    public static bool ShowCrudOperations(this ClaimsPrincipal user)
+    {
+        return user.IsAdmin() || user.IsContributor();
+    }
 }

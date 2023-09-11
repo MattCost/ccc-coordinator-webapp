@@ -60,11 +60,14 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="row mt-3">
-                            <div class="col">
-                                @Html.DisplayFor(modelItem => groupRide, "CoordinatorSignupWidget")
+                        @if(User.IsCoordinator())
+                        {
+                            <div class="row mt-3">
+                                <div class="col">
+                                    @Html.DisplayFor(modelItem => groupRide, "CoordinatorSignupWidget")
+                                </div>
                             </div>
-                        </div>
+                        }
                         <div class="row mt-5">
                             <div class="col">
                                 @Html.DisplayFor(modelItem => Model.BikeRoutes[groupRide.BikeRouteId],"CueTableView")
