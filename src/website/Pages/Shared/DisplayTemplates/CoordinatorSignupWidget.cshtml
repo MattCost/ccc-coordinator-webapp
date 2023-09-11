@@ -1,0 +1,53 @@
+@model CCC.Entities.GroupRide
+@using CCC.Common.Authorization
+@using CCC.Entities
+
+@* Version 1 - List view *@
+@* @foreach (var coordinatorRole in Model.Coordinators.Keys)
+{
+    <li class="list-group-item">
+        @Html.DisplayFor(modelItem => coordinatorRole) - <span class="badge @(Model.Coordinators[coordinatorRole].RequiredCountMet ? "bg-success" : "bg-warning") rounded-pill">@Html.DisplayFor(modelItem => Model.Coordinators[coordinatorRole].CoordinatorIds.Count) /
+            @Html.DisplayFor(modelItem => Model.Coordinators[coordinatorRole].RequiredCount)</span>
+
+        @if(User.IsCoordinator() && !Model.Coordinators[coordinatorRole].RequiredCountMet && !Model.Coordinators[coordinatorRole].CoordinatorIds.Contains(User.NameIdentifier()))
+        {
+            @(" - ") <button type="button" class="btn btn-success" onclick="signup('@coordinatorRole', '@Model.Id')">Signup</button>
+        }
+        @if(User.IsCoordinator() && Model.Coordinators[coordinatorRole].CoordinatorIds.Contains(User.NameIdentifier()))
+        {
+            @(" - ") <button type="button" class="btn btn-warning" onclick="dropout('@coordinatorRole', '@Model.Id')">Drop Out</button>
+        }    
+    </li>
+} *@
+
+
+@* Version 2 - table view *@
+
+<table class="table table-striped table-bordered table-sm">
+    <thead>
+        <tr>
+            <th scope="col">Position</th>
+            <th scope="col">Current / Required</th>
+            <th scope="col"></th>  @* Placeholder for buttons *@
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var coordinatorRole in Model.Coordinators.Keys)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => coordinatorRole)</td>
+                <td><span class="badge @(Model.Coordinators[coordinatorRole].RequiredCountMet ? "bg-success" : "bg-warning") rounded-pill">@Html.DisplayFor(modelItem => Model.Coordinators[coordinatorRole].CoordinatorIds.Count) / @Html.DisplayFor(modelItem => Model.Coordinators[coordinatorRole].RequiredCount)</span></td>
+                <td>
+                    @if(User.IsCoordinator() && !Model.Coordinators[coordinatorRole].RequiredCountMet && !Model.Coordinators[coordinatorRole].CoordinatorIds.Contains(User.NameIdentifier()))
+                    {
+                        <button type="button" class="btn btn-success" onclick="signup('@coordinatorRole', '@Model.Id')">Signup</button>
+                    }
+                    @if(User.IsCoordinator() && Model.Coordinators[coordinatorRole].CoordinatorIds.Contains(User.NameIdentifier()))
+                    {
+                        <button type="button" class="btn btn-warning" onclick="dropout('@coordinatorRole', '@Model.Id')">Drop Out</button>
+                    }    
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

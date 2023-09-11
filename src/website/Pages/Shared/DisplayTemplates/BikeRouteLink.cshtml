@@ -1,0 +1,3 @@
+@model CCC.Entities.BikeRoute
+
+Route - <a asp-page="BikeRoutes/Details" asp-route-id=@Model.Id>@Html.DisplayFor(model=> Model.Name)</a> - @Html.DisplayFor(mode => Model.Distance) miles
