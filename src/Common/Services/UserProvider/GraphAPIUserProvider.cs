@@ -16,7 +16,7 @@ public class GraphAPIUserProvider : IUserProvider
         _graphServiceClient = graphServiceClient;
     }
 
-    private readonly string[] _userSelectParameters =  { "displayName", "id", Common.Authorization.Enums.IsCoordinatorAttribute, Common.Authorization.Enums.IsCoordinatorAdminAttribute, Common.Authorization.Enums.IsContributorAttribute, Common.Authorization.Enums.IsAdminAttribute };
+    private readonly string[] _userSelectParameters =  { "displayName", "id", "emails", Common.Authorization.Enums.IsCoordinatorAttribute, Common.Authorization.Enums.IsCoordinatorAdminAttribute, Common.Authorization.Enums.IsContributorAttribute, Common.Authorization.Enums.IsAdminAttribute };
 
     public async Task<IEnumerable<User>> GetCoordinators()
     {

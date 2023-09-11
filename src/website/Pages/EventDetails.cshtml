@@ -17,11 +17,31 @@
                 data: { rideId: e.detail.rideId, role: e.detail.role }
 
             }).done(function (response) {
-                console.log(response);
-                console.log(window.location.hash);
-                location.reload();
+                window.location.href = window.location.pathname+"?"+$.param({'activeTab':`list-${e.detail.rideId}`});
             });
         })
+    </script>
+
+    <script>
+        $(
+            function () {
+                const triggerTabList = document.querySelectorAll('#list-tab a')
+                triggerTabList.forEach(triggerEl => {
+                    const tabTrigger = new bootstrap.Tab(triggerEl)
+
+                    triggerEl.addEventListener('click', event => {
+                        event.preventDefault()
+                        tabTrigger.show()
+                    })
+                });
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const activeTab = urlParams.get('activeTab');
+                console.log("active Tab", activeTab);
+                const triggerEl = document.querySelector(`#list-tab a[href="#${activeTab}"]`)
+                bootstrap.Tab.getInstance(triggerEl).show() // Select tab by name
+            }
+        );
     </script>
 }
 

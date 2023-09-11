@@ -46,6 +46,30 @@ body {
   }
 }
 
+/* Print Preview */
+@media screen {
+  #printSection {
+      display: none;
+  }
+}
+
+@media print {
+  body * {
+    visibility:hidden;
+  }
+  #printSection, #printSection * {
+    visibility:visible;
+  }
+  #printSection {
+    position:absolute;
+    left:0;
+    top:0;
+  }
+}
+
+
+/* end print preview */
+
 :root {
   --ccc-green:rgb(44, 236, 19);
   --ccc-green-alpha: rgba(44,236, 19, 0.8);

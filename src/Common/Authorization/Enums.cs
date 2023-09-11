@@ -25,4 +25,5 @@ public static class Enums
     public const string IsContributorAttribute = $"extension_{_appId}_IsContributor";
     public const string IsAdminAttribute = $"extension_{_appId}_IsAdmin";
 
+    public const string NameIdentifier = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
 }

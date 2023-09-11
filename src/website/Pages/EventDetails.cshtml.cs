@@ -25,7 +25,7 @@ public class EventDetailsPageModel : PageModelBase
 
     public async Task OnGetAsync()
     {
-        ExtraData["ShowSignupButton"] = User.IsCoordinator();
+        ExtraData["UserIsCoordinator"] = User.IsCoordinator();
 
         try
         {
@@ -48,10 +48,10 @@ public class EventDetailsPageModel : PageModelBase
         public async Task<EmptyResult> OnPostSignupAsync(Guid rideId, CoordinatorRole role)
         {
             Logger.LogTrace("Entering OnPostSignupAsync. RideId: {RideId}. Role: {Role}", rideId, role);
-            var userDisplayName = HttpContext.User.Claims.Where( claim => claim.Type == "name").First().Value;
-            Logger.LogTrace("UserName: {UserName}", userDisplayName);
+            var userIdentifier = User.NameIdentifier();
+            Logger.LogTrace("User: {UserId}", userIdentifier);
 
-            await API.PatchForUserAsync("API", userDisplayName, options =>
+            await API.PatchForUserAsync("API", userIdentifier, options =>
             {
                 options.RelativePath = $"GroupRides/{rideId}/coordinators/{role}";
             });
