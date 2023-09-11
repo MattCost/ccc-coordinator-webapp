@@ -6,16 +6,17 @@
     <div class="row">
         <div class="col-3 "> @* was col-lg-2 *@
             <div class="list-group" id="list-tab" role="tablist">
-                <a class="list-group-item list-group-item-action active" id="list-details-list" data-bs-toggle="list" href="#list-details" role="tab" aria-controls="list-details">Details</a>
+                
+                <a class="list-group-item list-group-item-action @( ((string)ViewData["activeTab"]) == "list-details" ? "active" : "")" id="list-details-list" data-bs-toggle="list" href="#list-details" role="tab" aria-controls="list-details">Details</a>
                 @foreach (var groupRide in Model.GroupRides)
                 {
-                    <a class="list-group-item list-group-item-action" id=@($"list-{groupRide.Id}-list") data-bs-toggle="list" href="#@($"list-{groupRide.Id}")" role="tab" aria-controls="@($"list-{groupRide.Id}")">@groupRide.RideType Ride</a>
+                    <a class="list-group-item list-group-item-action" @( ((string)ViewData["activeTab"]) == $"list-{groupRide.Id}" ? "active" : "") id=@($"list-{groupRide.Id}-list") data-bs-toggle="list" href="#@($"list-{groupRide.Id}")" role="tab" aria-controls="@($"list-{groupRide.Id}")">@groupRide.RideType Ride</a>
                 }
             </div>
         </div>
         <div class="col-9">
             <div class="tab-content" id="nav-tabContent">
-                <div class="tab-pane fade show active" id="list-details" role="tabpanel" aria-labelledby="list-details-list">
+                <div class="tab-pane fade show @( ((string)ViewData["activeTab"]) == "list-details" ? "active" : "")" id="list-details" role="tabpanel" aria-labelledby="list-details-list">
                     <div class="row">
                         <div class="col"> @* was col-6*@
                             <ul class="list-group list-group-flush">
@@ -29,7 +30,7 @@
                 </div>
                 @foreach (var groupRide in Model.GroupRides)
                 {
-                    <div class="tab-pane fade" id=@($"list-{groupRide.Id}") role="tabpanel" aria-labelledby=@($"list-{groupRide.Id}-list")>
+                    <div class="tab-pane fade" @( ((string)ViewData["activeTab"]) == $"list-{groupRide.Id}" ? "active" : "") id=@($"list-{groupRide.Id}") role="tabpanel" aria-labelledby=@($"list-{groupRide.Id}-list")>
                         <div class="row">
                             <div class="col">
                                 <ul class="list-group list-group-flush">

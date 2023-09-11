@@ -23,9 +23,10 @@ public class EventDetailsPageModel : PageModelBase
     {
     }
 
-    public async Task OnGetAsync()
+    public async Task OnGetAsync(string activeTab)
     {
         ExtraData["UserIsCoordinator"] = User.IsCoordinator();
+        ExtraData["activeTab"] = string.IsNullOrEmpty(activeTab) ? "list-details" : activeTab;
 
         try
         {
