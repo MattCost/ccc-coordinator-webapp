@@ -1,0 +1,22 @@
+@model List<CCC.Entities.GroupRide>
+
+
+<ul class="list-group list-group-flush">
+    @foreach(var ride in Model)
+    {
+        <li class="list-group-item">@Html.DisplayFor(modelItem => ride.RideType)
+
+        <ul class="list-group list-group-flush">
+
+            @foreach(var role in ride.Coordinators.Keys)
+            {
+                for( int i=0 ; i < ride.Coordinators[role].RequiredCount ; i++)
+                {
+                    var userId = (i < ride.Coordinators[role].CoordinatorIds.Count) ? ride.Coordinators[role].CoordinatorIds[i] : "";
+                    <li class="list-group-item">@Html.DisplayFor(modelItem => role) - @Html.DisplayFor(modelItem => userId, "UserId") </li>
+                }
+            }
+        </ul>
+        </li>
+    }
+</ul>

@@ -42,6 +42,7 @@ public class EventDetailsPageModel : PageModelBase
                 var coordinatorSignedUp  = RideEvent.GroupRides.Select( ride => ride.Coordinators.Values.ToList()).SelectMany( x=>x).Where( entry => entry.CoordinatorIds.Contains(User.NameIdentifier())).Any();
                 Logger.LogDebug("CoordinatorSignedUp: {coordinatorSignedUp}", coordinatorSignedUp);
                 ExtraData["signedUp"] = coordinatorSignedUp;
+                ExtraData["userDisplayNameLookup"] = RideEvent.CoordinatorDisplayNames;
             }
 
             

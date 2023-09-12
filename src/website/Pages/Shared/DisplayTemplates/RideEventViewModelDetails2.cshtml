@@ -41,17 +41,21 @@
 
                     <div class="row">
                         <div class="col">
-                            <button type="button" class="btn btn-link" onclick="printId('allCueSheets')">Print Cue
-                                Sheets</button>
+                            <button type="button" class="btn btn-link" onclick="printId('allCueSheets')">Print Cue Sheets</button> <button type="button" class="btn btn-link" onclick="printId('rolePrintout')">Print Role List</button>
                             @* everything inside this div will be invisible *@
                             <div class="print-preview">
                                 @* everything inside this div will be printed *@
                                 <div id='allCueSheets'>
                                     @Html.DisplayFor( model => routes, "EventPrintCueSheets")
                                 </div>
+                                <div id='rolePrintout'>
+                                    @Html.DisplayFor( model => model.GroupRides, "EventPrintRoleList")
+                                </div>
                             </div>
                         </div>
                     </div>
+
+
                 </div>
             @foreach (var groupRide in Model.GroupRides)
             {

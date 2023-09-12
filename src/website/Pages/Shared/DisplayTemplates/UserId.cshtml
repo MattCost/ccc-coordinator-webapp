@@ -1,0 +1,10 @@
+@model string
+@{
+    var lookupDictObject = ViewData["userDisplayNameLookup"];
+    var lookupDict = lookupDictObject == null ? new Dictionary<string, string>() : (Dictionary<string, string>) lookupDictObject;
+    
+    string displayName = string.IsNullOrEmpty(Model) ? "" : 
+        lookupDict.ContainsKey(Model) ? lookupDict[Model] : "lets go rider"; 
+}
+
+@Html.DisplayFor( model => displayName)

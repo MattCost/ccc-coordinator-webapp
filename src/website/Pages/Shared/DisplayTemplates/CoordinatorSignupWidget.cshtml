@@ -3,8 +3,8 @@
 @using CCC.Entities
 @{
     const string key = "signedUp";
-    var junk = ViewData[key];
-    var signedUp = junk == null ? false : (bool)junk;
+    object? junk = ViewData[key];
+    bool signedUp = junk == null ? false : (bool)junk;
 
 }
 @* Version 1 - List view *@
