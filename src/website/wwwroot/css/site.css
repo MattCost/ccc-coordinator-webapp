@@ -51,12 +51,19 @@ body {
   #printSection {
       display: none;
   }
+
+  .print-preview {
+    visibility: hidden;
+    display: none;
+  }
+
 }
 
 @media print {
   body * {
     visibility:hidden;
   }
+
   #printSection, #printSection * {
     visibility:visible;
   }
@@ -66,7 +73,6 @@ body {
     top:0;
   }
 }
-
 
 /* end print preview */
 

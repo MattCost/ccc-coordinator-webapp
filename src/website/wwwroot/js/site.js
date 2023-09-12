@@ -36,22 +36,53 @@ function toggleClass(id, className)
 
 function printId(id)
 {
-    printElement( document.getElementById(id))
+    console.log("Printing ", id)
+    printElement2( document.getElementById(id))
 }
 
 
 function printElement(elem) {
+    console.log("cloning dom of target element")
     var domClone = elem.cloneNode(true);
     
+    console.log("getting printSection")
     var $printSection = document.getElementById("printSection");
     
     if (!$printSection) {
+        console.log("printSection not found, creating ne div")
         var $printSection = document.createElement("div");
         $printSection.id = "printSection";
         document.body.appendChild($printSection);
     }
     
+    console.log("clear innerHTML of printSection")
     $printSection.innerHTML = "";
+    console.log("adding domClone to printSection")
     $printSection.appendChild(domClone);
+
+    console.log("calling window.print()")
     window.print();
+}
+
+
+function printElement2(elem) {
+    console.log("backing up body html")
+    var bodyBack = document.body.innerHTML;
+
+    console.log("cloning dom of target element")
+    var domClone = elem.cloneNode(true);
+    
+    console.log("creating print section")
+    var $printSection = document.createElement("div");
+    $printSection.id = "printSection";
+    document.body.innerHTML=""
+    document.body.appendChild($printSection);
+    
+    console.log("adding domClone to printSection")
+    $printSection.appendChild(domClone);
+
+    console.log("calling window.print()")
+    window.print();
+
+    document.body.innerHTML = bodyBack;
 }

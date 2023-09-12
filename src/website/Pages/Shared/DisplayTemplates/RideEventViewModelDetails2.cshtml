@@ -1,87 +1,95 @@
 @model CCC.Common.ViewModels.RideEventViewModel
 @using CCC.Common.Authorization
 
+@{
+    string activeTab = (string?)ViewData["activeTab"] ?? "list-details";
+    var rideEvent = Model.RideEvent ?? throw new Exception();
+    var routes = Model.BikeRoutes.Values.ToList();
+}
 
 <div class="container p-3 m-0">
     <div class="row">
         <div class="col-3 "> @* was col-lg-2 *@
             <div class="list-group" id="list-tab" role="tablist">
-                
-                <a class="list-group-item list-group-item-action @( ((string)ViewData["activeTab"]) == "list-details" ? "active" : "")" id="list-details-list" data-bs-toggle="list" href="#list-details" role="tab" aria-controls="list-details">Details</a>
+
+                <a class="list-group-item list-group-item-action @( activeTab == "list-details" ? "active" : "")"
+                    id="list-details-list" data-bs-toggle="list" href="#list-details" role="tab"
+                    aria-controls="list-details">Details</a>
                 @foreach (var groupRide in Model.GroupRides)
                 {
-                    <a class="list-group-item list-group-item-action" @( ((string)ViewData["activeTab"]) == $"list-{groupRide.Id}" ? "active" : "") id=@($"list-{groupRide.Id}-list") data-bs-toggle="list" href="#@($"list-{groupRide.Id}")" role="tab" aria-controls="@($"list-{groupRide.Id}")">@groupRide.RideType Ride</a>
+                    <a class="list-group-item list-group-item-action" @(activeTab == $"list-{groupRide.Id}" ? "active" :
+                    "") id=@($"list-{groupRide.Id}-list") data-bs-toggle="list" href="#@($"list-{groupRide.Id}")"
+                        role="tab" aria-controls="@($"list-{groupRide.Id}")">@groupRide.RideType Ride</a>
                 }
             </div>
         </div>
         <div class="col-9">
             <div class="tab-content" id="nav-tabContent">
-                <div class="tab-pane fade show @( ((string)ViewData["activeTab"]) == "list-details" ? "active" : "")" id="list-details" role="tabpanel" aria-labelledby="list-details-list">
+                <div class="tab-pane fade show @( activeTab == "list-details" ? "active" : "")" id="list-details"
+                    role="tabpanel" aria-labelledby="list-details-list">
                     <div class="row">
                         <div class="col"> @* was col-6*@
                             <ul class="list-group list-group-flush">
-                                <li class="list-group-item">@Html.DisplayFor(model => model.RideEvent.Name)</li>
-                                <li class="list-group-item">@Html.DisplayFor(model => model.RideEvent.Location)</li>
-                                <li class="list-group-item">@Html.DisplayFor(model => model.RideEvent.StartTime)</li>
-                                <li class="list-group-item">@Html.DisplayFor(model => model.RideEvent.Description)</li>
+                                @* <li class="list-group-item">@Html.DisplayFor(model => model.RideEvent.Name)</li> *@
+                                <li class="list-group-item">@Html.DisplayFor(model => rideEvent.Name)</li>
+                                <li class="list-group-item">@Html.DisplayFor(model => rideEvent.Location)</li>
+                                <li class="list-group-item">@Html.DisplayFor(model => rideEvent.StartTime)</li>
+                                <li class="list-group-item">@Html.DisplayFor(model => rideEvent.Description)</li>
                             </ul>
                         </div>
                     </div>
-                </div>
-                @foreach (var groupRide in Model.GroupRides)
-                {
-                    <div class="tab-pane fade" @( ((string)ViewData["activeTab"]) == $"list-{groupRide.Id}" ? "active" : "") id=@($"list-{groupRide.Id}") role="tabpanel" aria-labelledby=@($"list-{groupRide.Id}-list")>
-                        <div class="row">
-                            <div class="col">
-                                <ul class="list-group list-group-flush">
-                                    <li class="list-group-item">@Html.DisplayFor(modelItem => groupRide.RideType) Ride</li>
-                                    <li class="list-group-item">@Html.DisplayFor(modelItem => Model.BikeRoutes[groupRide.BikeRouteId], "BikeRouteLink")</li>
-                                    @* <li class="list-group-item">Route - <a asp-page="BikeRoutes/Details" asp-route-id=@groupRide.BikeRouteId>@Html.DisplayFor(modelItem => Model.BikeRoutes[groupRide.BikeRouteId].Name)</a> - @Html.DisplayFor(modelItem => Model.BikeRoutes[groupRide.BikeRouteId].Distance) miles</li> *@
-                                    <li class="list-group-item">@Html.DisplayFor(modelItem => Model.BikeRoutes[groupRide.BikeRouteId].Description)</li>
-                                    @* <li class="list-group-item">
-                                        @Html.DisplayFor(modelItem => groupRide, "CoordinatorSignupWidget")
-                                    </li> *@
-                                    @* @foreach (var coordinatorRole in groupRide.Coordinators.Keys)
-                                    {
-                                        <li class="list-group-item">
-                                            @Html.DisplayFor(modelItem => coordinatorRole) - <span class="badge @(groupRide.Coordinators[coordinatorRole].RequiredCountMet ? "bg-success" : "bg-warning") rounded-pill">@Html.DisplayFor(modelItem => groupRide.Coordinators[coordinatorRole].CoordinatorIds.Count) /
-                                                @Html.DisplayFor(modelItem => groupRide.Coordinators[coordinatorRole].RequiredCount)</span>
 
-                                            @if(User.IsCoordinator() && !groupRide.Coordinators[coordinatorRole].RequiredCountMet && !groupRide.Coordinators[coordinatorRole].CoordinatorIds.Contains(User.NameIdentifier()))
-                                            {
-                                                @(" - ") <button type="button" class="btn btn-success" onclick="signup('@coordinatorRole', '@groupRide.Id')">Signup</button>
-                                            }
-                                            @if(User.IsCoordinator() && groupRide.Coordinators[coordinatorRole].CoordinatorIds.Contains(User.NameIdentifier()))
-                                            {
-                                                @(" - ") <button type="button" class="btn btn-warning" onclick="dropout('@coordinatorRole', '@groupRide.Id')">Drop Out</button>
-                                            }
-                                        
-                                        </li>
-                                    } *@
-                                </ul>
-                            </div>
-                        </div>
-                        @if(User.IsCoordinator())
-                        {
-                            <div class="row mt-3">
-                                <div class="col">
-                                    @Html.DisplayFor(modelItem => groupRide, "CoordinatorSignupWidget")
+                    <div class="row">
+                        <div class="col">
+                            <button type="button" class="btn btn-link" onclick="printId('allCueSheets')">Print Cue
+                                Sheets</button>
+                            @* everything inside this div will be invisible *@
+                            <div class="print-preview">
+                                @* everything inside this div will be printed *@
+                                <div id='allCueSheets'>
+                                    @Html.DisplayFor( model => routes, "EventPrintCueSheets")
                                 </div>
                             </div>
-                        }
-                        <div class="row mt-5">
-                            <div class="col">
-                                @Html.DisplayFor(modelItem => Model.BikeRoutes[groupRide.BikeRouteId],"CueTableView")
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col">
-                                @Html.DisplayFor(modelItem => Model.BikeRoutes[groupRide.BikeRouteId],"CueTablePrintView")
-                            </div>                            
                         </div>
                     </div>
-                }
-            </div>
+                </div>
+            @foreach (var groupRide in Model.GroupRides)
+            {
+                <div class="tab-pane fade @( activeTab == $"list-{groupRide.Id}" ? "active" : "")"
+                    id=@($"list-{groupRide.Id}") role="tabpanel" aria-labelledby=@($"list-{groupRide.Id}-list")>
+                    <div class="row">
+                        <div class="col">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">@Html.DisplayFor(modelItem => groupRide.RideType) Ride</li>
+                                <li class="list-group-item">@Html.DisplayFor(modelItem =>
+                                Model.BikeRoutes[groupRide.BikeRouteId], "BikeRouteLink")</li>
+                                <li class="list-group-item">@Html.DisplayFor(modelItem =>
+                                Model.BikeRoutes[groupRide.BikeRouteId].Description)</li>
+
+                            </ul>
+                        </div>
+                    </div>
+                    @if (User.IsCoordinator())
+                    {
+                        <div class="row mt-3">
+                            <div class="col">
+                                @Html.DisplayFor(modelItem => groupRide, "CoordinatorSignupWidget")
+                            </div>
+                        </div>
+                    }
+                    <div class="row mt-5">
+                        <div class="col">
+                            @Html.DisplayFor(modelItem => Model.BikeRoutes[groupRide.BikeRouteId],"CueTableView")
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col">
+                            @Html.DisplayFor(modelItem => Model.BikeRoutes[groupRide.BikeRouteId],"CueTablePrintView")
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
     </div>
+</div>
 </div>
