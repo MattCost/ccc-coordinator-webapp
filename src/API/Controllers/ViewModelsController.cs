@@ -2,6 +2,7 @@ using System.Runtime.CompilerServices;
 using CCC.Common.ViewModels;
 using CCC.Entities;
 using CCC.Services.EntityProvider;
+using CCC.Services.UserProvider;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -11,8 +12,10 @@ namespace CCC.API.Controllers;
 
 public class ViewModelsController : EntityProviderBaseController
 {
-    public ViewModelsController(ILogger<EntityProviderBaseController> logger, IEntityProvider entityProvider) : base(logger, entityProvider)
+    private readonly IUserProvider _userProvider;
+    public ViewModelsController(ILogger<EntityProviderBaseController> logger, IEntityProvider entityProvider, IUserProvider userProvider) : base(logger, entityProvider)
     {
+        _userProvider = userProvider;
     }
 
     [HttpGet("RideEvents/{id:guid}")]
@@ -23,7 +26,8 @@ public class ViewModelsController : EntityProviderBaseController
         {
             RideEvent = rideEvent
         };
-
+        var allCoordinatorsTask = _userProvider.GetCoordinators();
+        
         var tasks = viewModel.RideEvent.RideIds.Select( rideId => EntityProvider.GetGroupRide(rideId)).ToList();
         await Task.WhenAll(tasks);
 
@@ -34,6 +38,11 @@ public class ViewModelsController : EntityProviderBaseController
 
         viewModel.BikeRoutes = bikeRouteTasks.Select( task => task.Result).ToList().DistinctBy( x => x.Id).ToDictionary( route => route.Id, route => route);
         
+        await allCoordinatorsTask;
+
+        //Ids we need.
+        var allIds = viewModel.GroupRides.SelectMany( ride => ride.Coordinators.Values.ToList()).SelectMany( entry => entry.CoordinatorIds).Distinct();
+        viewModel.CoordinatorDisplayNames = allCoordinatorsTask.Result.Where( user => allIds.Contains(user.UserId) ).ToList().ToDictionary( user => user.UserId, user => user.DisplayName);
         return Ok(viewModel);
     }
 }
