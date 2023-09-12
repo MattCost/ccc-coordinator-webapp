@@ -1,7 +1,9 @@
 @model CCC.Entities.GroupRide
 @using CCC.Common.Authorization
 @using CCC.Entities
-
+@{
+    var signedUp = (bool)ViewData["signedUp"];
+}
 @* Version 1 - List view *@
 @* @foreach (var coordinatorRole in Model.Coordinators.Keys)
 {
@@ -38,7 +40,7 @@
                 <td>@Html.DisplayFor(modelItem => coordinatorRole)</td>
                 <td><span class="badge @(Model.Coordinators[coordinatorRole].RequiredCountMet ? "bg-success" : "bg-warning") rounded-pill">@Html.DisplayFor(modelItem => Model.Coordinators[coordinatorRole].CoordinatorIds.Count) / @Html.DisplayFor(modelItem => Model.Coordinators[coordinatorRole].RequiredCount)</span></td>
                 <td>
-                    @if(User.IsCoordinator() && !Model.Coordinators[coordinatorRole].RequiredCountMet && !Model.Coordinators[coordinatorRole].CoordinatorIds.Contains(User.NameIdentifier()))
+                    @if(User.IsCoordinator() && !signedUp && !Model.Coordinators[coordinatorRole].RequiredCountMet && !Model.Coordinators[coordinatorRole].CoordinatorIds.Contains(User.NameIdentifier()))
                     {
                         <button type="button" class="btn btn-success" onclick="signup('@coordinatorRole', '@Model.Id')">Signup</button>
                     }

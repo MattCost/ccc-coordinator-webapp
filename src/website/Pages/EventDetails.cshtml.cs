@@ -25,7 +25,7 @@ public class EventDetailsPageModel : PageModelBase
 
     public async Task OnGetAsync(string activeTab)
     {
-        ExtraData["UserIsCoordinator"] = User.IsCoordinator();
+        // ExtraData["UserIsCoordinator"] = User.IsCoordinator();
         ExtraData["activeTab"] = string.IsNullOrEmpty(activeTab) ? "list-details" : activeTab;
 
         try
@@ -36,6 +36,15 @@ public class EventDetailsPageModel : PageModelBase
             });
             Logger.LogDebug("Result from API {Result}", result);
             RideEvent = result ?? new RideEventViewModel();
+
+            if(User.IsCoordinator())
+            {
+                var coordinatorSignedUp  = RideEvent.GroupRides.Select( ride => ride.Coordinators.Values.ToList()).SelectMany( x=>x).Where( entry => entry.CoordinatorIds.Contains(User.NameIdentifier())).Any();
+                Logger.LogDebug("CoordinatorSignedUp: {coordinatorSignedUp}", coordinatorSignedUp);
+                ExtraData["signedUp"] = coordinatorSignedUp;
+            }
+
+            
         }
         catch (Exception ex)
         {
