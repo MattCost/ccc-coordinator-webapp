@@ -46,10 +46,9 @@
 
 @* ajax version with pagination *@
 <table data-toggle="table" data-search="true" data-data-type="json" data-ajax="fetchBikeRoutes" data-pagination="true"
-  data-page-list="[1 2 5 10 25]" data-page-size="2" class="table" id="table1">
+  class="table" id="table1">
   <thead>
     <tr>
-      <th data-field="id">Route Id</th>
       <th data-field="name" data-sortable="true">Name</th>
       <th data-field="distance" data-sortable="true">Mileage</th>
       <th data-field="description">Description</th>
@@ -59,7 +58,7 @@
 </table>
 
 @* Static table version *@
-<table data-toggle="table" data-search="true" data-pagination="true" class="table" id="table2">
+@* <table data-toggle="table" data-search="true" data-pagination="true" class="table" id="table2">
   <thead>
     <tr>
       <th data-field="name" data-sortable="true">Name</th>
@@ -79,19 +78,4 @@
       </tr>
     }
   </tbody>
-</table>
-
-@* I dont remember this version *@
-@* @foreach(var route in Model.Routes)
-{
-@Html.DisplayFor(modelItem => route,"BikeRouteOverview")
-<div class="row">
-<div class="col">
-@if(User.ShowCrudOperations())
-{
-<a asp-page="Edit" asp-route-id="@route.Id">Edit</a><br>
-}
-<a asp-page="Details" asp-route-id="@route.Id">Details</a><br>
-</div>
-</div>
-} *@
+</table> *@
