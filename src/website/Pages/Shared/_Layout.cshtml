@@ -1,6 +1,27 @@
-﻿@model CCC.website.Models.PageModelBase
+﻿@* this needs to be PageModel and the error stuff needs to come from ViewData, so that MS Identity pages will work *@
+@* @model CCC.website.Models.PageModelBase *@
+@model Microsoft.AspNetCore.Mvc.RazorPages.PageModel
 @using CCC.Common.Authorization
 
+@{
+    bool DisplayCurrentError = false;
+    bool DisplayPreviousError = false;
+    string? PreviousPageErrorMessage = null;
+    string? CurrentPageErrorMessage = null;
+    string? PreviousPageAction = null;
+    string? CurrentPageAction = null;
+
+    if(Model is CCC.website.Models.PageModelBase smartModel)
+    {
+        DisplayCurrentError = smartModel.DisplayCurrentError;
+        DisplayPreviousError = smartModel.DisplayPreviousError;
+        CurrentPageErrorMessage = smartModel.CurrentPageErrorMessage;
+        CurrentPageAction = smartModel.CurrentPageAction;
+        PreviousPageErrorMessage = smartModel.PreviousPageErrorMessage;
+        PreviousPageAction = smartModel.PreviousPageAction;
+    }
+
+}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,9 +29,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - website</title>
+    @RenderSection("StyleSheets", false)
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/website.styles.css" asp-append-version="true" />
+    @RenderSection("AdditionalStyleSheets", false)
 </head>
 
 <body>
@@ -28,7 +51,7 @@
                             <a class="nav-link text-dark" asp-page="/Hello/Index">Hello</a>
                         </li>
 
-                        @if (Model.DisplayCurrentError || Model.DisplayPreviousError)
+                        @if (DisplayCurrentError || DisplayPreviousError)
                         {
                             <div class="btn-group">
                                 <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown"
@@ -36,46 +59,48 @@
                                     Error
                                 </button>
                                 <ul class="dropdown-menu">
-                                    @if (Model.DisplayCurrentError)
+                                    @if (DisplayCurrentError)
                                     {
-                                        <li class="dropdown-item">@Html.DisplayFor(model => model.CurrentPageErrorMessage)</li>
+                                        <li class="dropdown-item">@Html.DisplayFor(modelItem => CurrentPageErrorMessage)</li>
                                         <li>
                                             <hr class="dropdown-divider">
                                         </li>
-                                        <li class="dropdown-item">url: @Html.DisplayFor(model => model.CurrentPageAction)</li>
+                                        <li class="dropdown-item">url: @Html.DisplayFor(modelItem => CurrentPageAction)</li>
                                         <li>
                                             <hr class="dropdown-divider">
                                         </li>
                                     }
-                                    @if (Model.DisplayPreviousError)
+                                    @if (DisplayPreviousError)
                                     {
-                                        <li class="dropdown-item">@Html.DisplayFor(model => model.PreviousPageErrorMessage)</li>
+                                        <li class="dropdown-item">@Html.DisplayFor(modelItem => PreviousPageErrorMessage)</li>
                                         <li>
                                             <hr class="dropdown-divider">
                                         </li>
-                                        <li class="dropdown-item">url: @Html.DisplayFor(model => model.PreviousPageAction)</li>
+                                        <li class="dropdown-item">url: @Html.DisplayFor(modelItem => PreviousPageAction)</li>
                                     }
                                 </ul>
                             </div>
                         }
 
-                        @if (User.ShowCrudOperations())
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Bike Routes
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item nav-link text-dark"
+                                        asp-page="/BikeRoutes/Index">All Routes</a>
+                                </li>
+                                @if(User.ShowCrudOperations())
+                                {
+                                <li><a class="dropdown-item nav-link text-dark" asp-page="/BikeRoutes/Create">Create
+                                        New</a>
+                                </li>
+                                }
+                            </ul>
+                        </li>
+                        @if(User.ShowCrudOperations())
                         {
-
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                                    aria-expanded="false">
-                                    Bike Route
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item nav-link text-dark"
-                                            asp-page="/BikeRoutes/Index">Overview</a>
-                                    </li>
-                                    <li><a class="dropdown-item nav-link text-dark" asp-page="/BikeRoutes/Create">Create
-                                            New</a>
-                                    </li>
-                                </ul>
-                            </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                                     aria-expanded="false">

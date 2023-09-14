@@ -34,7 +34,7 @@ namespace CCC.website
             services.AddOptions();
 
             var initialScope = Configuration.GetValue<string>("API:Scope") ?? throw new Exception("API:Scope is required");
-            
+
             services.AddMicrosoftIdentityWebAppAuthentication(Configuration, Constants.AzureAdB2C)
                     //Since we only have 1 downstream scope, we can request it now. 
                     .EnableTokenAcquisitionToCallDownstreamApi(new string[] { initialScope })
@@ -58,7 +58,30 @@ namespace CCC.website
                 options.Filters.Add(new AuthorizeFilter(policy));
             }).AddMicrosoftIdentityUI();
 
-            services.AddRazorPages().AddSessionStateTempDataProvider();
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(Common.Authorization.Enums.AdminPolicy,
+                    policy => policy.RequireClaim(Common.Authorization.Enums.IsAdminClaim, new string[] { "true" }));
+
+                options.AddPolicy(Common.Authorization.Enums.CoordinatorAdminPolicy,
+                    policy => policy.RequireAssertion(context => context.User.HasClaim(c => (c.Type == Common.Authorization.Enums.IsAdminClaim || c.Type == Common.Authorization.Enums.IsCoordinatorAdminClaim) && c.Value == "true")));
+
+                options.AddPolicy(Common.Authorization.Enums.CoordinatorPolicy,
+                    policy => policy.RequireClaim(Common.Authorization.Enums.IsCoordinatorClaim, new string[] { "true" }));
+
+                options.AddPolicy(Common.Authorization.Enums.ContributorPolicy,
+                    policy => policy.RequireAssertion(context => context.User.HasClaim(c => (c.Type == Common.Authorization.Enums.IsAdminClaim || c.Type == Common.Authorization.Enums.IsContributorClaim) && c.Value == "true")));
+
+                options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+            });
+
+
+            services.AddRazorPages(option =>
+            {
+                option.Conventions.AuthorizePage("/BikeRoutes/Create", Common.Authorization.Enums.ContributorPolicy);
+                option.Conventions.AuthorizePage("/BikeRoutes/Edit", Common.Authorization.Enums.ContributorPolicy);
+            }).AddSessionStateTempDataProvider();
+
             services.AddSession();
 
             services.Configure<OpenIdConnectOptions>(Configuration.GetSection(Constants.AzureAdB2C));
@@ -89,7 +112,7 @@ namespace CCC.website
 
             app.UseStaticFiles();
             app.UseSession();
-            
+
             app.UseCookiePolicy();
 
             app.UseRouting();

@@ -1,16 +1,64 @@
 @page
 
 @model CCC.website.Pages.BikeRoutes.IndexPageModel
+@using CCC.Common.Authorization
+
 @{
-    ViewData["Title"] = "Route Listing";
+  ViewData["Title"] = "Route Listing";
 }
 
-<h3>Hello World</h3>
-@foreach(var route in Model.Routes)
+@section StyleSheets
 {
-    @Html.DisplayFor(modelItem => route,"BikeRouteOverview")
-    <div class="row">
-        <a asp-page="Edit" asp-route-id="@route.Id">Edit</a><br>
-        <a asp-page="Details" asp-route-id="@route.Id">Details</a><br>
-    </div>
-}   
+  <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.22.1/dist/bootstrap-table.min.css">
+}
+
+@section Scripts
+{
+  <script src="https://unpkg.com/bootstrap-table@1.22.1/dist/bootstrap-table.min.js"></script>
+}
+<h3>I didn't know you liked Bike Routes</h3>
+
+
+<table class="table" id="table" data-toggle="table" data-search="true">
+  <thead>
+    <tr>
+      @* <th data-field="id">Route Id</th> *@
+      <th data-sortable="true">Name</th>
+      <th data-sortable="true">Mileage</th>
+      <th>Description</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (var route in Model.Routes)
+    {
+      <tr>
+        @* <td>@Html.DisplayFor(modelItem => route.Id)</td> *@
+        <td>@Html.DisplayFor(modelItem => route.Name)</td>
+        <td>@Html.DisplayFor(modelItem => route.Distance)</td>
+        <td>@Html.DisplayFor(modelItem => route.Description)</td>
+        <td>
+          @if (User.ShowCrudOperations())
+          {
+            <a asp-page="Edit" asp-route-id="@route.Id">Edit</a>
+          }
+          <a asp-page="Details" asp-route-id="@route.Id">Details</a>
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>
+
+@* @foreach(var route in Model.Routes)
+{
+@Html.DisplayFor(modelItem => route,"BikeRouteOverview")
+<div class="row">
+<div class="col">
+@if(User.ShowCrudOperations())
+{
+<a asp-page="Edit" asp-route-id="@route.Id">Edit</a><br>
+}
+<a asp-page="Details" asp-route-id="@route.Id">Details</a><br>
+</div>
+</div>
+} *@
