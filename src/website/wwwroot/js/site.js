@@ -10,14 +10,12 @@ function signup(role, id)
 
     const event = new CustomEvent("signup", {  detail: {role: role, rideId: id }});
     document.dispatchEvent(event);
-
 }
 
 function dropout(role, id)
 {
     const event = new CustomEvent("dropout", {  detail: {role: role, rideId: id }});
     document.dispatchEvent(event);
-
 }
 
 

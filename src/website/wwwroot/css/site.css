@@ -86,6 +86,24 @@ body {
 }
 
 /*
+CCC Colors
+*/
+.ccc-green-bg {
+  background-color: var(--ccc-green);
+}
+
+.ccc-pink-bg {
+  background-color: var(--ccc-pink);
+}
+
+.ccc-green {
+  color: var(--ccc-green)
+}
+
+.ccc-pink {
+  color: var(--ccc-pink)
+}
+/*
     Classes used on the calendar to show different rides
 */
 .road-ride {
@@ -103,9 +121,7 @@ body {
   border: 1px solid var(--ccc-pink);
 }
 
-.ccc-green {
-  background-color: var(--ccc-green);
-}
+
 /* this puts a margin on any row that follows another row */
 /* .ccc-grid .row+ .row {
   margin-top: 1rem

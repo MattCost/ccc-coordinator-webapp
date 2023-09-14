@@ -36,5 +36,24 @@ namespace CCC.website.Pages.BikeRoutes
                 CurrentPageErrorMessage = ex.Message;
             }
         }
+
+        public async Task<JsonResult> OnGetFetchBikeRoutes()
+        {
+            Logger.LogTrace("Entering OnGetFetchBikeRoutes");
+            try
+            {
+                var result = await API.GetForUserAsync<List<BikeRoute>>("API", options =>
+                {
+                    options.RelativePath = "BikeRoutes";
+                });
+                Logger.LogDebug("Result from API {Result}", result);
+                return new JsonResult(result);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Exception trying to Fetch bike routes!");
+                return new JsonResult(new {});
+            }
+        } 
     }
 }

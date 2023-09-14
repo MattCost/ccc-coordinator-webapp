@@ -1,5 +1,4 @@
 @page
-
 @model CCC.website.Pages.BikeRoutes.IndexPageModel
 @using CCC.Common.Authorization
 
@@ -8,47 +7,81 @@
 }
 
 @section StyleSheets
-{
+  {
   <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.22.1/dist/bootstrap-table.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 }
 
 @section Scripts
-{
+  {
   <script src="https://unpkg.com/bootstrap-table@1.22.1/dist/bootstrap-table.min.js"></script>
+  <script src="~/js/ajax-data.js" asp-append-version="true"></script>
+
+  <script>
+    function operateFormatter(value, row, index) {
+      console.log("operateFormatter was called", { value, row, index });
+      return [
+        '<a class="favorite-route" href="javascript:void(0)" title="Like">',
+        '<i class="fa-regular fa-thumbs-up ccc-green"></i>',
+        '</a>  ',
+        '<a class="route-details" href="javascript:void(0)" title="View Route">',
+        '<i class="fa-solid fa-bicycle ccc-pink"></i>',
+        '</a>'
+      ].join('')
+    }
+
+    operateEvents = {
+      'click .favorite-route': function (e, value, row, index) {
+        alert(`Adding ${row.name} to your favorites`);
+      },
+
+      'click .route-details': function (e, value, row, index) {
+        alert(`Redirect to BikeRoutes/Details/${row.id}`);
+      }
+    }
+  </script>
+
 }
 <h3>I didn't know you liked Bike Routes</h3>
 
-
-<table class="table" id="table" data-toggle="table" data-search="true">
+@* ajax version with pagination *@
+<table data-toggle="table" data-search="true" data-data-type="json" data-ajax="fetchBikeRoutes" data-pagination="true"
+  data-page-list="[1 2 5 10 25]" data-page-size="2" class="table" id="table1">
   <thead>
     <tr>
-      @* <th data-field="id">Route Id</th> *@
-      <th data-sortable="true">Name</th>
-      <th data-sortable="true">Mileage</th>
-      <th>Description</th>
-      <th></th>
+      <th data-field="id">Route Id</th>
+      <th data-field="name" data-sortable="true">Name</th>
+      <th data-field="distance" data-sortable="true">Mileage</th>
+      <th data-field="description">Description</th>
+      <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents">Actions</th>
+    </tr>
+  </thead>
+</table>
+
+@* Static table version *@
+<table data-toggle="table" data-search="true" data-pagination="true" class="table" id="table2">
+  <thead>
+    <tr>
+      <th data-field="name" data-sortable="true">Name</th>
+      <th data-field="distance" data-sortable="true">Mileage</th>
+      <th data-field="description">Description</th>
+      <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents">Actions</th>
     </tr>
   </thead>
   <tbody>
     @foreach (var route in Model.Routes)
     {
       <tr>
-        @* <td>@Html.DisplayFor(modelItem => route.Id)</td> *@
         <td>@Html.DisplayFor(modelItem => route.Name)</td>
         <td>@Html.DisplayFor(modelItem => route.Distance)</td>
         <td>@Html.DisplayFor(modelItem => route.Description)</td>
-        <td>
-          @if (User.ShowCrudOperations())
-          {
-            <a asp-page="Edit" asp-route-id="@route.Id">Edit</a>
-          }
-          <a asp-page="Details" asp-route-id="@route.Id">Details</a>
-        </td>
+        <td></td>
       </tr>
     }
   </tbody>
 </table>
 
+@* I dont remember this version *@
 @* @foreach(var route in Model.Routes)
 {
 @Html.DisplayFor(modelItem => route,"BikeRouteOverview")
