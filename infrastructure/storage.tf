@@ -16,3 +16,8 @@ resource "azurerm_storage_table" "entities" {
   name                 = "Entities"
   storage_account_name = azurerm_storage_account.this.name
 }
+
+resource "azurerm_storage_table" "favorites" {
+  name                 = "Favorites"
+  storage_account_name = azurerm_storage_account.this.name
+}
