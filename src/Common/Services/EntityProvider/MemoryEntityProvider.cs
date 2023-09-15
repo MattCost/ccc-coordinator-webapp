@@ -10,6 +10,11 @@ public class MemoryEntityProvider : IEntityProvider
     private Dictionary<Guid, RideEvent> _rideEvents = new();
     private Dictionary<Guid, User> _coordinators = new();
 
+    public Task AddFavoriteRoute(string userId, Guid bikeRouteId)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task DeleteBikeRoute(Guid routeId)
     {      
         if(!_bikeRoutes.ContainsKey(routeId))  
@@ -73,6 +78,11 @@ public class MemoryEntityProvider : IEntityProvider
             throw new EntityNotFoundException(typeof(BikeRoute), routeId);
     }
 
+    public Task<List<Guid>> GetFavoriteRoutes(string userId)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<GroupRide> GetGroupRide(Guid rideId)
     {
         return _groupRides.ContainsKey(rideId) ? Task.FromResult(_groupRides[rideId]) :
@@ -83,6 +93,11 @@ public class MemoryEntityProvider : IEntityProvider
     {
         return _rideEvents.ContainsKey(eventId) ? Task.FromResult(_rideEvents[eventId]) :
             throw new EntityNotFoundException(typeof(RideEvent), eventId);
+    }
+
+    public Task RemoveFavoriteRoute(string userId, Guid bikeRouteId)
+    {
+        throw new NotImplementedException();
     }
 
     public Task RestoreBikeRoute(Guid routeId)

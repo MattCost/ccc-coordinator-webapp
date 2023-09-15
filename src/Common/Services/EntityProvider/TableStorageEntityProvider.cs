@@ -16,18 +16,20 @@ public class EntityProviderTableStorage : IEntityProvider
 
 
     protected readonly ISecretsManager _secretsManager;
-    private static string TableName => "Entities";
+    private static string EntitiesTable => "Entities";
+    private static string FavoritesTable => "Favorites";
 
     protected readonly ILogger<EntityProviderTableStorage> _logger;
-    protected TableClient TableClient { get; private set; }
+    protected TableClient EntitiesTableClient { get; private set; }
+    protected TableClient FavoritesTableClient { get; private set; }
     public EntityProviderTableStorage(ILogger<EntityProviderTableStorage> logger, ISecretsManager secretsManager)
     {
         _logger = logger;
         _secretsManager = secretsManager;
 
         var connectionString = _secretsManager.GetSecret("STORAGE_ACT_CONNECTION_STRING");
-        TableClient = new TableClient(connectionString, TableName);
-
+        EntitiesTableClient = new TableClient(connectionString, EntitiesTable);
+        FavoritesTableClient = new TableClient(connectionString, FavoritesTable);
     }
 
     #region PublicInterface
@@ -150,17 +152,17 @@ public class EntityProviderTableStorage : IEntityProvider
     }
     private async Task<TModel> GetEntityAsync<TModel>(string rowKey, string partitionKey) where TModel : class, new()
     {
-        _logger.LogTrace("Getting Partition:Row {Partition}:{Row} from Table {Table}", partitionKey, rowKey, TableName);
+        _logger.LogTrace("Getting Partition:Row {Partition}:{Row} from Table {Table}", partitionKey, rowKey, EntitiesTable);
         try
         {
-            var tableEntity = await TableClient.GetEntityAsync<TableEntity>(partitionKey, rowKey);
+            var tableEntity = await EntitiesTableClient.GetEntityAsync<TableEntity>(partitionKey, rowKey);
             return CreateFromTableEntity<TModel>(tableEntity);
 
         }
         catch (Azure.RequestFailedException ex) when (ex.Status == 404)
         {
-            _logger.LogWarning("Partition:Row {Partition}:{Row} not found in Table {Table}", partitionKey, rowKey, TableName);
-            throw new EntityNotFoundException($"{TableName}:{partitionKey}:{rowKey} not found");
+            _logger.LogWarning("Partition:Row {Partition}:{Row} not found in Table {Table}", partitionKey, rowKey, EntitiesTable);
+            throw new EntityNotFoundException($"{EntitiesTable}:{partitionKey}:{rowKey} not found");
         }
         catch (Azure.RequestFailedException ex) when (ex.Status == 400)
         {
@@ -217,7 +219,7 @@ public class EntityProviderTableStorage : IEntityProvider
         try
         {
             var output = new List<T>();
-            var queryResults = TableClient.QueryAsync<TableEntity>(filter: queryFilter);
+            var queryResults = EntitiesTableClient.QueryAsync<TableEntity>(filter: queryFilter);
             await foreach (var result in queryResults)
             {
                 output.Add(CreateFromTableEntity<T>(result));
@@ -227,8 +229,8 @@ public class EntityProviderTableStorage : IEntityProvider
         }
         catch (Azure.RequestFailedException ex) when (ex.Status == 404)
         {
-            _logger.LogWarning("Table {TableName} not found", TableName);
-            throw new EntityNotFoundException($"{TableName} not found");
+            _logger.LogWarning("Table {TableName} not found", EntitiesTable);
+            throw new EntityNotFoundException($"{EntitiesTable} not found");
         }
 
         catch (Azure.RequestFailedException ex) when (ex.Status == 400)
@@ -269,6 +271,7 @@ public class EntityProviderTableStorage : IEntityProvider
 
         return dict;
     }
+
     private async Task UpsertEntityAsync<TModel>(TModel model, string partitionKey, string rowKey)
     {
         _logger.LogDebug("Entering Upsert Entity. Partition Key {Partition}. Row Key {Row}", partitionKey, rowKey);
@@ -280,7 +283,7 @@ public class EntityProviderTableStorage : IEntityProvider
                 PartitionKey = partitionKey
             };
             tableEntity.Add("IsDeleted", false);
-            await TableClient.UpsertEntityAsync(tableEntity);
+            await EntitiesTableClient.UpsertEntityAsync(tableEntity);
         }
         catch (Azure.RequestFailedException ex) when (ex.Status == 404)
         {
@@ -303,7 +306,7 @@ public class EntityProviderTableStorage : IEntityProvider
     {
         try
         {
-            await TableClient.UpsertEntityAsync(
+            await EntitiesTableClient.UpsertEntityAsync(
                 new TableEntity(partitionKey, rowKey)
                 {
                     ["IsDeleted"] = true
@@ -312,8 +315,8 @@ public class EntityProviderTableStorage : IEntityProvider
         }
         catch (Azure.RequestFailedException ex) when (ex.Status == 404)
         {
-            _logger.LogWarning("Partition:Row {Partition}:{Row} not found in Table {Table}", partitionKey, rowKey, TableName);
-            throw new EntityNotFoundException($"{TableName}:{partitionKey}:{rowKey} not found");
+            _logger.LogWarning("Partition:Row {Partition}:{Row} not found in Table {Table}", partitionKey, rowKey, EntitiesTable);
+            throw new EntityNotFoundException($"{EntitiesTable}:{partitionKey}:{rowKey} not found");
         }
         catch (Azure.RequestFailedException ex) when (ex.Status == 400)
         {
@@ -331,7 +334,7 @@ public class EntityProviderTableStorage : IEntityProvider
     {
         try
         {
-            await TableClient.UpsertEntityAsync(
+            await EntitiesTableClient.UpsertEntityAsync(
                 new TableEntity(partitionKey, rowKey)
                 {
                     ["IsDeleted"] = false
@@ -339,8 +342,8 @@ public class EntityProviderTableStorage : IEntityProvider
         }
         catch (Azure.RequestFailedException ex) when (ex.Status == 404)
         {
-            _logger.LogWarning("Partition:Row {Partition}:{Row} not found in Table {Table}", partitionKey, rowKey, TableName);
-            throw new EntityNotFoundException($"{TableName}:{partitionKey}:{rowKey} not found");
+            _logger.LogWarning("Partition:Row {Partition}:{Row} not found in Table {Table}", partitionKey, rowKey, EntitiesTable);
+            throw new EntityNotFoundException($"{EntitiesTable}:{partitionKey}:{rowKey} not found");
         }
         catch (Azure.RequestFailedException ex) when (ex.Status == 400)
         {
@@ -352,6 +355,56 @@ public class EntityProviderTableStorage : IEntityProvider
             _logger.LogError(ex, "Exception");
             throw;
         }
+    }
+
+    public async Task<List<Guid>> GetFavoriteRoutes(string userId)
+    {
+        var queryFilter = $"PartitionKey eq '{userId}' and EntityType eq BikeRoute";
+        try
+        {
+            var output = new List<Guid>();
+            var queryResults = EntitiesTableClient.QueryAsync<TableEntity>(filter: queryFilter);
+            await foreach (var result in queryResults)
+            {
+                if(result.ContainsKey("BikeRouteId") && result["BikeRouteId"] is Guid bikeRouteId)
+                {
+                    output.Add(bikeRouteId);
+                }
+            }
+            _logger.LogDebug("Output has {Count} entries", output.Count);
+            return output;
+        }
+        catch (Azure.RequestFailedException ex) when (ex.Status == 404)
+        {
+            _logger.LogWarning("Table {TableName} not found", EntitiesTable);
+            throw new EntityNotFoundException($"{EntitiesTable} not found");
+        }
+
+        catch (Azure.RequestFailedException ex) when (ex.Status == 400)
+        {
+            _logger.LogError(ex, "Bad Request generated");
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception");
+            throw;
+        }
+    }
+
+    public async Task AddFavoriteRoute(string userId, Guid bikeRouteId)
+    {
+        var entry = new TableEntity(userId, bikeRouteId.ToString())
+        {
+            ["EntityType"] = "BikeRoute",
+            ["BikeRouteId"] = bikeRouteId
+        };
+        await FavoritesTableClient.UpsertEntityAsync(entry);
+    }
+
+    public async Task RemoveFavoriteRoute(string userId, Guid bikeRouteId)
+    {
+        await FavoritesTableClient.DeleteEntityAsync(userId, bikeRouteId.ToString());
     }
 
 
