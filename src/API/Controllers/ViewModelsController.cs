@@ -40,7 +40,8 @@ public class ViewModelsController : EntityProviderBaseController
         viewModel.BikeRoutes = bikeRouteTasks.Select( task => task.Result).ToList().DistinctBy( x => x.Id).ToDictionary( route => route.Id, route => new BikeRouteViewModel(route));
         
         var favorites = await EntityProvider.GetFavoriteRoutes(User.NameIdentifier());
-        favorites.ForEach( id => viewModel.BikeRoutes[id].IsFavorite = true);
+        // favorites.ForEach( id => viewModel.BikeRoutes[id].IsFavorite = true);
+        viewModel.BikeRoutes.Values.ToList().ForEach( bikeRoute => bikeRoute.IsFavorite = favorites.Contains(bikeRoute.Id));
         
         await allCoordinatorsTask;
 
