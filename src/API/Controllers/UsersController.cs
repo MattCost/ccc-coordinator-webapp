@@ -38,7 +38,7 @@ public class UsersController : ControllerBase
     }
 
 
-    [Authorize(Policy = Common.Authorization.Enums.CoordinatorAdminPolicy)]
+    [Authorize(Policy = CCC.Authorization.Enums.CoordinatorAdminPolicy)]
     [HttpGet("coordinatorAdmins")]
     public async Task<ActionResult<IEnumerable<User>>> GetCoordinatorAdmins()
     {
@@ -55,7 +55,7 @@ public class UsersController : ControllerBase
         }
     }
 
-    [Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
+    [Authorize(Policy = CCC.Authorization.Enums.AdminPolicy)]
     [HttpGet()]
     public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
     {
@@ -98,14 +98,14 @@ public class UsersController : ControllerBase
 
     #region Coordinator
 
-    [Authorize(Policy = Common.Authorization.Enums.CoordinatorAdminPolicy)]
+    [Authorize(Policy = CCC.Authorization.Enums.CoordinatorAdminPolicy)]
     [HttpPatch("{userId}/coordinator")]
     public async Task<ActionResult> AssignCoordinator(string userId)
     {
         return await UserProviderActionHelper(() => _userProvider.AssignCoordinator(userId), "Unable to assign coordinator to user");
     }
 
-    [Authorize(Policy = Common.Authorization.Enums.CoordinatorAdminPolicy)]
+    [Authorize(Policy = CCC.Authorization.Enums.CoordinatorAdminPolicy)]
     [HttpDelete("{userId}/coordinator")]
     public async Task<ActionResult> RemoveCoordinator(string userId)
     {
@@ -115,14 +115,14 @@ public class UsersController : ControllerBase
 
     #region CoordinatorAdmin
 
-    [Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
+    [Authorize(Policy = CCC.Authorization.Enums.AdminPolicy)]
     [HttpPatch("{userId}/coordinatorAdmin")]
     public async Task<ActionResult> AssignCoordinatorAdmin(string userId)
     {
         return await UserProviderActionHelper(() => _userProvider.AssignCoordinatorAdmin(userId), "Unable to assign coordinator admin to user");
     }
 
-    [Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
+    [Authorize(Policy = CCC.Authorization.Enums.AdminPolicy)]
     [HttpDelete("{userId}/coordinatorAdmin")]
     public async Task<ActionResult> RemoveCoordinatorAdmin(string userId)
     {
@@ -132,14 +132,14 @@ public class UsersController : ControllerBase
 
     #region Contributor
 
-    [Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
+    [Authorize(Policy = CCC.Authorization.Enums.AdminPolicy)]
     [HttpPatch("{userId}/contributor")]
     public async Task<ActionResult> AssignContributor(string userId)
     {
         return await UserProviderActionHelper(() => _userProvider.AssignContributor(userId), "Unable to assign contributor to user");
     }
 
-    [Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
+    [Authorize(Policy = CCC.Authorization.Enums.AdminPolicy)]
     [HttpDelete("{userId}/contributor")]
     public async Task<ActionResult> RemoveContributor(string userId)
     {
@@ -149,14 +149,14 @@ public class UsersController : ControllerBase
 
     #region Admin
 
-    [Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
+    [Authorize(Policy = CCC.Authorization.Enums.AdminPolicy)]
     [HttpPatch("{userId}/admin")]
     public async Task<ActionResult> AssignAdmin(string userId)
     {
         return await UserProviderActionHelper(() => _userProvider.AssignAdmin(userId), "Unable to assign admin from user");
     }
 
-    [Authorize(Policy = Common.Authorization.Enums.AdminPolicy)]
+    [Authorize(Policy = CCC.Authorization.Enums.AdminPolicy)]
     [HttpDelete("{userId}/admin")]
     public async Task<ActionResult> RemoveAdmin(string userId)
     {

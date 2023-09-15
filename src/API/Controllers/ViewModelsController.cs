@@ -1,5 +1,5 @@
 using System.Runtime.CompilerServices;
-using CCC.Common.ViewModels;
+using CCC.ViewModels;
 using CCC.Entities;
 using CCC.Services.EntityProvider;
 using CCC.Services.UserProvider;
@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Graph.Models;
+using CCC.Authorization;
 
 namespace CCC.API.Controllers;
 
@@ -36,7 +37,10 @@ public class ViewModelsController : EntityProviderBaseController
         var bikeRouteTasks = viewModel.GroupRides.Select( ride => EntityProvider.GetBikeRoute(ride.BikeRouteId)).ToList();
         await Task.WhenAll(bikeRouteTasks);
 
-        viewModel.BikeRoutes = bikeRouteTasks.Select( task => task.Result).ToList().DistinctBy( x => x.Id).ToDictionary( route => route.Id, route => route);
+        viewModel.BikeRoutes = bikeRouteTasks.Select( task => task.Result).ToList().DistinctBy( x => x.Id).ToDictionary( route => route.Id, route => new BikeRouteViewModel(route));
+        
+        var favorites = await EntityProvider.GetFavoriteRoutes(User.NameIdentifier());
+        favorites.ForEach( id => viewModel.BikeRoutes[id].IsFavorite = true);
         
         await allCoordinatorsTask;
 

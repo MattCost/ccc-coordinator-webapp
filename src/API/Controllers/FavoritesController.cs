@@ -1,4 +1,4 @@
-using CCC.Common.Authorization;
+using CCC.Authorization;
 using CCC.Entities;
 using CCC.Exceptions;
 using CCC.Services.EntityProvider;

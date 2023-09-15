@@ -23,7 +23,7 @@ public class GroupRidesController : EntityProviderBaseController
         return await EntityProviderActionHelper(async () => { return await EntityProvider.GetGroupRide(id); }, "Unable to get groupRide");
     }
 
-    [Authorize(Policy = Common.Authorization.Enums.ContributorPolicy)]
+    [Authorize(Policy = CCC.Authorization.Enums.ContributorPolicy)]
     [HttpPost]
     public async Task<ActionResult> Create([FromBody] GroupRideCreateModel createModel)
     {
@@ -84,21 +84,21 @@ public class GroupRidesController : EntityProviderBaseController
         return await EntityProviderActionHelper(async () => await EntityProvider.UpdateGroupRide(model), "Unable to create groupRide");
     }
 
-    [Authorize(Policy = Common.Authorization.Enums.ContributorPolicy)]
+    [Authorize(Policy = CCC.Authorization.Enums.ContributorPolicy)]
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> Delete([FromRoute] Guid id)
     {
         return await EntityProviderActionHelper(async () => await EntityProvider.DeleteGroupRide(id), "Unable to delete groupRide");
     }
 
-    [Authorize(Policy = Common.Authorization.Enums.ContributorPolicy)]
+    [Authorize(Policy = CCC.Authorization.Enums.ContributorPolicy)]
     [HttpPut("{id:guid}/restore")]
     public async Task<ActionResult> Restore([FromRoute] Guid id)
     {
         return await EntityProviderActionHelper(async () => await EntityProvider.RestoreGroupRide(id), "Unable to restore groupRide");
     }
 
-    [Authorize(Policy = Common.Authorization.Enums.CoordinatorPolicy)]
+    [Authorize(Policy = CCC.Authorization.Enums.CoordinatorPolicy)]
     [HttpPatch("{id:guid}/coordinators/{role:coordinatorRole}")]
     public async Task<ActionResult> Signup([FromRoute] Guid id, [FromRoute] CoordinatorRole role, [FromBody] string coordinatorId)
     {
@@ -114,7 +114,7 @@ public class GroupRidesController : EntityProviderBaseController
         }, "Unable to signup");
     }
 
-    [Authorize(Policy = Common.Authorization.Enums.CoordinatorPolicy)]
+    [Authorize(Policy = CCC.Authorization.Enums.CoordinatorPolicy)]
     [HttpDelete("{id:guid}/coordinators/{role:coordinatorRole}")]
     public async Task<ActionResult> DeleteSignup([FromRoute] Guid id, [FromRoute] CoordinatorRole role, [FromBody] string coordinatorId)
     {

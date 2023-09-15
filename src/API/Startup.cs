@@ -46,17 +46,17 @@ namespace CCC.API
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy(Common.Authorization.Enums.AdminPolicy,
-                    policy => policy.RequireClaim(Common.Authorization.Enums.IsAdminClaim, new string[] { "true" }));
+                options.AddPolicy(CCC.Authorization.Enums.AdminPolicy,
+                    policy => policy.RequireClaim(CCC.Authorization.Enums.IsAdminClaim, new string[] { "true" }));
 
-                options.AddPolicy(Common.Authorization.Enums.CoordinatorAdminPolicy,
-                    policy => policy.RequireAssertion( context => context.User.HasClaim( c => (c.Type == Common.Authorization.Enums.IsAdminClaim || c.Type == Common.Authorization.Enums.IsCoordinatorAdminClaim) && c.Value == "true")));
+                options.AddPolicy(CCC.Authorization.Enums.CoordinatorAdminPolicy,
+                    policy => policy.RequireAssertion( context => context.User.HasClaim( c => (c.Type == CCC.Authorization.Enums.IsAdminClaim || c.Type == CCC.Authorization.Enums.IsCoordinatorAdminClaim) && c.Value == "true")));
 
-                options.AddPolicy(Common.Authorization.Enums.CoordinatorPolicy,
-                    policy => policy.RequireClaim(Common.Authorization.Enums.IsCoordinatorClaim, new string[] { "true" }));
+                options.AddPolicy(CCC.Authorization.Enums.CoordinatorPolicy,
+                    policy => policy.RequireClaim(CCC.Authorization.Enums.IsCoordinatorClaim, new string[] { "true" }));
 
-                options.AddPolicy(Common.Authorization.Enums.ContributorPolicy,
-                    policy => policy.RequireAssertion( context => context.User.HasClaim( c => (c.Type == Common.Authorization.Enums.IsAdminClaim || c.Type == Common.Authorization.Enums.IsContributorClaim) && c.Value == "true")));
+                options.AddPolicy(CCC.Authorization.Enums.ContributorPolicy,
+                    policy => policy.RequireAssertion( context => context.User.HasClaim( c => (c.Type == CCC.Authorization.Enums.IsAdminClaim || c.Type == CCC.Authorization.Enums.IsContributorClaim) && c.Value == "true")));
 
                 options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
             });
