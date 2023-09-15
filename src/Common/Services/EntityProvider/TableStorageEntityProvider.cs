@@ -365,7 +365,7 @@ public class EntityProviderTableStorage : IEntityProvider
             throw new Exception("UserId must be provided");
         }
         
-        var queryFilter = $"PartitionKey eq '{userId}' and EntityType eq BikeRoute";
+        var queryFilter = $"PartitionKey eq '{userId}' and EntityType eq 'BikeRoute'";
         try
         {
             var output = new List<Guid>();
