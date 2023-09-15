@@ -1,3 +1,4 @@
+//todo rename to ccc.auth
 namespace CCC.Common.Authorization;
 
 public static class Enums
