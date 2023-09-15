@@ -23,12 +23,6 @@ public interface IEntityProvider
     Task RestoreRideEvent (Guid eventId);
     Task UpdateRideEvent(RideEvent rideEvent);
 
-    // Task<IEnumerable<User>> GetCoordinators();
-    // Task<IEnumerable<User>> GetCoordinatorAdmins();
-    // Task AssignCoordinator(string userId);
-    // Task RemoveCoordinator(string userId);
-    // Task AssignCoordinatorAdmin(string userId);
-    // Task RemoveCoordinatorAdmin(string userId);
     Task<List<Guid>> GetFavoriteRoutes(string userId);
     Task AddFavoriteRoute(string userId, Guid bikeRouteId);
     Task RemoveFavoriteRoute(string userId, Guid bikeRouteId);
