@@ -1,6 +1,6 @@
 @page
 @model CCC.website.Pages.BikeRoutes.IndexPageModel
-@using CCC.Common.Authorization
+@using CCC.Authorization
 
 @{
   ViewData["Title"] = "Route Listing";
@@ -20,14 +20,18 @@
   <script>
     function operateFormatter(value, row, index) {
       console.log("operateFormatter was called", { value, row, index });
-      return [
+      let output = [];
+      output.push('<a class="favorite-route" href="javascript:void(0)" title="Like">');
+      output.push('<i class="fa-regular fa-thumbs-up ccc-green"></i>');
+      output.push('</a>');
+      output.push(`<a href="BikeRoutes/Details/${row.id}" title="Details"><i class="fa-solid fa-bicycle ccc-pink"></i></a>`);
+      return output.join('');
+      @* return [
         '<a class="favorite-route" href="javascript:void(0)" title="Like">',
         '<i class="fa-regular fa-thumbs-up ccc-green"></i>',
         '</a>  ',
-        '<a class="route-details" href="javascript:void(0)" title="View Route">',
-        '<i class="fa-solid fa-bicycle ccc-pink"></i>',
-        '</a>'
-      ].join('')
+        `<a href="BikeRoutes/Details/${row.id}" title="Details"><i class="fa-solid fa-bicycle ccc-pink"></i></a>`
+      ].join('') *@
     }
 
     operateEvents = {
@@ -36,7 +40,7 @@
       },
 
       'click .route-details': function (e, value, row, index) {
-        alert(`Redirect to BikeRoutes/Details/${row.id}`);
+        location.href = `BikeRoutes/Details/${row.id}`;
       }
     }
   </script>

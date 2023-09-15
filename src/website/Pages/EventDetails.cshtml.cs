@@ -1,11 +1,11 @@
 
 using System.ComponentModel;
-using CCC.Common.ViewModels;
+using CCC.ViewModels;
 using CCC.website.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Abstractions;
 
-using CCC.Common.Authorization;
+using CCC.Authorization;
 using CCC.Entities;
 
 namespace CCC.website.Pages;
