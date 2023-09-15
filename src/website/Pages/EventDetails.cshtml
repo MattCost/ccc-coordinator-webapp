@@ -48,9 +48,12 @@
 
                 const urlParams = new URLSearchParams(window.location.search);
                 const activeTab = urlParams.get('activeTab');
-                console.log("active Tab", activeTab);
-                const triggerEl = document.querySelector(`#list-tab a[href="#${activeTab}"]`)
-                bootstrap.Tab.getInstance(triggerEl).show() // Select tab by name
+                if(activeTab != null)
+                {
+                    console.log("active Tab", activeTab);
+                    const triggerEl = document.querySelector(`#list-tab a[href="#${activeTab}"]`)
+                    bootstrap.Tab.getInstance(triggerEl).show() // Select tab by name
+                }
             }
         );
     </script>
