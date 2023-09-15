@@ -3,6 +3,7 @@ using CCC.Entities;
 using CCC.ViewModels;
 using CCC.website.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Graph.Models;
 using Microsoft.Identity.Abstractions;
 using Microsoft.Identity.Web;
 
@@ -17,48 +18,15 @@ namespace CCC.website.Pages.BikeRoutes
         {
         }
 
-        public List<BikeRoute> Routes { get; set; } = new ();
-
-        public async Task OnGetAsync()
-        {
-            try
-            {
-                var result = await API.GetForUserAsync<List<BikeRoute>>("API", options =>
-                {
-                    options.RelativePath = "BikeRoutes";
-                });
-                Logger.LogDebug("Result from API {Result}", result);
-                Routes = result ?? new();
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex, "Exception trying to get bike routes!");
-                CurrentPageAction = "OnGetAsync";
-                CurrentPageErrorMessage = ex.Message;
-            }
-        }
-
         public async Task<JsonResult> OnGetFetchBikeRoutes()
         {
             Logger.LogTrace("Entering OnGetFetchBikeRoutes");
             try
             {
-                var routes = await API.GetForUserAsync<List<BikeRoute>>("API", options =>
-                {
-                    options.RelativePath = "BikeRoutes";
+                var routes = await API.GetForUserAsync<List<BikeRouteViewModel>>("API", options => {
+                    options.RelativePath = "ViewModels/BikeRoutes";
                 });
-
-                if(routes == null) 
-                    return new JsonResult(new {});
-
-                Logger.LogDebug("Result from API {Result}", routes);
-
-                var favorites = await API.GetForUserAsync<List<Guid>>("API", options => {
-                    options.RelativePath = "Favorites/BikeRoutes";
-                });
-
-                var viewModels = routes.Select(route => new BikeRouteViewModel(route){ IsFavorite = favorites != null && favorites.Contains(route.Id)}).ToList();
-                return new JsonResult(viewModels);
+                return new JsonResult(routes);
             }
             catch (Exception ex)
             {

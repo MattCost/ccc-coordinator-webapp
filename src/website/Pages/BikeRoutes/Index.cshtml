@@ -21,48 +21,52 @@
 
   <script>
     function operateFormatter(value, row, index) {
-      console.log("operateFormatter was called", { value, row, index });
+      @* console.log("operateFormatter was called", { value, row, index }); *@
       let output = [];
 
-      if(row.isFavorite)
-      {
-        output.push('<a class="favorite-route" href="javascript:void(0)" title="Like"><i class="fa-solid fa-thumbs-up fa-xl ccc-green"></i></a>&nbsp;');
-      }
-      else 
-      {
-        output.push('<a class="add-to-favorites-route" href="javascript:void(0)" title="Like"><i class="fa-regular fa-thumbs-up fa-xl ccc-green"></i></a>&nbsp;');
-      }
-
+      output.push('<a class="toggle-favorite-route" href="javascript:void(0)" title="Favorite">');
+      favoriteText = row.isFavorite ? "fa-solid" : "fa-regular";
+      output.push(`<i class="${favoriteText} fa-thumbs-up fa-xl ccc-green"></i></a>&nbsp;`);
+  
       output.push(`<a href="BikeRoutes/Details/${row.id}" title="Details"><i class="fa-solid fa-bicycle fa-xl ccc-pink"></i></a>`);
       return output.join('');
 
     }
 
     var $table = $('#bikeRouteTable')
-    operateEvents = {
-      'click .favorite-route': function (e, value, row, index) {
+
+    function toggleFavoriteRoute(row) {
+      console.log("Toggling favorite for row", row);
+      if(row.isFavorite)
+      {
         $.ajax({
           type: "POST",
           headers: { "RequestVerificationToken": '@token' },
           url: "?handler=RemoveFavoriteRoute",
           data: { routeId: row.id}
         }).done(function (response) {
-          console.log("Remove Favorite complete");
+          @* console.log("Remove Favorite complete"); *@
           $table.bootstrapTable('refresh')
-        });        
-      },
-      
-      'click .add-to-favorites-route': function (e, value, row, index) {
+        });
+      }
+      else
+      {
         $.ajax({
           type: "POST",
           headers: { "RequestVerificationToken": '@token' },
           url: "?handler=AddFavoriteRoute",
           data: { routeId: row.id}
         }).done(function (response) {
-          console.log("Add Favorite complete");
+          @* console.log("Add Favorite complete"); *@
           $table.bootstrapTable('refresh')
-        });        
-      },      
+        });   
+      }
+    }
+
+    operateEvents = {
+      'click .toggle-favorite-route': function (e, value, row, index) {
+        toggleFavoriteRoute(row);
+      },
       
       'click .route-details': function (e, value, row, index) {
         location.href = `BikeRoutes/Details/${row.id}`;
@@ -75,6 +79,8 @@
 
 @* ajax version with pagination *@
 <table data-toggle="table" data-search="true" data-data-type="json" data-ajax="fetchBikeRoutes" data-pagination="true"
+  data-sort-name="name"
+  data-sort-order="asc"
   class="table" id="bikeRouteTable">
   <thead>
     <tr>
