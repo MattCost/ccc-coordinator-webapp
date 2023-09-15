@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using Azure.Data.Tables;
 using CCC.Entities;
+using CCC.Enums;
 using CCC.Exceptions;
 using CCC.Services.Secrets;
 using Microsoft.Extensions.Logging;
@@ -18,6 +19,7 @@ public class EntityProviderTableStorage : IEntityProvider
     protected readonly ISecretsManager _secretsManager;
     private static string EntitiesTable => "Entities";
     private static string FavoritesTable => "Favorites";
+    private static string IsDeletedFlag => "IsDeleted";
 
     protected readonly ILogger<EntityProviderTableStorage> _logger;
     protected TableClient EntitiesTableClient { get; private set; }
@@ -129,7 +131,7 @@ public class EntityProviderTableStorage : IEntityProvider
 
     private async Task<List<RideEvent>> GetRidesUsingRoute(Guid routeId)
     {
-        var queryFilter = $"PartitionKey eq '{GroupRides}' and BikeRouteId eq guid'{routeId}' and not IsDeleted";
+        var queryFilter = $"PartitionKey eq '{GroupRides}' and BikeRouteId eq guid'{routeId}' and not {IsDeletedFlag}";
 
         return await QueryHelper<RideEvent>(queryFilter);
     }
@@ -178,38 +180,14 @@ public class EntityProviderTableStorage : IEntityProvider
 
     private async Task<IEnumerable<TModel>> GetAllEntitiesAsync<TModel>(string partitionKey) where TModel : class, new()
     {
-        var queryFilter = $"PartitionKey eq '{partitionKey}' and not IsDeleted";
+        var queryFilter = $"PartitionKey eq '{partitionKey}' and not {IsDeletedFlag}";
         return await QueryHelper<TModel>(queryFilter);
-        // try
-        // {
-        //     await Task.CompletedTask;
-        //     var queryFilter = $"PartitionKey eq '{partitionKey}' and not IsDeleted";
-        //     var queryResults = TableClient.QueryAsync<TableEntity>(filter: queryFilter).ToBlockingEnumerable();
-        //     var output = queryResults.Select(CreateFromTableEntity<TModel>).ToList();
-        //     return output;
-        // }
-        // catch (Azure.RequestFailedException ex) when (ex.Status == 404)
-        // {
-        //     _logger.LogWarning("Table {TableName} not found", TableName);
-        //     throw new EntityNotFoundException($"{TableName} not found");
-        // }
-
-        // catch (Azure.RequestFailedException ex) when (ex.Status == 400)
-        // {
-        //     _logger.LogError(ex, "Bad Request generated");
-        //     throw;
-        // }
-        // catch (Exception ex)
-        // {
-        //     _logger.LogError(ex, "Exception");
-        //     throw;
-        // }
     }
 
     private async Task<List<GroupRide>> GetRidesAtEvent(Guid eventId)
     {
         _logger.LogDebug("Getting GroupRides at event {Id}", eventId);
-        var queryFilter = $"PartitionKey eq '{GroupRides}' and RideEventId eq guid'{eventId}' and not IsDeleted";
+        var queryFilter = $"PartitionKey eq '{GroupRides}' and RideEventId eq guid'{eventId}' and not {IsDeletedFlag}";
         return await QueryHelper<GroupRide>(queryFilter);
     }
 
@@ -282,7 +260,7 @@ public class EntityProviderTableStorage : IEntityProvider
                 RowKey = rowKey,
                 PartitionKey = partitionKey
             };
-            tableEntity.Add("IsDeleted", false);
+            tableEntity.Add(IsDeletedFlag, false);
             await EntitiesTableClient.UpsertEntityAsync(tableEntity);
         }
         catch (Azure.RequestFailedException ex) when (ex.Status == 404)
@@ -309,9 +287,8 @@ public class EntityProviderTableStorage : IEntityProvider
             await EntitiesTableClient.UpsertEntityAsync(
                 new TableEntity(partitionKey, rowKey)
                 {
-                    ["IsDeleted"] = true
+                    [IsDeletedFlag] = true
                 });
-            // await TableClient.DeleteEntityAsync(partitionKey, rowKey);
         }
         catch (Azure.RequestFailedException ex) when (ex.Status == 404)
         {
@@ -337,7 +314,7 @@ public class EntityProviderTableStorage : IEntityProvider
             await EntitiesTableClient.UpsertEntityAsync(
                 new TableEntity(partitionKey, rowKey)
                 {
-                    ["IsDeleted"] = false
+                    [IsDeletedFlag] = false
                 });
         }
         catch (Azure.RequestFailedException ex) when (ex.Status == 404)
@@ -365,14 +342,14 @@ public class EntityProviderTableStorage : IEntityProvider
             throw new Exception("UserId must be provided");
         }
         
-        var queryFilter = $"PartitionKey eq '{userId}' and EntityType eq 'BikeRoute'";
+        var queryFilter = $"PartitionKey eq '{userId}' and EntityType eq '{EntityTypes.BikeRoute}'";
         try
         {
             var output = new List<Guid>();
             var queryResults = FavoritesTableClient.QueryAsync<TableEntity>(filter: queryFilter);
             await foreach (var result in queryResults)
             {
-                if(result.ContainsKey("BikeRouteId") && result["BikeRouteId"] is Guid bikeRouteId)
+                if(result.ContainsKey("EntityId") && result["EntityId"] is Guid bikeRouteId)
                 {
                     output.Add(bikeRouteId);
                 }
@@ -405,14 +382,16 @@ public class EntityProviderTableStorage : IEntityProvider
         {
             throw new Exception("UserId must be provided");
         }
+        //validate route id?
         var entry = new TableEntity(userId, bikeRouteId.ToString())
         {
-            ["EntityType"] = "BikeRoute",
-            ["BikeRouteId"] = bikeRouteId
+            ["EntityType"] = EntityTypes.BikeRoute,
+            ["EntityId"] = bikeRouteId
         };
         await FavoritesTableClient.UpsertEntityAsync(entry);
     }
 
+    // If we add other favorite types, this just becomes removeFavorite OR we add entity validation to this
     public async Task RemoveFavoriteRoute(string userId, Guid bikeRouteId)
     {
         _logger.LogDebug("Entering RemoveFavoriteRoute. UserId {User} BikeRouteId {BikeRouteId}", userId, bikeRouteId);
