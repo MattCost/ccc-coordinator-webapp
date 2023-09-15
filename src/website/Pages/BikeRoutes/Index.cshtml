@@ -26,14 +26,14 @@
 
       if(row.isFavorite)
       {
-        output.push('<a class="favorite-route" href="javascript:void(0)" title="Like"><i class="fa-solid fa-thumbs-up ccc-green"></i></a>');
+        output.push('<a class="favorite-route" href="javascript:void(0)" title="Like"><i class="fa-solid fa-thumbs-up fa-xl ccc-green"></i></a>&nbsp;');
       }
       else 
       {
-        output.push('<a class="add-to-favorites-route" href="javascript:void(0)" title="Like"><i class="fa-regular fa-thumbs-up ccc-green"></i></a>');
+        output.push('<a class="add-to-favorites-route" href="javascript:void(0)" title="Like"><i class="fa-regular fa-thumbs-up fa-xl ccc-green"></i></a>&nbsp;');
       }
 
-      output.push(`<a href="BikeRoutes/Details/${row.id}" title="Details"><i class="fa-solid fa-bicycle ccc-pink"></i></a>`);
+      output.push(`<a href="BikeRoutes/Details/${row.id}" title="Details"><i class="fa-solid fa-bicycle fa-xl ccc-pink"></i></a>`);
       return output.join('');
 
     }
