@@ -4,6 +4,26 @@
     ViewData["Title"] = "Route Listing";
 }
 
-<h3>The Bike Route!</h3>
 
-@Html.DisplayFor(model => model.BikeRoute,"BikeRouteDetails")
+@* @Html.DisplayFor(model => model.BikeRoute,"BikeRouteDetails") *@
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1><span class="ccc-green">@Html.DisplayFor(model => Model.BikeRoute.Name)</span> - <span class="ccc-pink">@Model.BikeRoute.Distance miles</span></h1>
+            <div>@Html.DisplayFor(model => Model.BikeRoute.Description)</div>
+        </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col">
+            <h4>
+            Turn by Turn listing<small class="text-muted">Don't Get Lost!</small>
+            </h4>
+            @Html.DisplayFor(modelItem => Model.BikeRoute,"CueTableView")
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col">
+            @Html.DisplayFor(modelItem => Model.BikeRoute,"CueTablePrintView")
+        </div>
+    </div>
+</div>
