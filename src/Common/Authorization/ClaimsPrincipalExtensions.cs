@@ -1,6 +1,6 @@
 using System.Security.Claims;
 
-namespace CCC.Common.Authorization;
+namespace CCC.Authorization;
 
 public static class AuthorizationExtensions
 {

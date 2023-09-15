@@ -16,14 +16,14 @@ public class GraphAPIUserProvider : IUserProvider
         _graphServiceClient = graphServiceClient;
     }
 
-    private readonly string[] _userSelectParameters =  { "displayName", "id", "emails", Common.Authorization.Enums.IsCoordinatorAttribute, Common.Authorization.Enums.IsCoordinatorAdminAttribute, Common.Authorization.Enums.IsContributorAttribute, Common.Authorization.Enums.IsAdminAttribute };
+    private readonly string[] _userSelectParameters =  { "displayName", "id", "emails", CCC.Authorization.Enums.IsCoordinatorAttribute, CCC.Authorization.Enums.IsCoordinatorAdminAttribute, CCC.Authorization.Enums.IsContributorAttribute, CCC.Authorization.Enums.IsAdminAttribute };
 
     public async Task<IEnumerable<User>> GetCoordinators()
     {
         var users = await _graphServiceClient.Users.GetAsync((requestConfig) =>
         {
             requestConfig.QueryParameters.Select = _userSelectParameters;  
-            requestConfig.QueryParameters.Filter = $"{Common.Authorization.Enums.IsCoordinatorAttribute} eq true";
+            requestConfig.QueryParameters.Filter = $"{CCC.Authorization.Enums.IsCoordinatorAttribute} eq true";
         });
         if (users == null || users.Value == null) throw new Exception("cant get users");
         return users.Value.Select(user => new User { DisplayName = user.DisplayName ?? "mystery", UserId = user.Id ?? user.UserPrincipalName ?? "fuck me", AdditionalData = user.AdditionalData });
@@ -34,7 +34,7 @@ public class GraphAPIUserProvider : IUserProvider
         var users = await _graphServiceClient.Users.GetAsync((requestConfig) =>
         {
             requestConfig.QueryParameters.Select = _userSelectParameters;  
-            requestConfig.QueryParameters.Filter = $"{Common.Authorization.Enums.IsCoordinatorAdminAttribute} eq true";
+            requestConfig.QueryParameters.Filter = $"{CCC.Authorization.Enums.IsCoordinatorAdminAttribute} eq true";
         });
         if (users == null || users.Value == null) throw new Exception("cant get users");
         return users.Value.Select(user => new User { DisplayName = user.DisplayName ?? "mystery", UserId = user.Id ?? user.UserPrincipalName ?? "fuck me", AdditionalData = user.AdditionalData });
@@ -45,7 +45,7 @@ public class GraphAPIUserProvider : IUserProvider
         var users = await _graphServiceClient.Users.GetAsync((requestConfig) =>
         {
             requestConfig.QueryParameters.Select = _userSelectParameters;  
-            // requestConfig.QueryParameters.Filter = $"{Common.Authorization.Enums.IsCoordinatorAdminAttribute} eq true";
+            // requestConfig.QueryParameters.Filter = $"{CCC.Authorization.Enums.IsCoordinatorAdminAttribute} eq true";
         });
         if (users == null || users.Value == null) throw new Exception("cant get users");
         return users.Value.Select(user => new User { DisplayName = user.DisplayName ?? "mystery", UserId = user.Id ?? user.UserPrincipalName ?? "fuck me", AdditionalData = user.AdditionalData });
@@ -61,41 +61,41 @@ public class GraphAPIUserProvider : IUserProvider
 
     public async Task AssignCoordinator(string userId)
     {
-        await SetAdditionalDataAttribute(userId, Common.Authorization.Enums.IsCoordinatorAttribute, true);
+        await SetAdditionalDataAttribute(userId, CCC.Authorization.Enums.IsCoordinatorAttribute, true);
     }
 
     public async Task RemoveCoordinator(string userId)
     {
-        await SetAdditionalDataAttribute(userId, Common.Authorization.Enums.IsCoordinatorAttribute, false);
+        await SetAdditionalDataAttribute(userId, CCC.Authorization.Enums.IsCoordinatorAttribute, false);
     }
 
     public async Task AssignCoordinatorAdmin(string userId)
     {
-        await SetAdditionalDataAttribute(userId, Common.Authorization.Enums.IsCoordinatorAdminAttribute, true);
+        await SetAdditionalDataAttribute(userId, CCC.Authorization.Enums.IsCoordinatorAdminAttribute, true);
     }
 
     public async Task RemoveCoordinatorAdmin(string userId)
     {
-        await SetAdditionalDataAttribute(userId, Common.Authorization.Enums.IsCoordinatorAdminAttribute, false);
+        await SetAdditionalDataAttribute(userId, CCC.Authorization.Enums.IsCoordinatorAdminAttribute, false);
     }
 
     public async Task AssignContributor(string userId)
     {
-        await SetAdditionalDataAttribute(userId, Common.Authorization.Enums.IsContributorAttribute, true);
+        await SetAdditionalDataAttribute(userId, CCC.Authorization.Enums.IsContributorAttribute, true);
     }
 
     public async Task RemoveContributor(string userId)
     {
-        await SetAdditionalDataAttribute(userId, Common.Authorization.Enums.IsContributorAttribute, false);
+        await SetAdditionalDataAttribute(userId, CCC.Authorization.Enums.IsContributorAttribute, false);
     }
 
     public async Task AssignAdmin(string userId)
     {
-        await SetAdditionalDataAttribute(userId, Common.Authorization.Enums.IsAdminAttribute, true);
+        await SetAdditionalDataAttribute(userId, CCC.Authorization.Enums.IsAdminAttribute, true);
     }
 
     public async Task RemoveAdmin(string userId)
     {
-        await SetAdditionalDataAttribute(userId, Common.Authorization.Enums.IsAdminAttribute, false);
+        await SetAdditionalDataAttribute(userId, CCC.Authorization.Enums.IsAdminAttribute, false);
     }
 }
