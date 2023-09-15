@@ -1,5 +1,6 @@
 
 using CCC.Entities;
+using CCC.ViewModels;
 using CCC.website.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Abstractions;
@@ -42,18 +43,60 @@ namespace CCC.website.Pages.BikeRoutes
             Logger.LogTrace("Entering OnGetFetchBikeRoutes");
             try
             {
-                var result = await API.GetForUserAsync<List<BikeRoute>>("API", options =>
+                var routes = await API.GetForUserAsync<List<BikeRoute>>("API", options =>
                 {
                     options.RelativePath = "BikeRoutes";
                 });
-                Logger.LogDebug("Result from API {Result}", result);
-                return new JsonResult(result);
+
+                if(routes == null) 
+                    return new JsonResult(new {});
+
+                Logger.LogDebug("Result from API {Result}", routes);
+
+                var favorites = await API.GetForUserAsync<List<Guid>>("API", options => {
+                    options.RelativePath = "Favorites/BikeRoutes";
+                });
+
+                var viewModels = routes.Select(route => new BikeRouteViewModel(route){ IsFavorite = favorites != null && favorites.Contains(route.Id)}).ToList();
+                return new JsonResult(viewModels);
             }
             catch (Exception ex)
             {
                 Logger.LogError(ex, "Exception trying to Fetch bike routes!");
                 return new JsonResult(new {});
             }
-        } 
+        }
+
+        public async Task OnPostAddFavoriteRoute(Guid routeId)
+        {
+            Logger.LogTrace("Adding Route {RouteId} to favorites", routeId);
+            try
+            {
+                await API.PostForUserAsync("API", string.Empty, options => {
+                    options.RelativePath = $"Favorites/BikeRoutes/{routeId}";
+                });
+            }
+            catch(Exception ex)
+            {
+                Logger.LogError(ex, "Exception trying to add route to favorites");
+            }
+        }
+
+        public async Task OnPostRemoveFavoriteRoute(Guid routeId)
+        {
+            Logger.LogTrace("Removing Route {RouteId} from favorites", routeId);
+            try
+            {
+                await API.DeleteForUserAsync("API", string.Empty, options => {
+                    options.RelativePath = $"Favorites/BikeRoutes/{routeId}";
+                });
+            }
+            catch(Exception ex)
+            {
+                Logger.LogError(ex, "Exception trying to remove route from favorites");
+            }
+        }
+
+        
     }
 }

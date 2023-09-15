@@ -1,8 +1,10 @@
 @page
 @model CCC.website.Pages.BikeRoutes.IndexPageModel
 @using CCC.Authorization
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery antiforgery
 
 @{
+  var token = antiforgery.GetAndStoreTokens(HttpContext).RequestToken;
   ViewData["Title"] = "Route Listing";
 }
 
@@ -21,24 +23,47 @@
     function operateFormatter(value, row, index) {
       console.log("operateFormatter was called", { value, row, index });
       let output = [];
-      output.push('<a class="favorite-route" href="javascript:void(0)" title="Like">');
-      output.push('<i class="fa-regular fa-thumbs-up ccc-green"></i>');
-      output.push('</a>');
+
+      if(row.isFavorite)
+      {
+        output.push('<a class="favorite-route" href="javascript:void(0)" title="Like"><i class="fa-solid fa-thumbs-up ccc-green"></i></a>');
+      }
+      else 
+      {
+        output.push('<a class="add-to-favorites-route" href="javascript:void(0)" title="Like"><i class="fa-regular fa-thumbs-up ccc-green"></i></a>');
+      }
+
       output.push(`<a href="BikeRoutes/Details/${row.id}" title="Details"><i class="fa-solid fa-bicycle ccc-pink"></i></a>`);
       return output.join('');
-      @* return [
-        '<a class="favorite-route" href="javascript:void(0)" title="Like">',
-        '<i class="fa-regular fa-thumbs-up ccc-green"></i>',
-        '</a>  ',
-        `<a href="BikeRoutes/Details/${row.id}" title="Details"><i class="fa-solid fa-bicycle ccc-pink"></i></a>`
-      ].join('') *@
+
     }
 
+    var $table = $('#bikeRouteTable')
     operateEvents = {
       'click .favorite-route': function (e, value, row, index) {
-        alert(`Adding ${row.name} to your favorites`);
+        $.ajax({
+          type: "POST",
+          headers: { "RequestVerificationToken": '@token' },
+          url: "?handler=RemoveFavoriteRoute",
+          data: { routeId: row.id}
+        }).done(function (response) {
+          console.log("Remove Favorite complete");
+          $table.bootstrapTable('refresh')
+        });        
       },
-
+      
+      'click .add-to-favorites-route': function (e, value, row, index) {
+        $.ajax({
+          type: "POST",
+          headers: { "RequestVerificationToken": '@token' },
+          url: "?handler=AddFavoriteRoute",
+          data: { routeId: row.id}
+        }).done(function (response) {
+          console.log("Add Favorite complete");
+          $table.bootstrapTable('refresh')
+        });        
+      },      
+      
       'click .route-details': function (e, value, row, index) {
         location.href = `BikeRoutes/Details/${row.id}`;
       }
@@ -50,7 +75,7 @@
 
 @* ajax version with pagination *@
 <table data-toggle="table" data-search="true" data-data-type="json" data-ajax="fetchBikeRoutes" data-pagination="true"
-  class="table" id="table1">
+  class="table" id="bikeRouteTable">
   <thead>
     <tr>
       <th data-field="name" data-sortable="true">Name</th>
