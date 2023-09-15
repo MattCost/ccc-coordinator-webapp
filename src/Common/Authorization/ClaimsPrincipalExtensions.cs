@@ -30,6 +30,10 @@ public static class AuthorizationExtensions
         {
             return user.Claims.Where( c => c.Type == Enums.NameIdentifier).First().Value;
         }
+        if(user.HasClaim( c=> c.Type == "sub"))
+        {
+            return user.Claims.Where( c=> c.Type == "sub").First().Value;
+        }
         return string.Empty;
     }
 
