@@ -363,7 +363,7 @@ public class EntityProviderTableStorage : IEntityProvider
         try
         {
             var output = new List<Guid>();
-            var queryResults = EntitiesTableClient.QueryAsync<TableEntity>(filter: queryFilter);
+            var queryResults = FavoritesTableClient.QueryAsync<TableEntity>(filter: queryFilter);
             await foreach (var result in queryResults)
             {
                 if(result.ContainsKey("BikeRouteId") && result["BikeRouteId"] is Guid bikeRouteId)
