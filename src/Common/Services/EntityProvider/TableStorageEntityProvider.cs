@@ -359,6 +359,12 @@ public class EntityProviderTableStorage : IEntityProvider
 
     public async Task<List<Guid>> GetFavoriteRoutes(string userId)
     {
+        _logger.LogDebug("Entering GetFavoriteRoutes. UserId {User} ", userId);
+        if(string.IsNullOrEmpty(userId))
+        {
+            throw new Exception("UserId must be provided");
+        }
+        
         var queryFilter = $"PartitionKey eq '{userId}' and EntityType eq BikeRoute";
         try
         {
@@ -394,6 +400,11 @@ public class EntityProviderTableStorage : IEntityProvider
 
     public async Task AddFavoriteRoute(string userId, Guid bikeRouteId)
     {
+        _logger.LogDebug("Entering AddFavoriteRoute. UserId {User} BikeRouteId {BikeRouteId}", userId, bikeRouteId);
+        if(string.IsNullOrEmpty(userId))
+        {
+            throw new Exception("UserId must be provided");
+        }
         var entry = new TableEntity(userId, bikeRouteId.ToString())
         {
             ["EntityType"] = "BikeRoute",
@@ -404,6 +415,12 @@ public class EntityProviderTableStorage : IEntityProvider
 
     public async Task RemoveFavoriteRoute(string userId, Guid bikeRouteId)
     {
+        _logger.LogDebug("Entering RemoveFavoriteRoute. UserId {User} BikeRouteId {BikeRouteId}", userId, bikeRouteId);
+        if(string.IsNullOrEmpty(userId))
+        {
+            throw new Exception("UserId must be provided");
+        }
+
         await FavoritesTableClient.DeleteEntityAsync(userId, bikeRouteId.ToString());
     }
 
