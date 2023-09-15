@@ -1,7 +1,7 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Calendar";
 }
 
 
@@ -35,7 +35,7 @@
                         location.href = `EventDetails/${rides[0].id}`;
                     }
                     else {
-                        alert("opening multi-ride select modal");
+                        alert("todo open multi-ride select modal");
                     }
                 }
             });
@@ -52,10 +52,8 @@
                     dateColor: "#eb34ba",
                     ride: ride,
                     onclick(e, data) {
-        @* alert("Open modal for rideId" + data.ride.id); *@
-                            console.log(data.ride);
+                        console.log(data.ride);
                         location.href = `EventDetails/${data.ride.id}`;
-
                     }
                 })
             });
@@ -73,8 +71,5 @@
     </script>
 }
 
-<h3>Let's Go Ride Bikes!</h3>
-<div id="calendar">
-
-
-</div>
+<h3>Let's Go <span class="ccc-pink">Ride</span> <span class="ccc-green">Bikes!</span></h3>
+<div id="calendar"></div>
