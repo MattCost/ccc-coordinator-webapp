@@ -63,6 +63,21 @@
       }
     }
 
+    $('#filterByDistance').click(function () {
+      var min = document.getElementById("minDistance").value;
+      var max = document.getElementById("maxDistance").value;
+      $table.bootstrapTable('filterBy', {
+        //no filters here, just the algo
+      }, {
+        'filterAlgorithm': (row, filters) => {
+        return (row.distance >= min) && (row.distance <= max);
+      }
+      })
+    });
+
+    $('#clearDistanceFilter').click(function() {
+      $table.bootstrapTable('filterBy', { }, {'filterAlgorithm': 'and'});
+    })
     operateEvents = {
       'click .toggle-favorite-route': function (e, value, row, index) {
         toggleFavoriteRoute(row);
@@ -91,6 +106,25 @@
     </tr>
   </thead>
 </table>
+
+@* Custom Milage filters *@
+<style>
+#select {
+  width: 100px;
+  display: inline-block;
+}
+</style>
+
+<div class="toolbar">
+  Distance - 
+  <label for="minDistance">Min:</label>
+  <input type="number" id="minDistance" name="minDistance">
+  <label for="maxDistance">Min:</label>
+  <input type="number" id="maxDistance" name="maxDistance">
+  <button class="btn btn-secondary" id="filterByDistance">Filter</button>
+  <button class="btn btn-secondary" id="clearDistanceFilter">Clear</button>
+</div>
+
 
 @* Static table version *@
 @* <table data-toggle="table" data-search="true" data-pagination="true" class="table" id="table2">
