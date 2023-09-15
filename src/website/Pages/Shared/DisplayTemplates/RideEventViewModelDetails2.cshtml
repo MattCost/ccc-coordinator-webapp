@@ -3,7 +3,7 @@
 
 @{
     string activeTab = (string?)ViewData["activeTab"] ?? "list-details";
-    var rideEvent = Model.RideEvent ?? throw new Exception();
+    var rideEvent = Model.RideEvent ?? new CCC.Entities.RideEvent();
     var routes = Model.BikeRoutes.Values.ToList();
 }
 
