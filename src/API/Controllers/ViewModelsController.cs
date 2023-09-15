@@ -49,4 +49,19 @@ public class ViewModelsController : EntityProviderBaseController
         viewModel.CoordinatorDisplayNames = allCoordinatorsTask.Result.Where( user => allIds.Contains(user.UserId) ).ToList().ToDictionary( user => user.UserId, user => user.DisplayName);
         return Ok(viewModel);
     }
+
+    [HttpGet("BikeRoutes")]
+    public async Task<ActionResult<List<BikeRouteViewModel>>> GetBikeRoutes()
+    {
+        var routes = EntityProvider.GetAllBikeRoutes();
+        var favorites = EntityProvider.GetFavoriteRoutes(User.NameIdentifier());
+        
+        await Task.WhenAll(routes, favorites);
+
+        var favoriteIds = favorites.Result ?? new List<Guid>();
+
+        var output = routes.Result.Select( route => new BikeRouteViewModel(route) { IsFavorite = favoriteIds.Contains(route.Id)}).ToList();
+
+        return output;
+    }
 }
