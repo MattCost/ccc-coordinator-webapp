@@ -5,7 +5,6 @@
 }
 
 
-@* @Html.DisplayFor(model => model.BikeRoute,"BikeRouteDetails") *@
 <div class="container">
     <div class="row">
         <div class="col">
@@ -16,7 +15,7 @@
     <div class="row mt-5">
         <div class="col">
             <h4>
-            Turn by Turn listing<small class="text-muted">Don't Get Lost!</small>
+            Turn by Turn listing <small class="text-muted">Don't Get Lost!</small>
             </h4>
             @Html.DisplayFor(modelItem => Model.BikeRoute,"CueTableView")
         </div>
