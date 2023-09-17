@@ -1,9 +1,8 @@
-﻿@* this needs to be PageModel and the error stuff needs to come from ViewData, so that MS Identity pages will work *@
-@* @model CCC.website.Models.PageModelBase *@
-@model Microsoft.AspNetCore.Mvc.RazorPages.PageModel
+﻿@model Microsoft.AspNetCore.Mvc.RazorPages.PageModel
 @using CCC.Authorization
 
 @{
+    bool useCurrentNav = false;
     bool DisplayCurrentError = false;
     bool DisplayPreviousError = false;
     string? PreviousPageErrorMessage = null;
@@ -32,14 +31,16 @@
     @RenderSection("StyleSheets", false)
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    @* <link rel="stylesheet" href="~/website.styles.css" asp-append-version="true" /> *@
+    <link rel="stylesheet" href="~/website.styles.css" asp-append-version="true" />
     @RenderSection("AdditionalStyleSheets", false)
 </head>
 
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
+        @if(useCurrentNav)
+        {
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+                <div class="container">
                 <a class="navbar-brand" asp-area="" asp-page="/Index">Calendar of Rides</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -127,8 +128,71 @@
 
                     </ul>
                 </div>
-            </div>
-        </nav>
+                </div>
+            </nav>
+        }
+        else
+        {
+            @* from the example *@
+            @* <nav class="navbar navbar-expand-md bg-body-tertiary"> *@
+            @* from the template *@
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+                <div class="container"> @*was fluid*@
+                    <a class="navbar-brand" href="/Index">Calendar of Rides</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="/BikeRoutes/Index">All Routes</a>
+                            </li>
+                        @if (DisplayCurrentError || DisplayPreviousError)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Error
+                                </a>
+                                <ul class="dropdown-menu">
+                                    @if (DisplayCurrentError)
+                                    {
+                                        <li class="dropdown-item">@Html.DisplayFor(modelItem => CurrentPageErrorMessage)</li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li class="dropdown-item">url: @Html.DisplayFor(modelItem => CurrentPageAction)</li>
+                                        <li><hr class="dropdown-divider"></li>
+                                    }
+                                    @if (DisplayPreviousError)
+                                    {
+                                        <li class="dropdown-item">@Html.DisplayFor(modelItem => PreviousPageErrorMessage)</li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li class="dropdown-item">url: @Html.DisplayFor(modelItem => PreviousPageAction)</li>
+                                    }
+@* 
+                                    <li><a class="dropdown-item" href="#">error 1</a></li>
+                                    <li><a class="dropdown-item" href="#">error 2</a></li>
+                                    <li><a class="dropdown-item" href="#">error 3</a></li> *@
+                                </ul>
+                            </li>
+                        }
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Hello">API Status</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" >
+                                    Create
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="/BikeRoutes/Create">Bike Route</a></li>
+                                    <li><a class="dropdown-item" href="#">Ride Event</a></li>
+                                    <li><a class="dropdown-item" href="#">Group Ride</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            
+        }
     </header>
     <div class="container">
         <main role="main" class="pb-3">
