@@ -3,7 +3,7 @@ function fetchBikeRoutes(params)
     console.log("entering fetchBikeRoutes. ", params );
     $.ajax({
         type: "GET",
-        url: "BikeRoutes/Index?handler=FetchBikeRoutes",
+        url: "/BikeRoutes/Index?handler=FetchBikeRoutes",
         // dataType: json
     }).done(function (data) {
         console.log(data);
