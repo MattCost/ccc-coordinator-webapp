@@ -48,7 +48,7 @@ public class BikeRoutesController : EntityProviderBaseController
     
     [Authorize(Policy = CCC.Authorization.Enums.ContributorPolicy)]
     [HttpPost]
-    public async Task<ActionResult> Create([FromBody] BikeRouteCreateModel createModel)
+    public async Task<ActionResult<BikeRoute>> Create([FromBody] BikeRouteCreateModel createModel)
     {
         Logger.LogTrace("Entering Create. Model {Model}", createModel);        
         var model = new BikeRoute
@@ -58,7 +58,7 @@ public class BikeRoutesController : EntityProviderBaseController
             Description = createModel.Description,
             Distance = createModel.Distance
         };  
-        return await EntityProviderActionHelper( async () => await EntityProvider.UpdateBikeRoute(model), "Unable to create Bike Route");
+        return await EntityProviderActionHelper( async () => { await EntityProvider.UpdateBikeRoute(model); return model;}, "Unable to create Bike Route");
     }
 
     [Authorize(Policy = CCC.Authorization.Enums.ContributorPolicy)]
