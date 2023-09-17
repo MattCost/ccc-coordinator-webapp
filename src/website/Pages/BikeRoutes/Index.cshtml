@@ -28,7 +28,7 @@
       favoriteText = row.isFavorite ? "fa-solid" : "fa-regular";
       output.push(`<i class="${favoriteText} fa-thumbs-up fa-xl ccc-green"></i></a>&nbsp;`);
   
-      output.push(`<a href="BikeRoutes/Details/${row.id}" title="Details"><i class="fa-solid fa-bicycle fa-xl ccc-pink"></i></a>`);
+      output.push(`<a href="Details/${row.id}" title="Details"><i class="fa-solid fa-bicycle fa-xl ccc-pink"></i></a>`);
       return output.join('');
 
     }
