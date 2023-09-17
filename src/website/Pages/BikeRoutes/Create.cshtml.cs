@@ -20,18 +20,29 @@ namespace CCC.website.Pages.BikeRoutes
         {
             try
             {
-                await API.PostForUserAsync("API", CreateModel, options =>
+                var newModel = await API.PostForUserAsync<BikeRouteCreateModel, BikeRoute>("API", CreateModel, options =>
                 {
                     options.RelativePath = "BikeRoutes";
                 });
+
+                if(newModel is null || newModel.Id == Guid.Empty)
+                {
+                    Logger.LogError("Unable to create bikeRoute. API Returned null");
+                    PreviousPageAction = "BikeRoute/Create/OnPost";
+                    PreviousPageErrorMessage = "API returned null when trying to create route";
+                    return RedirectToPage("Index");
+                }
+
+                return RedirectToPage("Edit", new { id = newModel.Id});
             }
             catch (Exception ex)
             {
+                //todo expose actual error
                 Logger.LogError(ex, "Unable to create bikeRoute");
                 PreviousPageAction = "BikeRoute/Create/OnPost";
                 PreviousPageErrorMessage = "Error when trying to create route";
+                return RedirectToPage("Index");
             }
-            return RedirectToPage("Index");
 
         }
     }
