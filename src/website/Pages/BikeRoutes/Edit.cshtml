@@ -8,47 +8,83 @@
     ViewData["Title"] = "Edit Route Listing";
 }
 
+@section StyleSheets
+{
+  <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.22.1/dist/bootstrap-table.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+}
+
 @section Scripts
 {
-    <script>
-    function SayHello()
-    {
-        alert("hello world")
-    }
-    </script>
+  <script src="https://unpkg.com/bootstrap-table@1.22.1/dist/bootstrap-table.min.js"></script>
 }
 
 <div class="row">
     Bike Route Details
 </div>
-<div class="row">
-    @Html.DisplayFor(model => model.BikeRoute,"BikeRouteDetails")
-</div>
-<div class="row">
-    Edit Route Metadata
+<form method="post">
+    <div class="form-group">
+        @Html.LabelFor( model => Model.BikeRoute.Name)
+        @Html.EditorFor( model => Model.BikeRoute.Name, new { htmlAttributes = new { @class = "form-control", @placeholder="name"} })
+        <small id="name" class="form-text text-muted">What's the name of the route?</small>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor( model => Model.BikeRoute.Description)
+        @Html.EditorFor( model => Model.BikeRoute.Description, new { htmlAttributes = new { @class = "form-control" } })
+        <small id="desciption" class="form-text text-muted">Provide a description of the route</small>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor( model => Model.BikeRoute.Distance)
+        @Html.EditorFor( model => Model.BikeRoute.Distance, new { htmlAttributes = new { @class = "form-control" } })
+        <small id="desciption" class="form-text text-muted">How many miles?</small>
+    </div>
+    <input class="btn btn-primary" id="Submit" type="submit" value="update" />
+</form>
 
-    @using (Html.BeginForm())
-    {
-        @Html.EditorFor(model => model.BikeRoute, "BikeRoute")
-        <input id = "Submit" type = "submit" value = "submit" />
-    }
-</div>
-
-<p> </p>
-
-<div class="row">
-    Delete Bike Route?
-</div>
 <div>
-    @using (Html.BeginForm())
-    {
-        <input asp-page-handler="Delete" id = "Delete" type="submit" value = "Delete Route" />
-    }
+    <form method="post" asp-page-handler="Delete">
+        <input class="btn btn-warning" id = "Delete" type="submit" value = "Delete Route?" onclick="return confirm('Are you sure?')"/>
+    </form>
 </div>
 
 <p> </p>
 
-<div class="container">
+<div class="row">
+    <div class="col">
+        <table data-toggle="table"  data-pagination="true" class="table table-striped table-bordered table-sm" id="cueTable">
+            <thead>
+                <tr>
+                    <th data-field="operation" >Operation</th>
+                    <th data-field="street" >Street / Landmark</th>
+                    <th data-field="mile-marker" >Mile Marker</th>
+                    <th data-field="notes" >Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var cue in Model.BikeRoute.Cues)
+                {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => cue.Operation)</td>
+                    <td>@Html.DisplayFor(modelItem => cue.StreetName)</td>
+                    <td>@Html.DisplayFor(modelItem => cue.MileMarker)</td>
+                    <td>@Html.DisplayFor(modelItem => cue.Notes)</td>
+                </tr>
+                }
+            </tbody>
+        </table> 
+    </div>
+</div>
+@*
+disable all form controls
+click a row to enable them
+wait for row to lose focus
+changes are added to list of requests
+
+user hits cancle - list is deleted
+user hits save - each operation is submitted
+
+ *@
+@* <div class="container">
     Edit Route Cues
     <div class="row">
         <div class="col">
@@ -111,5 +147,5 @@
         </div>
     </form>
 </div>
-
+ *@
 
