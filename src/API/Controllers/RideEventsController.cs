@@ -27,7 +27,7 @@ public class RideEventsController : EntityProviderBaseController
 
     [Authorize(Policy = CCC.Authorization.Enums.ContributorPolicy)]
     [HttpPost]
-    public async Task<ActionResult> Create([FromBody] RideEventCreateModel createModel)
+    public async Task<ActionResult<RideEvent>> Create([FromBody] RideEventCreateModel createModel)
     {
         Logger.LogDebug("Entering Create Ride Event. Generating model");
         var model = new RideEvent
@@ -40,7 +40,7 @@ public class RideEventsController : EntityProviderBaseController
             RideIds = createModel.Rides
         };
         Logger.LogDebug("Generated Model {Json}", System.Text.Json.JsonSerializer.Serialize(model));
-        return await EntityProviderActionHelper( async () => await EntityProvider.UpdateRideEvent(model), "Unable to create Ride Event");
+        return await EntityProviderActionHelper( async () => {await EntityProvider.UpdateRideEvent(model); return model;}, "Unable to create Ride Event");
     }
 
     [Authorize(Policy = CCC.Authorization.Enums.ContributorPolicy)]

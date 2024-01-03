@@ -25,7 +25,7 @@ public class GroupRidesController : EntityProviderBaseController
 
     [Authorize(Policy = CCC.Authorization.Enums.ContributorPolicy)]
     [HttpPost]
-    public async Task<ActionResult> Create([FromBody] GroupRideCreateModel createModel)
+    public async Task<ActionResult<GroupRide>> Create([FromBody] GroupRideCreateModel createModel)
     {
         var model = new GroupRide
         {
@@ -81,7 +81,7 @@ public class GroupRidesController : EntityProviderBaseController
                 };
                 break;
         }
-        return await EntityProviderActionHelper(async () => await EntityProvider.UpdateGroupRide(model), "Unable to create groupRide");
+        return await EntityProviderActionHelper(async () => {await EntityProvider.UpdateGroupRide(model); return model;}, "Unable to create groupRide");
     }
 
     [Authorize(Policy = CCC.Authorization.Enums.ContributorPolicy)]
