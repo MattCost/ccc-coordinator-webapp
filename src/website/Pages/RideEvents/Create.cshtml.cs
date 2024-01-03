@@ -21,10 +21,19 @@ namespace CCC.website.Pages.RideEvents
             // CreateModel.StartTime = DateTime.SpecifyKind(CreateModel.StartTime, DateTimeKind.Utc);
             try
             {
-                await API.PostForUserAsync("API", CreateModel, options =>
+                var newModel = await API.PostForUserAsync<RideEventCreateModel, RideEvent>("API", CreateModel, options =>
                 {
                     options.RelativePath = "RideEvents";
                 });
+
+                if(newModel is null || newModel.Id == Guid.Empty)
+                {
+                    Logger.LogError("Unable to create RideEvent. API Returned null");
+                    PreviousPageAction = "RideEvents/Create/OnPost";
+                    PreviousPageErrorMessage = "API returned null when trying to create event";
+                    return RedirectToPage("Index");
+                }
+                //todo redirect to page where we can add groupRides to this event  (group ride create page?)
             }
             catch (Exception ex)
             {
