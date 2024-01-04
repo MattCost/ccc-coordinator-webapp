@@ -42,10 +42,20 @@ namespace CCC.website.Pages.GroupRides
         {
             try
             {
-                await API.PostForUserAsync("API", CreateModel, options =>
+                var newModel = await API.PostForUserAsync<GroupRideCreateModel, GroupRide>("API", CreateModel, options =>
                 {
                     options.RelativePath = "GroupRides";
                 });
+
+                if(newModel is null || newModel.Id == Guid.Empty)
+                {
+                    Logger.LogError("Unable to create GroupRide. API Returned null");
+                    PreviousPageAction = "GroupRides/Create/OnPost";
+                    PreviousPageErrorMessage = "API returned null when trying to create groupRide";
+                    return RedirectToPage("Index");
+                }
+                
+                //todo where to redirect to?
             }
             catch (Exception ex)
             {

@@ -1,12 +1,64 @@
 @page
 @model CCC.website.Pages.GroupRides.CreatePageModel
+@using CCC.Entities
+@using CCC.website.Models
 @{
 }
 <div class="row">
     Create a new group ride
 </div>
-@using (Html.BeginForm())
+@* @using (Html.BeginForm())
 {
-    @Html.EditorFor(model => model.CreateModel, "GroupRideCreateModel", Model.ExtraProperties)
-    <input id="Submit" type="submit" value="submit" />
-}
+@Html.EditorFor(model => model.CreateModel, "GroupRideCreateModel", Model.ExtraProperties)
+<input id="Submit" type="submit" value="submit" />
+} *@
+
+<form method="post">
+    <div class="form-group">
+        @Html.LabelFor(model => Model.CreateModel.RideType)
+        <select class="form-control" aria-placeholder="rideType" name="RideType"
+            asp-items='EnumHelper.SelectListForEnum<RideType>()'>
+            <option disabled selected value="">Select an operation </option>
+        </select>
+        <small id="rideType" class="form-text text-muted">What kind of ride?</small>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => Model.CreateModel.BikeRouteId)
+        @if (ViewData["BikeRoutes"] != null)
+        {
+            var list = (SelectList)(ViewData["BikeRoutes"] ?? new SelectList(new List<SelectListItem>(), "Value", "Text"));
+
+            <select class="form-control" aria-placeholder="bikeRouteId" id="BikeRouteId" name="BikeRouteId"
+                asp-items='list'>
+                <option value="">Select a Bike Route </option>
+            </select>
+        }
+        else
+        {
+            @Html.EditorFor(model => Model.CreateModel.BikeRouteId)
+        }
+        <small id="bikeRouteId" class="form-text text-muted">What route?</small>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => Model.CreateModel.RideEventId)
+
+        @if (ViewData["ParentEvents"] != null)
+        {
+            var list = (SelectList)(ViewData["ParentEvents"] ?? new SelectList(new List<SelectListItem>(), "Value",
+            "Text"));
+
+            <select class="form-control" aria-placeholder="rideEventId" id="RideEventId" name="RideEventId"
+                asp-items='list'>
+                <option value="">Select a parent event </option>
+            </select>
+        }
+        else
+        {
+            @Html.EditorFor(model => Model.CreateModel.RideEventId)
+        }
+        <small id="desciption" class="form-text text-muted">How many miles?</small>
+    </div>
+
+    <input class="btn btn-primary" id="Submit" type="submit" value="submit" />
+</form>
