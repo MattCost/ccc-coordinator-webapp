@@ -7,15 +7,10 @@
 <div class="row">
     Create a new group ride
 </div>
-@* @using (Html.BeginForm())
-{
-@Html.EditorFor(model => model.CreateModel, "GroupRideCreateModel", Model.ExtraProperties)
-<input id="Submit" type="submit" value="submit" />
-} *@
 
 <form method="post">
     <div class="form-group">
-        @Html.LabelFor(model => Model.CreateModel.RideType)
+        @Html.LabelFor(model => Model.CreateModel.RideType, "Ride Type")
         <select class="form-control" aria-placeholder="rideType" name="RideType"
             asp-items='EnumHelper.SelectListForEnum<RideType>()'>
             <option disabled selected value="">Select an operation </option>
@@ -23,7 +18,7 @@
         <small id="rideType" class="form-text text-muted">What kind of ride?</small>
     </div>
     <div class="form-group">
-        @Html.LabelFor(model => Model.CreateModel.BikeRouteId)
+        @Html.LabelFor(model => Model.CreateModel.BikeRouteId, "Bike Route")
         @if (Model.ExtraProperties["BikeRoutes"] != null)
         {
             var list = (SelectList)(Model.ExtraProperties["BikeRoutes"] ?? new SelectList(new List<SelectListItem>(), "Value", "Text"));
@@ -41,7 +36,7 @@
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(model => Model.CreateModel.RideEventId)
+        @Html.LabelFor(model => Model.CreateModel.RideEventId, "Event")
 
         @if (Model.ExtraProperties["ParentEvents"] != null)
         {
@@ -57,7 +52,7 @@
         {
             @Html.EditorFor(model => Model.CreateModel.RideEventId)
         }
-        <small id="desciption" class="form-text text-muted">How many miles?</small>
+        <small id="desciption" class="form-text text-muted">Which event?</small>
     </div>
 
     <input class="btn btn-primary" id="Submit" type="submit" value="submit" />
