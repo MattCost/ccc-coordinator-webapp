@@ -34,7 +34,7 @@ namespace CCC.website.Pages.GroupRides
             
             await Task.WhenAll(eventsTask, routesTask);
 
-            ExtraProperties["ParentEvents"] = new SelectList(eventsTask.Result?.Select(e => new SelectListItem { Value = e.Id.ToString(), Text = $"{e.Name} - {e.Description}" }), "Value", "Text");
+            ExtraProperties["ParentEvents"] = new SelectList(eventsTask.Result?.Select(e => new SelectListItem { Value = e.Id.ToString(), Text = $"{e.Name} - {e.StartTime} - {e.Description}" }), "Value", "Text");
             ExtraProperties["BikeRoutes"] = new SelectList( routesTask.Result?.Select( r => new SelectListItem{ Value = r.Id.ToString(), Text = $"{r.Name} - {r.Distance} miles" }), "Value", "Text");            
         }
 
