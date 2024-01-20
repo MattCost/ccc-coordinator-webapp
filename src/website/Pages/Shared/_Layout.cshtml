@@ -2,13 +2,13 @@
 @using CCC.Authorization
 
 @{
-    bool useCurrentNav = false;
     bool DisplayCurrentError = false;
     bool DisplayPreviousError = false;
     string? PreviousPageErrorMessage = null;
     string? CurrentPageErrorMessage = null;
     string? PreviousPageAction = null;
     string? CurrentPageAction = null;
+    bool showCrudOperations = false;
 
     if(Model is CCC.website.Models.PageModelBase smartModel)
     {
@@ -18,6 +18,7 @@
         CurrentPageAction = smartModel.CurrentPageAction;
         PreviousPageErrorMessage = smartModel.PreviousPageErrorMessage;
         PreviousPageAction = smartModel.PreviousPageAction;
+        showCrudOperations = User.ShowCrudOperations();
     }
 
 }
@@ -37,102 +38,6 @@
 
 <body>
     <header>
-        @if(useCurrentNav)
-        {
-            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-                <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">Calendar of Rides</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item"><a class="nav-link text-dark" asp-page="/Hello/Index">Hello</a></li>
-
-                        @if (DisplayCurrentError || DisplayPreviousError)
-                        {
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Error
-                                </button>
-                                <ul class="dropdown-menu">
-                                    @if (DisplayCurrentError)
-                                    {
-                                        <li class="dropdown-item">@Html.DisplayFor(modelItem => CurrentPageErrorMessage)</li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li class="dropdown-item">url: @Html.DisplayFor(modelItem => CurrentPageAction)</li>
-                                        <li><hr class="dropdown-divider"></li>
-                                    }
-                                    @if (DisplayPreviousError)
-                                    {
-                                        <li class="dropdown-item">@Html.DisplayFor(modelItem => PreviousPageErrorMessage)</li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li class="dropdown-item">url: @Html.DisplayFor(modelItem => PreviousPageAction)</li>
-                                    }
-                                </ul>
-                            </div>
-                        }
-
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Bike Routes
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item nav-link text-dark"
-                                        asp-page="/BikeRoutes/Index">All Routes</a>
-                                </li>
-                                @if(User.ShowCrudOperations())
-                                {
-                                <li><a class="dropdown-item nav-link text-dark" asp-page="/BikeRoutes/Create">Create
-                                        New</a>
-                                </li>
-                                }
-                            </ul>
-                        </li>
-                        @if(User.ShowCrudOperations())
-                        {
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                                    aria-expanded="false">
-                                    Group Ride
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item nav-link text-dark"
-                                            asp-page="/GroupRides/Index">Overview</a>
-                                    </li>
-                                    <li><a class="dropdown-item nav-link text-dark" asp-page="/GroupRides/Create">Create
-                                            New</a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                                    aria-expanded="false">
-                                    Ride Event
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item nav-link text-dark"
-                                            asp-page="/RideEvents/Index">Overview</a>
-                                    </li>
-                                    <li><a class="dropdown-item nav-link text-dark" asp-page="/RideEvents/Create">Create
-                                            New</a>
-                                    </li>
-                                    <li><a class="dropdown-item nav-link text-dark" asp-page="/RideEvents/ListView">List
-                                            View</a>
-                                    </li>
-                                </ul>
-                            </li>
-                        }
-
-
-                    </ul>
-                </div>
-                </div>
-            </nav>
-        }
-        else
-        {
             @* from the example *@
             @* <nav class="navbar navbar-expand-md bg-body-tertiary"> *@
             @* from the template *@
@@ -177,6 +82,8 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="/Hello">API Status</a>
                             </li>
+                        @if(showCrudOperations)
+                        {
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" >
                                     Create
@@ -187,12 +94,11 @@
                                     <li><a class="dropdown-item" href="/GroupRides/Create">Group Ride</a></li>
                                 </ul>
                             </li>
+                        }
                         </ul>
                     </div>
                 </div>
             </nav>
-            
-        }
     </header>
     <div class="container">
         <main role="main" class="pb-3">
