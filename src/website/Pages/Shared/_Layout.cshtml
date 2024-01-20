@@ -9,6 +9,7 @@
     string? PreviousPageAction = null;
     string? CurrentPageAction = null;
     bool showCrudOperations = false;
+    bool showUserAdminOperations = false;
 
     if(Model is CCC.website.Models.PageModelBase smartModel)
     {
@@ -19,6 +20,7 @@
         PreviousPageErrorMessage = smartModel.PreviousPageErrorMessage;
         PreviousPageAction = smartModel.PreviousPageAction;
         showCrudOperations = User.ShowCrudOperations();
+        showUserAdminOperations = User.IsAdmin() || User.IsCoordinatorAdmin();
     }
 
 }
@@ -92,6 +94,18 @@
                                     <li><a class="dropdown-item" href="/BikeRoutes/Create">Bike Route</a></li>
                                     <li><a class="dropdown-item" href="/RideEvents/Create">Ride Event</a></li>
                                     <li><a class="dropdown-item" href="/GroupRides/Create">Group Ride</a></li>
+                                </ul>
+                            </li>
+                        }
+                        @if(showUserAdminOperations)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" >
+                                    User Admin
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="/Users/Index">User Index</a></li>
+                                    <li><a class="dropdown-item" href="/Users/Index">User Index</a></li>
                                 </ul>
                             </li>
                         }
