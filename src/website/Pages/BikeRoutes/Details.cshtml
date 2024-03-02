@@ -1,5 +1,7 @@
 @page "{id:guid}"
 @model CCC.website.Pages.BikeRoutes.DetailsPageModel
+@using CCC.Authorization
+
 @{
     ViewData["Title"] = "Route Listing";
 }
@@ -12,6 +14,14 @@
             <div>@Html.DisplayFor(model => Model.BikeRoute.Description)</div>
         </div>
     </div>
+    @if(User.ShowCrudOperations())
+    {
+    <div class="row">
+        <div class="col">
+            <a asp-page="Edit" asp-route-id=@Model.BikeRoute.Id>Edit</a>
+        </div>
+    </div>
+    }
     <div class="row mt-5">
         <div class="col">
             <h4>
