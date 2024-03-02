@@ -50,41 +50,7 @@
     <input class="btn btn-warning" id="Delete" type="submit" value="Delete Route" asp-page-handler="Delete"
         onclick="return confirm('Are you sure you want to Delete the route?')" />    
 </form>
-
-@* <div>
-    <form method="post" asp-page-handler="Delete">
-        <input class="btn btn-warning" id="Delete" type="submit" value="Delete Route?"
-            onclick="return confirm('Are you sure?')" />
-    </form>
-</div> *@
-
-@* <p> </p>
-    <div class="row">
-        <div class="col">
-            <table data-toggle="table" data-pagination="true" class="table table-striped table-bordered table-sm" id="cueTable">
-                <thead>
-                    <tr>
-                        <th data-field="Metaoperation">Operation</th>
-                        <th data-field="Metastreet">Street / Landmark</th>
-                        <th data-field="Metamile-marker">Mile Marker</th>
-                        <th data-field="Metanotes">Notes</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var cue in Model.BikeRoute.Cues)
-                    {
-                        <tr>
-                            <td>@Html.DisplayFor(modelItem => cue.Operation)</td>
-                            <td>@Html.DisplayFor(modelItem => cue.StreetName)</td>
-                            <td>@Html.DisplayFor(modelItem => cue.MileMarker)</td>
-                            <td>@Html.DisplayFor(modelItem => cue.Notes)</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <p></p> *@
+ <p> </p>
 
 <form method="post">
     @Html.HiddenFor(model => Model.BikeRoute.Id)
@@ -107,8 +73,8 @@
                     <tr>
                         <td>
                             <div class="form-group">
-                                <select class="form-control" aria-placeholder="CueOperation" name=@($"BikeRoute.Cues[{i}].Operation") id=@($"BikeRoute_Cues_{i}__Operation") asp-items='EnumHelper.SelectListForEnum<CCC.Enums.CueOperation>()'>
-                                    <option selected value="@Model.BikeRoute.Cues[i].Operation">@Model.BikeRoute.Cues[i].Operation</option>
+                                <select class="form-control" aria-placeholder="CueOperation" name=@($"BikeRoute.Cues[{i}].Operation") id=@($"BikeRoute_Cues_{i}__Operation") asp-items='EnumHelper.SelectListForEnum_Selected<CCC.Enums.CueOperation>(@Model.BikeRoute.Cues[i].Operation)'>
+                                    @* <option selected value="@Model.BikeRoute.Cues[i].Operation">@Model.BikeRoute.Cues[i].Operation</option> *@
                                 </select>
                             </div>
                         </td>

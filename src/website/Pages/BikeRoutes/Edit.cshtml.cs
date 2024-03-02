@@ -111,7 +111,7 @@ namespace CCC.website.Pages.BikeRoutes
         {
             Logger.LogDebug("Entering OnPostAddCueRow");
             Logger.LogDebug("BikeRoute Json {Json}", JsonSerializer.Serialize(BikeRoute));
-            BikeRoute.Cues.Add(new CueEntry { StreetName = "_new_", Notes = "_new_"});
+            BikeRoute.Cues.Add(new CueEntry());
             ModelState.Clear();
 
         }
@@ -120,11 +120,10 @@ namespace CCC.website.Pages.BikeRoutes
         {
             Logger.LogDebug("Entering OnPostInsertCueRow Index {Index}", cueIndex);
             Logger.LogDebug("BikeRoute Json {Json}", JsonSerializer.Serialize(BikeRoute));
-            // Logger.LogDebug("ModelState keys {Keys}", JsonSerializer.Serialize(ModelState.Keys));
             if(cueIndex < BikeRoute.Cues.Count)
             {
                 Logger.LogDebug("Inserting cue at Index {Index}", cueIndex);
-                BikeRoute.Cues.Insert(cueIndex, new CueEntry { StreetName = "_new_", Notes = "_new_"});
+                BikeRoute.Cues.Insert(cueIndex, new CueEntry());
                 ModelState.Clear();
             }
             Logger.LogDebug("BikeRoute Json {Json}", JsonSerializer.Serialize(BikeRoute));
@@ -138,30 +137,6 @@ namespace CCC.website.Pages.BikeRoutes
             });
             return RedirectToPage("Index");
         }
-
-        // public async Task<IActionResult> OnPostAddCueRow()
-        // {
-        //     Logger.LogTrace("Entering  OnPostAddCueRow");
-        //     await API.PostForUserAsync("API", CueRow, options => { options.RelativePath = $"BikeRoutes/{Id}/cues";});
-        //     // return RedirectToPage();
-        //     return new EmptyResult();
-        // }
-
-        // public async Task<IActionResult> OnPostDeleteCueRow(int index)
-        // {
-        //     Logger.LogTrace("Entering OnPostDeleteCueRow");
-        //     await API.DeleteForUserAsync("API", string.Empty, options => { options.RelativePath = $"BikeRoutes/{Id}/cues/{index}"; });
-        //     // return RedirectToPage();
-        //     return new EmptyResult();
-        // }
-
-        // public async Task<IActionResult> OnPostInsertCueRow(int index = 0)
-        // {
-        //     Logger.LogTrace("Entering OnPostInsertCueRow");
-        //     await API.PatchForUserAsync("API", CueRow, options => { options.RelativePath = $"BikeRoutes/{Id}/cues/{index}";});
-        //     // return RedirectToPage();
-        //     return new EmptyResult();
-        // }
 
     }
 }

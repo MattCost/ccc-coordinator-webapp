@@ -6,43 +6,45 @@ namespace CCC.Enums;
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum CueOperation
 {
-    [CueOperationPrintAttribute("a")]
-    StartRoute = 0,
+    [CueOperationPrintAttribute(" ")]
+    Default = 0,
+    [CueOperationPrintAttribute("Α")]
+    StartRoute = 1,
 
     [CueOperationPrintAttribute("L")]
-    Left = 1,
+    Left = 2,
 
     [CueOperationPrintAttribute("R")]
-    Right = 2,
+    Right = 3,
 
-    [CueOperationPrintAttribute("X")]
-    Cross = 3,
+    [CueOperationPrintAttribute("x")]
+    Cross = 4,
 
-    [CueOperationPrintAttribute("S")]
-    Straight = 4,
+    [CueOperationPrintAttribute("s")]
+    Straight = 5,
 
     [CueOperationPrintAttribute("L@")]
-    LeftAt = 5,
+    LeftAt = 6,
 
     [CueOperationPrintAttribute("R@")]
-    RightAt = 6,
+    RightAt = 7,
 
-    [CueOperationPrintAttribute("sL")]
-    SlightLeft = 7,
+    [CueOperationPrintAttribute("l")]
+    SlightLeft = 8,
 
-    [CueOperationPrintAttribute("sR")]
-    SlightRight = 8,
+    [CueOperationPrintAttribute("r")]
+    SlightRight = 9,
 
     [CueOperationPrintAttribute("(L)")]
-    LeftCircle = 9,
+    LeftCircle = 10,
 
     [CueOperationPrintAttribute("(R)")]
-    RightCircle = 10,
+    RightCircle = 11,
 
     [CueOperationPrintAttribute("(S)")]
-    StraightCircle = 11,
-    [CueOperationPrintAttribute("z")]
-    EndRoute = 12
+    StraightCircle = 12,
+    [CueOperationPrintAttribute("Ω")]
+    EndRoute = 13
 }
 
 [System.AttributeUsage(System.AttributeTargets.Field)]
