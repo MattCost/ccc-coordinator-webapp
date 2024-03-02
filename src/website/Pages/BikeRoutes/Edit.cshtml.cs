@@ -101,6 +101,7 @@ namespace CCC.website.Pages.BikeRoutes
             {
                 Logger.LogDebug("Removing cue at Index {Index}", cueIndex);
                 BikeRoute.Cues.RemoveAt(cueIndex);
+                ModelState.Remove(nameof(BikeRoute));
             }
             Logger.LogDebug("BikeRoute Json {Json}", JsonSerializer.Serialize(BikeRoute));
 
@@ -108,14 +109,12 @@ namespace CCC.website.Pages.BikeRoutes
 
 
         
-        public async Task<IActionResult> OnPostAddCueRowAsync()
+        public void OnPostAddCueRow()
         {
-            await Task.CompletedTask;
             Logger.LogDebug("Entering OnPostAddCueRow");
-            // issue 1 - this json is showing we lost all the Operations, but the rest of the data is correct
             Logger.LogDebug("BikeRoute Json {Json}", JsonSerializer.Serialize(BikeRoute));
             BikeRoute.Cues.Add(new CueEntry { StreetName = "_new_", Notes = "_new_"});
-            Logger.LogDebug("BikeRoute Json {Json}", JsonSerializer.Serialize(BikeRoute));
+            ModelState.Remove(nameof(BikeRoute));
             return Page();
             // redirect to myself, with the model binding param?
             // return RedirectToPage(new {Id, BikeRoute});
@@ -129,6 +128,8 @@ namespace CCC.website.Pages.BikeRoutes
             {
                 Logger.LogDebug("Inserting cue at Index {Index}", cueIndex);
                 BikeRoute.Cues.Insert(cueIndex, new CueEntry { StreetName = "_new_", Notes = "_new_"});
+                ModelState.Remove(nameof(BikeRoute));
+
            
 
             }
