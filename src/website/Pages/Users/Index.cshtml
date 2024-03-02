@@ -5,7 +5,19 @@
     ViewData["Title"] = "User Management";
 }
 
+@if(Model.ShowAdminSection)
+{
 <h3>Hello Admin</h3>
     <div class="row">
-        //todo
+        Placeholder for CoordinatorAdmin Assignments
     </div>
+}
+
+@if(Model.ShowCoordinatorAdminSection || Model.ShowAdminSection)
+{
+<h3>Hello Coordinator Admin</h3>
+    <div class="row">
+        Placeholder for Coordinator Assignments
+    </div>
+    
+}
