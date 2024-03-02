@@ -1,7 +1,9 @@
 using System.Reflection;
+using System.Text.Json.Serialization;
 
 namespace CCC.Enums;
 
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum CueOperation
 {
     [CueOperationPrintAttribute("a")]
