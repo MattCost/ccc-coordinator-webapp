@@ -46,15 +46,17 @@
         @Html.EditorFor(model => Model.BikeRoute.Distance, new { htmlAttributes = new { @class = "form-control" } })
         <small id="desciption" class="form-text text-muted">How many miles?</small>
     </div>
-    <input class="btn btn-primary" id="Submit" type="submit" value="update" />
+    <input class="btn btn-primary" id="Submit" type="submit" value="Update Details" />
+    <input class="btn btn-warning" id="Delete" type="submit" value="Delete Route" asp-page-handler="Delete"
+        onclick="return confirm('Are you sure you want to Delete the route?')" />    
 </form>
 
-<div>
+@* <div>
     <form method="post" asp-page-handler="Delete">
         <input class="btn btn-warning" id="Delete" type="submit" value="Delete Route?"
             onclick="return confirm('Are you sure?')" />
     </form>
-</div>
+</div> *@
 
 @* <p> </p>
     <div class="row">
@@ -144,9 +146,9 @@
         </tbody>
     </table>
 
-    <input class="btn btn-primary" id="Save" type="submit" value="Save Changes" asp-page-handler="SaveCueChanges"
+    <input class="btn btn-primary" id="Save" type="submit" value="Save Cues" asp-page-handler="SaveCueChanges"
         onclick="return confirm('Are you sure?')" />
-    <input class="btn btn-warning" id="Discard" type="submit" value="Discard Changes" asp-page-handler="DiscardCueChanges"
+    <input class="btn btn-warning" id="Discard" type="submit" value="Discard Cue Changes" asp-page-handler="DiscardCueChanges"
         onclick="return confirm('Are you sure?')" />
 </form>
 @*
