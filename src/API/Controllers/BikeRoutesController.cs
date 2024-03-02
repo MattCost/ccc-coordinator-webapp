@@ -77,12 +77,46 @@ public class BikeRoutesController : EntityProviderBaseController
         return await EntityProviderActionHelper( async () => await EntityProvider.RestoreBikeRoute(id), "Unable to restore bike route");
     }
 
+    /*
+        Create (end)        POST id/cues - adds a single cue to the end
+        Create (insert)     POST id/cues/index - adds a single cue at the specified index. 
+        Delete              DELETE id/cues/index - deletes a single cue at the specified index
+        Update              PUT id/cues/index - updates a single cue at the specified index
+        Update              PUT id/cues - replaces all cues on model
+
+    */
+
     [Authorize(Policy = CCC.Authorization.Enums.ContributorPolicy)]
     [HttpPost("{id:guid}/cues")]
     public async Task<ActionResult> AddCue([FromRoute] Guid id, [FromBody] CueEntry cueEntry)
     {
         var model = await EntityProvider.GetBikeRoute(id);
         model.Cues.Add(cueEntry);
+        await EntityProvider.UpdateBikeRoute(model);
+        return Ok();
+    }
+
+    [Authorize(Policy = CCC.Authorization.Enums.ContributorPolicy)]
+    [HttpPost("{id:guid}/cues/{index:int}")]
+    public async Task<ActionResult> InsertCue([FromRoute] Guid id, [FromRoute] int index, [FromBody] CueEntry cue)
+    {
+        var model = await EntityProvider.GetBikeRoute(id);
+        if(index > model.Cues.Count)
+        {
+            return BadRequest("index is out of range");
+        }
+
+        model.Cues.Insert(index, cue);
+        await EntityProvider.UpdateBikeRoute(model);
+        return Ok();
+    }
+
+    [Authorize(Policy = CCC.Authorization.Enums.ContributorPolicy)]
+    [HttpPut("{id:guid}/cues")]
+    public async Task<ActionResult> ReplaceAllCue([FromRoute] Guid id, [FromBody] List<CueEntry> cues)
+    {
+        var model = await EntityProvider.GetBikeRoute(id);
+        model.Cues = cues;
         await EntityProvider.UpdateBikeRoute(model);
         return Ok();
     }
@@ -102,16 +136,15 @@ public class BikeRoutesController : EntityProviderBaseController
     }
 
     [Authorize(Policy = CCC.Authorization.Enums.ContributorPolicy)]
-    [HttpPatch("{id:guid}/cues/{index:int}")]
-    public async Task<ActionResult> InsertCue([FromRoute] Guid id, [FromRoute] int index, [FromBody] CueEntry cue)
+    [HttpPut("{id:guid}/cues/{index:int}")]
+    public async Task<ActionResult> UpdateCue([FromRoute] Guid id, [FromRoute] int index, [FromBody] CueEntry cue)
     {
         var model = await EntityProvider.GetBikeRoute(id);
         if(index > model.Cues.Count)
         {
             return BadRequest("index is out of range");
         }
-
-        model.Cues.Insert(index, cue);
+        model.Cues[index] = cue;
         await EntityProvider.UpdateBikeRoute(model);
         return Ok();
     }
