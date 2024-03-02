@@ -61,17 +61,27 @@ coordinator admin page to let admins assign coordinator role to others
 
 CSS Styling on the entire app!
 
+Create Pages
+    Bike Route
+    Ride Event
+    Group Ride
+
+    need to make ride event deal with more type
+    Add template for Wednesday night road ride
+    add template for wednesday night mtb race
+
+
+
 views for riders vs coordinators
-    public access for riders?
+    riders don't see Role list
+    riders don't see signup section
+
     allow anon access to view rides?
+    
     view model returned has different data based on user
 
-bottom of cue list - "print this cue sheet"
 
-overall "print cue sheets"
-
-cue operations need some attributes so we can get those for printing.
-Left => L
-Left at => L @
-Cross => X 
-etc
+Need a user management page
+    Admins - can assign CoordinatorAdmin / Contributor
+    CoordinatorAdmin - can assign Coordinator
+    
