@@ -101,40 +101,35 @@ namespace CCC.website.Pages.BikeRoutes
             {
                 Logger.LogDebug("Removing cue at Index {Index}", cueIndex);
                 BikeRoute.Cues.RemoveAt(cueIndex);
-                ModelState.Remove(nameof(BikeRoute));
+                ModelState.Clear();
             }
             Logger.LogDebug("BikeRoute Json {Json}", JsonSerializer.Serialize(BikeRoute));
 
         }
 
-
-        
         public void OnPostAddCueRow()
         {
             Logger.LogDebug("Entering OnPostAddCueRow");
             Logger.LogDebug("BikeRoute Json {Json}", JsonSerializer.Serialize(BikeRoute));
             BikeRoute.Cues.Add(new CueEntry { StreetName = "_new_", Notes = "_new_"});
-            ModelState.Remove(nameof(BikeRoute));
-            return Page();
-            // redirect to myself, with the model binding param?
-            // return RedirectToPage(new {Id, BikeRoute});
+            ModelState.Clear();
+
         }
 
         public void OnPostInsertCueRow(int cueIndex)
         {
             Logger.LogDebug("Entering OnPostInsertCueRow Index {Index}", cueIndex);
             Logger.LogDebug("BikeRoute Json {Json}", JsonSerializer.Serialize(BikeRoute));
+            // Logger.LogDebug("ModelState keys {Keys}", JsonSerializer.Serialize(ModelState.Keys));
             if(cueIndex < BikeRoute.Cues.Count)
             {
                 Logger.LogDebug("Inserting cue at Index {Index}", cueIndex);
                 BikeRoute.Cues.Insert(cueIndex, new CueEntry { StreetName = "_new_", Notes = "_new_"});
-                ModelState.Remove(nameof(BikeRoute));
-
-           
-
+                ModelState.Clear();
             }
             Logger.LogDebug("BikeRoute Json {Json}", JsonSerializer.Serialize(BikeRoute));
         }
+
         public async Task<IActionResult> OnPostDeleteAsync()
         {
             Logger.LogTrace("Entering OnPostDeleteAsync");
