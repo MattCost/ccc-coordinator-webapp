@@ -21,6 +21,7 @@ public class UsersController : ControllerBase
     }
 
     //for now anyone can get coordinators, to fill out view models. todo - only coordinators can see coordinators?
+    // [Authorize(Policy = CCC.Authorization.Enums.CoordinatorPolicy)]
 
     [HttpGet("coordinators")]
     public async Task<ActionResult<IEnumerable<User>>> GetCoordinators()
@@ -55,13 +56,14 @@ public class UsersController : ControllerBase
         }
     }
 
-    [Authorize(Policy = CCC.Authorization.Enums.AdminPolicy)]
+    [Authorize(Policy = CCC.Authorization.Enums.CoordinatorAdminPolicy)]
     [HttpGet()]
     public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
     {
         try
         {
-            return Ok(await _userProvider.GetUsers());
+            var users=await _userProvider.GetUsers();
+            return Ok(users);
 
         }
         catch (Exception ex)

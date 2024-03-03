@@ -46,6 +46,8 @@ namespace CCC.API
 
             services.AddAuthorization(options =>
             {
+                // TODO test this pattern for policies, since then all the auth logic is in 1 place
+                // options.AddPolicy("TestPolicy", policy => policy.RequireAssertion( context => context.User.IsAdmin()));
                 options.AddPolicy(CCC.Authorization.Enums.AdminPolicy,
                     policy => policy.RequireClaim(CCC.Authorization.Enums.IsAdminClaim, new string[] { "true" }));
 
