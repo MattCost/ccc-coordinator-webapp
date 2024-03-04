@@ -12,7 +12,8 @@
 @section StyleSheets
   {
   <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.22.1/dist/bootstrap-table.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
 }
 
 
@@ -22,29 +23,34 @@
   <script src="~/js/ajax-data.js" asp-append-version="true"></script>
 
   <script>
-    function operateFormatter(value, row, index) {
-      @* console.log("operateFormatter was called", { value, row, index }); *@
+    function actionsFormatter(value, row, index) {
+      console.log("actionsFormatter was called", { value, row, index });
       let output = [];
-      output.push(`<a href="javascript:alert('make Coordinator')" title="Details">Coordinator</a>`);
-      output.push(`<a href="javascript:alert("make Admin")" title="Details">Admin</a>`);
-
+      output.push(`<a class="toggle-coordinator" href="javascript:void(0)">Toggle Coordinator</a>&nbsp;`);
+      output.push(`<a class="toggle-coordinator-admin" href="javascript:void(0)">Toggle Cat Wrangler</a>&nbsp;`);
       return output.join('');
+    }
 
+    function checkboxFormatter(value, row, index) {
+      let output = [];
+      output.push(`<i class="fa-regular ${value ? "fa-square-check" : "fa-square" }"></i>&nbsp;`);
+      return output.join('');
     }
 
     var $table = $('#allUserTable')
 
-    function toggleFavoriteRoute(row) {
-      console.log("Toggling favorite for row", row);
-      if(row.isFavorite)
+    function toggleCoordinator(row) {
+      console.log("Toggling Coordinator for row", row);
+      if(row.isCoordinator)
       {
         $.ajax({
           type: "POST",
           headers: { "RequestVerificationToken": '@token' },
-          url: "?handler=RemoveFavoriteRoute",
-          data: { routeId: row.id}
+          url: "?handler=RemoveCoordinator",
+          data: { userId: row.userId}
         }).done(function (response) {
-          @* console.log("Remove Favorite complete"); *@
+          console.log("RemoveCoordinator complete");
+          console.log(response);
           $table.bootstrapTable('refresh')
         });
       }
@@ -53,37 +59,21 @@
         $.ajax({
           type: "POST",
           headers: { "RequestVerificationToken": '@token' },
-          url: "?handler=AddFavoriteRoute",
+          url: "?handler=AssignCoordinator",
           data: { routeId: row.id}
         }).done(function (response) {
-          @* console.log("Add Favorite complete"); *@
+          console.log("AssignCoordinator complete");
+          console.log(response);
           $table.bootstrapTable('refresh')
         });   
       }
     }
 
-    $('#filterByDistance').click(function () {
-      var min = document.getElementById("minDistance").value;
-      var max = document.getElementById("maxDistance").value;
-      $table.bootstrapTable('filterBy', {
-        //no filters here, just the algo
-      }, {
-        'filterAlgorithm': (row, filters) => {
-        return (row.distance >= min) && (row.distance <= max);
-      }
-      })
-    });
-
-    $('#clearDistanceFilter').click(function() {
-      $table.bootstrapTable('filterBy', { }, {'filterAlgorithm': 'and'});
-    })
-    operateEvents = {
-      'click .toggle-favorite-route': function (e, value, row, index) {
-        toggleFavoriteRoute(row);
-      },
-      
-      'click .route-details': function (e, value, row, index) {
-        location.href = `BikeRoutes/Details/${row.id}`;
+    actionEvents = {
+      'click .toggle-coordinator': function (e, value, row, index) {
+        @* console.log( "event ", e, value, row, index); *@
+        console.log("calling toggleCoordinator for row");
+        toggleCoordinator(row);
       }
     }
   </script>
@@ -116,11 +106,11 @@
     <tr>
       <th data-field="displayName" data-sortable="true">Name</th>
       <th data-field="userId" data-sortable="true">userId</th>
-      <th data-field="isAdmin" data-sortable="true">System Admin</th>
-      <th data-field="isCoordinator" data-sortable="true">Coordinator</th>
-      <th data-field="isContributor" data-sortable="true">Map Maker</th>
-      <th data-field="isCoordinatorAdmin" data-sortable="true">Coordinator Manager</th>
-      <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents">Actions</th>
+      <th data-field="isAdmin" data-sortable="true" data-formatter="checkboxFormatter">System Admin</th>
+      <th data-field="isCoordinator" data-sortable="true" data-formatter="checkboxFormatter">Coordinator</th>
+      <th data-field="isContributor" data-sortable="true" data-formatter="checkboxFormatter">Map Maker</th>
+      <th data-field="isCoordinatorAdmin" data-sortable="true" data-formatter="checkboxFormatter">Coordinator Manager</th>
+      <th data-field="actopms" data-formatter="actionsFormatter" data-events="actionEvents">Actions</th>
     </tr>
   </thead>
 </table>
