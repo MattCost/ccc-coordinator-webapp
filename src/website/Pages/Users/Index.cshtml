@@ -26,9 +26,19 @@
     function actionsFormatter(value, row, index) {
       console.log("actionsFormatter was called", { value, row, index });
       let output = [];
-      output.push(`<a class="toggle-coordinator" href="javascript:void(0)">Toggle Coordinator</a>&nbsp;`);
-      output.push(`<a class="toggle-coordinator-admin" href="javascript:void(0)">Toggle Cat Wrangler</a>&nbsp;`);
-      return output.join('');
+      
+      @if(Model.ShowCoordinatorAdminSection)
+      {
+        @: output.push(`<a class="toggle-coordinator" href="javascript:void(0)">${row.isCoordinator ? "Remove" : "Assign"} Coordinator</a>`);
+      }
+      @if(Model.ShowAdminSection)
+      {
+        @: output.push(`<a class="toggle-contributor" href="javascript:void(0)">${row.isContributor ? "Remove" : "Assign"} Contributor</a>`);
+        @: output.push(`<a class="toggle-coordinator-admin" href="javascript:void(0)">${row.isCoordinatorAdmin ? "Remove" : "Assign"} Coordinator Manager</a>`);
+      }
+       
+
+      return output.join('&nbsp;/&nbsp;');
     }
 
     function checkboxFormatter(value, row, index) {
@@ -60,9 +70,69 @@
           type: "POST",
           headers: { "RequestVerificationToken": '@token' },
           url: "?handler=AssignCoordinator",
-          data: { routeId: row.id}
+          data: { userId: row.userId}
         }).done(function (response) {
-          console.log("AssignCoordinator complete");
+          console.log("Assign Coordinator complete");
+          console.log(response);
+          $table.bootstrapTable('refresh')
+        });   
+      }
+    }
+
+    function toggleCoordinatorAdmin(row) {
+      console.log("Toggling Coordinator Admin for row", row);
+      if(row.isCoordinatorAdmin)
+      {
+        $.ajax({
+          type: "POST",
+          headers: { "RequestVerificationToken": '@token' },
+          url: "?handler=RemoveCoordinatorAdmin",
+          data: { userId: row.userId}
+        }).done(function (response) {
+          console.log("Remove Coordinator Admin complete");
+          console.log(response);
+          $table.bootstrapTable('refresh')
+        });
+      }
+      else
+      {
+        $.ajax({
+          type: "POST",
+          headers: { "RequestVerificationToken": '@token' },
+          url: "?handler=AssignCoordinatorAdmin",
+          data: { userId: row.userId}
+        }).done(function (response) {
+          console.log("Assign Coordinator Admin complete");
+          console.log(response);
+          $table.bootstrapTable('refresh')
+        });   
+      }
+    }
+
+    function toggleContributor(row) {
+      console.log("Toggling Contributor for row", row);
+      if(row.isContributor)
+      {
+        $.ajax({
+          type: "POST",
+          headers: { "RequestVerificationToken": '@token' },
+          url: "?handler=RemoveContributor",
+          data: { userId: row.userId}
+        }).done(function (response) {
+          console.log("Remove Contributor complete");
+          console.log(response);
+          $table.bootstrapTable('refresh')
+        });
+      }
+      else
+      {
+        $.ajax({
+          type: "POST",
+          headers: { "RequestVerificationToken": '@token' },
+          url: "?handler=AssignContributor",
+          data: { userId: row.userId}
+        }).done(function (response) {
+          console.log("Assign Contributor complete");
           console.log(response);
           $table.bootstrapTable('refresh')
         });   
@@ -71,9 +141,16 @@
 
     actionEvents = {
       'click .toggle-coordinator': function (e, value, row, index) {
-        @* console.log( "event ", e, value, row, index); *@
-        console.log("calling toggleCoordinator for row");
+        console.log("calling toggleCoordinator for row", row);
         toggleCoordinator(row);
+      },
+      'click .toggle-coordinator-admin': function (e, value, row, index) {
+        console.log("calling toggleCoordinator for row", row);
+        toggleCoordinatorAdmin(row);
+      },
+      'click .toggle-contributor': function (e, value, row, index) {
+        console.log("calling toggleContributor for row", row);
+        toggleContributor(row);
       }
     }
   </script>
@@ -81,23 +158,7 @@
 }
 
 
-@if(Model.ShowAdminSection)
-{
-<h3>Hello Admin</h3>
-    <div class="row">
-        Placeholder for CoordinatorAdmin Assignments
-    </div>
-}
 
-@if(Model.ShowCoordinatorAdminSection || Model.ShowAdminSection)
-{
-<h3>Hello Coordinator Admin</h3>
-    <div class="row">
-        Placeholder for Coordinator Assignments
-    </div>
-}
-
-@* ajax version with pagination *@
 <table data-toggle="table" data-search="true" data-data-type="json" data-ajax="fetchAllUsers" data-pagination="true"
   data-sort-name="name"
   data-sort-order="asc"
@@ -105,8 +166,11 @@
   <thead>
     <tr>
       <th data-field="displayName" data-sortable="true">Name</th>
-      <th data-field="userId" data-sortable="true">userId</th>
-      <th data-field="isAdmin" data-sortable="true" data-formatter="checkboxFormatter">System Admin</th>
+      <th data-field="userId" data-visible="false">userId</th>
+      @if(Model.ShowAdminSection)
+      {
+        @: <th data-field="isAdmin" data-sortable="true" data-formatter="checkboxFormatter">System Admin</th>
+      }
       <th data-field="isCoordinator" data-sortable="true" data-formatter="checkboxFormatter">Coordinator</th>
       <th data-field="isContributor" data-sortable="true" data-formatter="checkboxFormatter">Map Maker</th>
       <th data-field="isCoordinatorAdmin" data-sortable="true" data-formatter="checkboxFormatter">Coordinator Manager</th>

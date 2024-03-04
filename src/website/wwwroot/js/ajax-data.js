@@ -32,6 +32,6 @@ function fetchAllUsers(params)
         console.log("Fetch All Users Failed. ", { textStatus, errorThrown} );
         return {};
     })
-    console.log("exiting fetchBikeRoutes");
+    console.log("exiting fetchAllUsers");
 
 }
