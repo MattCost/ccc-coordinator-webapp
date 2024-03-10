@@ -1,6 +1,6 @@
 @page
 
-@model CCC.website.Pages.RideEvents.IndexPageModel
+@model CCC.website.Pages.Events.IndexPageModel
 @using CCC.Authorization
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery antiforgery
 
@@ -28,7 +28,7 @@
       {
         @: output.push(`<a href="Edit/${row.id}" title="Edit"><i class="fa-solid fa-pen-to-square fa-xl ccc-green"></i></a>`);
       }
-      output.push(`<a href="/EventDetails/${row.id}" title="Details"><i class="fa-solid fa-circle-info fa-xl ccc-pink"></i></a>`);
+      output.push(`<a href="Details/${row.id}" title="Details"><i class="fa-solid fa-circle-info fa-xl ccc-pink"></i></a>`);
       return output.join('');
 
     }

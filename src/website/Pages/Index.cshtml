@@ -1,5 +1,7 @@
 ﻿@page
 @model IndexModel
+@using CCC.Authorization
+
 @{
     ViewData["Title"] = "Calendar";
 }
@@ -32,7 +34,7 @@
                     if (rides.length == 0) {
                         //noop
                     } else if (rides.length == 1) {
-                        location.href = `EventDetails/${rides[0].id}`;
+                        location.href = `/Events/Details/${rides[0].id}`;
                     }
                     else {
                         alert("todo open multi-ride select modal");
@@ -53,7 +55,7 @@
                     ride: ride,
                     onclick(e, data) {
                         console.log(data.ride);
-                        location.href = `EventDetails/${data.ride.id}`;
+                        location.href = `/Events/Details/${data.ride.id}`;
                     }
                 })
             });
@@ -73,3 +75,9 @@
 
 <h3>Let's Go <span class="ccc-pink">Ride</span> <span class="ccc-green">Bikes!</span></h3>
 <div id="calendar"></div>
+@if(User.ShowCrudOperations())
+{
+    <div>
+    <a asp-page="/Events/Create" class="btn btn-primary btn-lg" role="button" >(+) Create Event</a>
+    </div>
+}

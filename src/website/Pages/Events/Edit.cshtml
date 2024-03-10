@@ -1,0 +1,126 @@
+@page "{id:guid}"
+@model CCC.website.Pages.Events.EditPageModel
+@using CCC.Authorization
+
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery antiforgery
+@{
+    var token = antiforgery.GetAndStoreTokens(HttpContext).RequestToken;
+    ViewData["Title"] = "Event Details";
+    string activeTab = (string?)ViewData["activeTab"] ?? "list-details";
+    var rideEvent = Model.RideEvent.RideEvent ?? new CCC.Entities.RideEvent();
+    var routes = Model.RideEvent.BikeRoutes.Values.ToList();
+    
+}
+@section Scripts
+    {
+    <script>
+        $(
+            function () {
+                document.addEventListener("signup", (e) => {
+                    console.log(e);
+                    var postSubmit = $.ajax({
+                        type: "POST",
+                        headers: { "RequestVerificationToken": '@token' },
+                        url: "?handler=Signup",
+                        data: { rideId: e.detail.rideId, role: e.detail.role }
+
+                    }).done(function (response) {
+                        window.location.href = window.location.pathname+"?"+$.param({'activeTab':`list-${e.detail.rideId}`});
+                    });
+                })
+
+                document.addEventListener("dropout", (e) => {
+                    console.log(e);
+                    var postSubmit = $.ajax({
+                        type: "POST",
+                        headers: { "RequestVerificationToken": '@token' },
+                        url: "?handler=Dropout",
+                        data: { rideId: e.detail.rideId, role: e.detail.role }
+
+                    }).done(function (response) {
+                        window.location.href = window.location.pathname+"?"+$.param({'activeTab':`list-${e.detail.rideId}`});
+                    });
+                })
+
+                const triggerTabList = document.querySelectorAll('#list-tab a')
+                triggerTabList.forEach(triggerEl => {
+                    const tabTrigger = new bootstrap.Tab(triggerEl)
+
+                    triggerEl.addEventListener('click', event => {
+                        event.preventDefault()
+                        tabTrigger.show()
+                    })
+                });
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const activeTab = urlParams.get('activeTab');
+                if(activeTab != null)
+                {
+                    console.log("active Tab", activeTab);
+                    const triggerEl = document.querySelector(`#list-tab a[href="#${activeTab}"]`)
+                    bootstrap.Tab.getInstance(triggerEl).show() // Select tab by name
+                }
+            }
+        );
+    </script>
+}
+
+<h3>EDIT PAGE!</h3>
+
+<div class="container p-3 m-0">
+    @* 1 row for details *@
+    <div class="row">
+        <div class="col-3 "> 
+            <div class="list-group">
+                <a class="list-group-item">Details</a>
+            </div>
+        </div>
+    
+        <div class="col-9">
+            <form method="post">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.EventUpdateModel.Name)
+                    @Html.EditorFor(model => Model.EventUpdateModel.Name, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.EventUpdateModel.Description)
+                    @Html.EditorFor(model => Model.EventUpdateModel.Description, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.EventDate)
+                    <input class="form-control" type="date" data-val="true" data-val-required="The Date field is required" asp-for="@Model.EventDate"  />
+                    <input class="form-control" type="time" data-val="true" data-val-required="The Time field is required" asp-for="@Model.EventTime"  />
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.EventUpdateModel.Location)
+                    @Html.EditorFor(model => Model.EventUpdateModel.Location, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+
+                <input class="btn btn-primary" id="Submit" type="submit" value="Update Details" asp-page-handler="UpdateEventDetails"/>
+                <input class="btn btn-warning" id="Delete" type="submit" value="Delete Event" asp-page-handler="DeleteEvent"
+                    onclick="return confirm('Are you sure you want to Delete the event?')" />    
+            </form>
+        </div>
+    </div>
+
+    @foreach(var groupRide in Model.RideEvent.GroupRides)
+    {
+        <div class="row">
+            <div class="col-3 "> 
+                <div class="list-group">
+                    <a class="list-group-item">@groupRide.RideType Ride</a>
+                </div>
+            </div>
+
+            <div class="col-9">
+                <ul class="list-group list-group- flush">
+                    @* <li class="list-group-item">@Html.DisplayFor(model => model.RideEvent.Name)</li> *@
+                    <li class="list-group-item">@Html.DisplayFor(modelItem => groupRide.RideType) Ride</li>
+                    <li class="list-group-item">todo bike route</li>
+                </ul>
+            </div>
+        </div>
+    }
+
+</div>  @* end of contianer *@

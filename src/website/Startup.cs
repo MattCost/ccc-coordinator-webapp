@@ -80,6 +80,8 @@ namespace CCC.website
             {
                 option.Conventions.AuthorizePage("/BikeRoutes/Create", CCC.Authorization.Enums.ContributorPolicy);
                 option.Conventions.AuthorizePage("/BikeRoutes/Edit", CCC.Authorization.Enums.ContributorPolicy);
+                option.Conventions.AuthorizePage("/RideEvents/Create", CCC.Authorization.Enums.ContributorPolicy);
+                option.Conventions.AuthorizePage("/RideEvents/Edit", CCC.Authorization.Enums.ContributorPolicy);
             }).AddSessionStateTempDataProvider();
 
             services.AddSession();

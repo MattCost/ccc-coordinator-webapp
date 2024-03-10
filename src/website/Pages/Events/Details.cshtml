@@ -1,9 +1,10 @@
 @page "{id:guid}"
-@model CCC.website.Pages.EventDetailsPageModel
+@model CCC.website.Pages.Events.DetailsPageModel
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery antiforgery
+@using CCC.Authorization
 @{
     var token = antiforgery.GetAndStoreTokens(HttpContext).RequestToken;
-    ViewData["Title"] = "Ride Event Details";
+    ViewData["Title"] = "Event Details";
 }
 @section Scripts
     {
@@ -59,7 +60,14 @@
     </script>
 }
 
-<h3>The Event Details!</h3>
+<div>
+    <h3>The Event Details!
+    @if(User.ShowCrudOperations())
+    {
+        <a asp-page="Edit" asp-route-id="@Model.Id" class="btn btn-primary btn-md" role="button" >Edit</a>
+    }
+    </h3>
+        
+</div>
 
-@* @Html.DisplayFor(model => model.RideEvent,"RideEventViewModelDetails", Model.ExtraData) *@
 @Html.DisplayFor(model => model.RideEvent,"RideEventViewModelDetails2", Model.ExtraData)

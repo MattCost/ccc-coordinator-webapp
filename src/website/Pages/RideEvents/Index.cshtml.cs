@@ -13,9 +13,29 @@ namespace CCC.website.Pages.RideEvents
         {
         }
 
-        // public List<RideEvent> RideEvents { get; set; } = new ();
+        public List<RideEvent> RideEvents { get; set; } = new ();
 
-        public async Task OnGetAsync()
+        // public async Task OnGetAsync()
+        // {
+        //     try
+        //     {
+        //         var result = await API.GetForUserAsync<List<RideEvent>>("API", options =>
+        //         {
+        //             options.RelativePath = "RideEvents";
+        //         });
+        //         Logger.LogDebug("Result from API {Result}", result);
+        //         RideEvents = result ?? new();
+        //         ViewData["RideEvents"] = result ?? new List<RideEvent>();
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         Logger.LogError(ex, "Exception trying to get RideEvents!");
+        //         CurrentPageAction = "OnGetAsync";
+        //         CurrentPageErrorMessage = ex.Message;
+        //     }
+        // }
+
+        public async Task<JsonResult> OnGetFetchRideEvents()
         {
             try
             {
@@ -24,14 +44,16 @@ namespace CCC.website.Pages.RideEvents
                     options.RelativePath = "RideEvents";
                 });
                 Logger.LogDebug("Result from API {Result}", result);
-                ViewData["RideEvents"] = result ?? new List<RideEvent>();
+                return new JsonResult(result ?? new List<RideEvent>() );
+
             }
             catch (Exception ex)
             {
                 Logger.LogError(ex, "Exception trying to get RideEvents!");
-                CurrentPageAction = "OnGetAsync";
-                CurrentPageErrorMessage = ex.Message;
+                return new JsonResult(new {});
             }
+
         }
+
     }
 }

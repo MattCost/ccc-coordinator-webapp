@@ -5,17 +5,17 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Abstractions;
 using Microsoft.Identity.Web;
 
-namespace CCC.website.Pages.RideEvents
+namespace CCC.website.Pages.Events
 {
-    public class ListViewPageModel : PageModelBase
+    public class IndexPageModel : PageModelBase
     {
-        public ListViewPageModel(ILogger<ListViewPageModel> logger, IDownstreamApi api) : base(logger, api)
+        public IndexPageModel(ILogger<IndexPageModel> logger, IDownstreamApi api) : base(logger, api)
         {
         }
 
         public List<RideEvent> RideEvents { get; set; } = new ();
 
-        public async Task OnGetAsync()
+        public async Task<JsonResult> OnGetFetchRideEvents()
         {
             try
             {
@@ -24,14 +24,16 @@ namespace CCC.website.Pages.RideEvents
                     options.RelativePath = "RideEvents";
                 });
                 Logger.LogDebug("Result from API {Result}", result);
-                RideEvents = result ?? new();
+                return new JsonResult(result ?? new List<RideEvent>() );
+
             }
             catch (Exception ex)
             {
                 Logger.LogError(ex, "Exception trying to get RideEvents!");
-                CurrentPageAction = "OnGetAsync";
-                CurrentPageErrorMessage = ex.Message;
+                return new JsonResult(new {});
             }
+
         }
+
     }
 }

@@ -35,3 +35,22 @@ function fetchAllUsers(params)
     console.log("exiting fetchAllUsers");
 
 }
+
+
+function fetchRideEvents(params)
+{
+    console.log("entering fetchRideEvents. ", params );
+    $.ajax({
+        type: "GET",
+        url: "?handler=FetchRideEvents",
+        // dataType: json
+    }).done(function (data) {
+        console.log(data);
+        params.success(data);
+        return data;        
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+        console.log("Fetch Ride Events Failed. ", { textStatus, errorThrown} );
+        return {};
+    })
+    console.log("exiting fetchRideEvents");
+}

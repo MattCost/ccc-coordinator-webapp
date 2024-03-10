@@ -1,47 +1,6 @@
 @page "{id:guid}"
 @model CCC.website.Pages.RideEvents.DetailsPageModel
-@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery antiforgery
 @{
-    var token = antiforgery.GetAndStoreTokens(HttpContext).RequestToken;
     ViewData["Title"] = "Ride Event Details";
 }
-@section Scripts
-{
-    <script>
-        document.addEventListener("signup", (e) => {
-            console.log(e);
-            var postSubmit = $.ajax({
-                type: "POST",
-                headers: { "RequestVerificationToken": '@token'},
-                url: "?handler=Signup",
-                data: { rideId: e.detail.rideId, role: e.detail.role }
-                
-            }).done(function(response){
-                console.log(response);
-                location.reload();
-            });            
-        })
-    </script>
-
-}
-
-<h3>Details Page</h3>
-<div class="row">
-    Ride Event Details
-</div>
-<div class="row">
-    @Html.DisplayFor(model => model.RideEvent,"RideEventDetails")
-</div>
-
-<p></p>
-
-<div class="row">
-    Group Rides taking place
-</div>
-
-<div class="row">
-    @foreach( var ride in Model.Rides)
-    {
-        @Html.DisplayFor( modelItem => ride, "RideEvent_GroupRide", Model.ExtraData)
-    }
-</div>
+Goodbye

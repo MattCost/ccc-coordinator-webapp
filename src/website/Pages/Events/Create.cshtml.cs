@@ -6,7 +6,7 @@ using Microsoft.Identity.Abstractions;
 using Microsoft.Identity.Web;
 using System.ComponentModel.DataAnnotations;
 
-namespace CCC.website.Pages.RideEvents
+namespace CCC.website.Pages.Events
 {
     public class CreatePageModel : PageModelBase
     {
@@ -24,8 +24,9 @@ namespace CCC.website.Pages.RideEvents
 
         public async Task<ActionResult> OnPostAsync()
         {
-            CreateModel.StartTime = Date.Add(Time.TimeOfDay);
             Logger.LogDebug("Entering OnPostAsync. CreateModel: {CreateModel}", System.Text.Json.JsonSerializer.Serialize(CreateModel));
+            CreateModel.StartTime = Date.Add(Time.TimeOfDay);
+            
             try
             {
                 var newModel = await API.PostForUserAsync<RideEventCreateModel, RideEvent>("API", CreateModel, options =>
@@ -38,9 +39,9 @@ namespace CCC.website.Pages.RideEvents
                     Logger.LogError("Unable to create RideEvent. API Returned null");
                     PreviousPageAction = "RideEvents/Create/OnPost";
                     PreviousPageErrorMessage = "API returned null when trying to create event";
-                    return RedirectToPage("Index");
+                    return RedirectToPage("/Index");
                 }
-                return RedirectToPage( "/RideEvents/Edit", new { id = newModel.Id});
+                return RedirectToPage( "Edit", new { id = newModel.Id});
             }
             catch (Exception ex)
             {
@@ -48,7 +49,7 @@ namespace CCC.website.Pages.RideEvents
                 PreviousPageAction = "RideEvents/Create/OnPost";
                 PreviousPageErrorMessage = "Error when trying to create ride event";
             }
-            return RedirectToPage("Index");
+            return RedirectToPage("/Index");
 
         }
     }

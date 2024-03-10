@@ -61,13 +61,8 @@ namespace CCC.website.Pages.RideEvents
             Logger.LogTrace("Entering OnPostDeleteAsync");
             try
             {
+                //todo get event, delete all group rides, then delete event
                 await API.DeleteForUserAsync("API", string.Empty, options => { options.RelativePath = $"RideEvents/{Id}";});
-                // var result = await API.CallApiForUserAsync("API", options =>
-                // {
-                //     options.RelativePath = $"RideEvents/{Id}";
-                //     options.HttpMethod = HttpMethod.Delete;
-                // });
-                // result.EnsureSuccessStatusCode();
             }
             catch(Exception ex)
             {
