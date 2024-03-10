@@ -114,11 +114,16 @@
             </div>
 
             <div class="col-9">
-                <ul class="list-group list-group- flush">
-                    @* <li class="list-group-item">@Html.DisplayFor(model => model.RideEvent.Name)</li> *@
-                    <li class="list-group-item">@Html.DisplayFor(modelItem => groupRide.RideType) Ride</li>
-                    <li class="list-group-item">todo bike route</li>
-                </ul>
+                <form method="post">
+                    <ul class="list-group list-group- flush">
+                        @* <li class="list-group-item">@Html.DisplayFor(model => model.RideEvent.Name)</li> *@
+                        <li class="list-group-item">@Html.DisplayFor(modelItem => groupRide.RideType) Ride</li>
+                        <li class="list-group-item">todo bike route</li>
+                    </ul>
+                     <input type="hidden" name="rideId" value="@groupRide.Id" />
+                    <input class="btn btn-warning" id="Delete" type="submit" value="Delete Ride" asp-page-handler="DeleteRide"
+                        onclick="return confirm('Are you sure you want to Delete this ride?')" />    
+                </form>
             </div>
         </div>
     }

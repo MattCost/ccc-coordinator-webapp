@@ -111,7 +111,7 @@ public class EditPageModel : PageModelBase
             {
                 options.RelativePath = $"RideEvents/{Id}";
             });
-            return RedirectToPage("Index");
+            return RedirectToPage("Index/");
 
         }
         public async Task<IActionResult> OnPostUpdateEventDetailsAsync()
@@ -124,6 +124,17 @@ public class EditPageModel : PageModelBase
                 options.RelativePath = $"RideEvents/{Id}";
             });
             Logger.LogDebug("Patch Complete");
+            return RedirectToPage();
+        }
+
+        public async Task<IActionResult> OnPostDeleteRideAsync(Guid rideId)
+        {
+            Logger.LogTrace("Entering OnPostDeleteRideAsync. Ride Id {RideId}", rideId);
+            await API.DeleteForUserAsync("API", string.Empty, options =>
+            {
+                options.RelativePath = $"GroupRides/{rideId}";
+            });
+            await Task.CompletedTask;
             return RedirectToPage();
         }
 }
