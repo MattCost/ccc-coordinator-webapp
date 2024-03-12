@@ -1,6 +1,9 @@
 @page "{id:guid}"
+
 @model CCC.website.Pages.Events.EditPageModel
+
 @using CCC.Authorization
+@using CCC.website.Models
 
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery antiforgery
 @{
@@ -71,9 +74,9 @@
     @* 1 row for details *@
     <div class="row">
         <div class="col-3 "> 
-            <div class="list-group">
-                <a class="list-group-item">Details</a>
-            </div>
+            <ul class="list-group">
+                <li class="list-group-item">Details</li>
+            </ul>
         </div>
     
         <div class="col-9">
@@ -103,24 +106,56 @@
             </form>
         </div>
     </div>
+        
+    <div class="row">
+        <div class="col-3"> 
+            <ul class="list-group">
+            <li class="list-group-item">Add Ride</li>
+            </ul>
+        </div>
+        
+        <div class="col-9">
+            <form method="post">
+                @Html.HiddenFor(model => Model.RideCreateModel.RideEventId)
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.RideCreateModel.RideType, "Ride Type")
+                    <select class="form-control" aria-placeholder="rideType" id="RideCreateModel_RideType" name="RideCreateModel.RideType" asp-items='EnumHelper.SelectListForEnum<CCC.Entities.RideType>()'>
+                        <option disabled selected value="">Select a ride </option>
+                    </select>
+                    <small id="rideType" class="form-text text-muted">What kind of ride?</small>
+                </div>
 
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.RideCreateModel.BikeRouteId, "Bike Route")
+                    <select class="form-control" aria-placeholder="bikeRouteId" id="RideCreateModel_BikeRouteId" name="RideCreateModel.BikeRouteId" asp-items='Model.BikeRouteSelectList'>
+                        <option selected disabled value="">Select a Bike Route </option>
+                    </select>
+                    <small id="bikeRouteId" class="form-text text-muted">What route?</small>
+                </div>
+                <input class="btn btn-primary" id="Submit" type="submit" value="Add Route" asp-page-handler="CreateRide" />
+            </form>                    
+        </div>
+    </div>
     @foreach(var groupRide in Model.RideEvent.GroupRides)
     {
         <div class="row">
             <div class="col-3 "> 
-                <div class="list-group">
-                    <a class="list-group-item">@groupRide.RideType Ride</a>
-                </div>
+                <ul class="list-group">
+                    <li class="list-group-item">@groupRide.RideType Ride</li>
+                </ul>
             </div>
 
             <div class="col-9">
                 <form method="post">
-                    <ul class="list-group list-group- flush">
-                        @* <li class="list-group-item">@Html.DisplayFor(model => model.RideEvent.Name)</li> *@
+                    <ul class="list-group list-group-flush">
                         <li class="list-group-item">@Html.DisplayFor(modelItem => groupRide.RideType) Ride</li>
-                        <li class="list-group-item">todo bike route</li>
+                        <li class="list-group-item">
+                            <select class="form-control" aria-placeholder="bikeRouteId" asp-for="@groupRide.BikeRouteId" asp-items='Model.BikeRouteSelectList'>
+                            </select>
+                        </li>
                     </ul>
                      <input type="hidden" name="rideId" value="@groupRide.Id" />
+                     <input class="btn btn-primary" id="Update" type="submit" value="Update Route" asp-page-handler = "UpdateRide" />
                     <input class="btn btn-warning" id="Delete" type="submit" value="Delete Ride" asp-page-handler="DeleteRide"
                         onclick="return confirm('Are you sure you want to Delete this ride?')" />    
                 </form>
