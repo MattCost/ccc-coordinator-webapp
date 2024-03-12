@@ -27,6 +27,7 @@ public class GroupRidesController : EntityProviderBaseController
     [HttpPost]
     public async Task<ActionResult<GroupRide>> Create([FromBody] GroupRideCreateModel createModel)
     {
+        // todo validate inputs
         var model = new GroupRide
         {
             Id = Guid.NewGuid(),
@@ -82,6 +83,22 @@ public class GroupRidesController : EntityProviderBaseController
                 break;
         }
         return await EntityProviderActionHelper(async () => {await EntityProvider.UpdateGroupRide(model); return model;}, "Unable to create groupRide");
+    }
+
+    [Authorize(Policy = CCC.Authorization.Enums.ContributorPolicy)]
+    [HttpPatch("{id:guid}/route/{bikeRouteId:guid}")]
+    public async Task<ActionResult> UpdateRoute([FromRoute] Guid id, Guid bikeRouteId)
+    {
+        return await EntityProviderActionHelper( async () =>
+        {
+            var rideModel = await EntityProvider.GetGroupRide(id);
+            Logger.LogDebug("Ride Model: {Model}", rideModel); 
+            var routeModel = await EntityProvider.GetBikeRoute(bikeRouteId);
+            Logger.LogDebug("Route Model: {Model}", routeModel);
+            rideModel.BikeRouteId = bikeRouteId;
+            Logger.LogDebug("Model: {Model}", rideModel);
+            await EntityProvider.UpdateGroupRide(rideModel);
+        },"Unable to update Group Ride");
     }
 
     [Authorize(Policy = CCC.Authorization.Enums.ContributorPolicy)]
