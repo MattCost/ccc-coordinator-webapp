@@ -1,4 +1,5 @@
 using CCC.Entities;
+using CCC.Exceptions;
 using CCC.Services.EntityProvider;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +28,34 @@ public class GroupRidesController : EntityProviderBaseController
     [HttpPost]
     public async Task<ActionResult<GroupRide>> Create([FromBody] GroupRideCreateModel createModel)
     {
-        // todo validate inputs
+        try
+        {
+            await EntityProvider.GetBikeRoute(createModel.BikeRouteId);
+        }
+        catch(EntityNotFoundException)
+        {
+            return new BadRequestObjectResult(new {message = "Invalid Bike Route Id", createModel.BikeRouteId});
+        }
+        catch(Exception ex)
+        {
+            Logger.LogError(ex, "Unable to verify Bike Route Id");
+            return Problem(ex.Message);
+        }
+
+        try
+        {
+            await EntityProvider.GetRideEvent(createModel.RideEventId);
+        }
+        catch(EntityNotFoundException)
+        {
+            return new BadRequestObjectResult(new {message = "Invalid Event Id", createModel.RideEventId});
+        }
+        catch(Exception ex)
+        {
+            Logger.LogError(ex, "Unable to verify Event Id");
+            return Problem(ex.Message);
+        }
+
         var model = new GroupRide
         {
             Id = Guid.NewGuid(),
