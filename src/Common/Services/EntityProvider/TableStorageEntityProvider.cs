@@ -102,15 +102,23 @@ public class EntityProviderTableStorage : IEntityProvider
 
     public async Task<IEnumerable<RideEvent>> GetAllRideEvents() => await GetAllEntitiesAsync<RideEvent>(RideEvents);
 
-    public async Task DeleteRideEvent(Guid eventId)
+    public async Task DeleteRideEvent(Guid eventId, bool force = false)
     {
         _logger.LogDebug("Deleting Ride Event {EventId}", eventId);
         var rides = await GetRidesAtEvent(eventId);
         _logger.LogDebug("Ride Event has {Count} rides", rides.Count());
         if (rides.Any())
         {
-            _logger.LogWarning("Event {Id} has rides, so event can't be deleted", eventId);
-            throw new EntityLockedException("Event has Group rides that must be deleted first");
+            if(!force)
+            {
+                _logger.LogWarning("Event {Id} has rides, so event can't be deleted", eventId);
+                throw new EntityLockedException("Event has Group rides that must be deleted first");
+            }
+            _logger.LogDebug("Ride Event {EventId}. Force Delete true. Removing all rides", eventId);
+            foreach(var ride in rides)
+            {
+                await DeleteGroupRide(ride.Id);
+            }
         }
         _logger.LogDebug("Deleting Ride Event {Id}", eventId);
         await DeleteEntityAsync(RideEvents, eventId.ToString());

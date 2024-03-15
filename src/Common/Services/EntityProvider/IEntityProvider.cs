@@ -19,7 +19,7 @@ public interface IEntityProvider
 
     Task<RideEvent> GetRideEvent(Guid eventId);
     Task<IEnumerable<RideEvent>> GetAllRideEvents();
-    Task DeleteRideEvent (Guid eventId);
+    Task DeleteRideEvent (Guid eventId, bool force = false);
     Task RestoreRideEvent (Guid eventId);
     Task UpdateRideEvent(RideEvent rideEvent);
 

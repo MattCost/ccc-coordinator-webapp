@@ -43,14 +43,21 @@ public class MemoryEntityProvider : IEntityProvider
         return Task.CompletedTask;
     }
 
-    public Task DeleteRideEvent(Guid eventId)
+    public Task DeleteRideEvent(Guid eventId, bool force = false)
     {
         if(!_rideEvents.ContainsKey(eventId))
             throw new EntityNotFoundException(typeof(RideEvent), eventId);
         
         if(_rideEvents[eventId].RideIds.Any())
         {
-            throw new EntityLockedException($"Ride Event {eventId} has rides listed. Delete rides first");
+            if(!force)
+            {
+                throw new EntityLockedException($"Ride Event {eventId} has rides listed. Delete rides first");
+            }
+            foreach(var rideId in _rideEvents[eventId].RideIds)
+            {
+                DeleteGroupRide(rideId);
+            }
         }
 
         _rideEvents.Remove(eventId);
