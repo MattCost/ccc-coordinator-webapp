@@ -32,7 +32,7 @@ public class ViewModelsController : EntityProviderBaseController
         var tasks = viewModel.RideEvent.RideIds.Select( rideId => EntityProvider.GetGroupRide(rideId)).ToList();
         await Task.WhenAll(tasks);
 
-        viewModel.GroupRides = tasks.Select( task => task.Result).ToList();
+        viewModel.GroupRides = tasks.Select( task => task.Result).OrderBy(rideEvent => rideEvent.RideType).ToList();
 
         var bikeRouteTasks = viewModel.GroupRides.Select( ride => EntityProvider.GetBikeRoute(ride.BikeRouteId)).ToList();
         await Task.WhenAll(bikeRouteTasks);
