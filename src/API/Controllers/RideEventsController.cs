@@ -84,9 +84,9 @@ public class RideEventsController : EntityProviderBaseController
 
     [Authorize(Policy = CCC.Authorization.Enums.ContributorPolicy)]
     [HttpDelete("{id:guid}")]
-    public async Task<ActionResult> Delete([FromRoute] Guid id)
+    public async Task<ActionResult> Delete([FromRoute] Guid id, [FromQuery] bool force = false)
     {
-        return await EntityProviderActionHelper( async () => await EntityProvider.DeleteRideEvent(id), "Unable to delete ride event");
+        return await EntityProviderActionHelper( async () => await EntityProvider.DeleteRideEvent(id, force), "Unable to delete ride event");
     }
 
     [Authorize(Policy = CCC.Authorization.Enums.ContributorPolicy)]
