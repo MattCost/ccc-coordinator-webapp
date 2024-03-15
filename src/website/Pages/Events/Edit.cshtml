@@ -17,7 +17,30 @@
 @section Scripts
     {
     <script>
+        $(function() {
+            var date = new Date();
+            var offset = date.getTimezoneOffset();
+            console.log( "offset ", offset);
+            document.getElementById("TimeZoneOffset").value=offset
+
+            var utcStartDate = new Date(@Model.EventStartTime.ToUnixTimeMilliseconds());
+            console.log("utcStartDate ", utcStartDate);
+            var localStart = utcStartDate.toLocaleTimeString("en-US",  
+            { 
+                hour: "numeric",
+                minute: "numeric",
+                second: "numeric",
+                hour12: false,
+            });
+            console.log("localStart ", localStart);
+            var timeInput = document.getElementById("EventTime");
+            timeInput.value = localStart;
+        });
+    </script>
+
+    <script>
         $(
+            
             function () {
                 document.addEventListener("signup", (e) => {
                     console.log(e);
@@ -68,17 +91,13 @@
     </script>
 }
 
-<h3>EDIT PAGE!</h3>
-
 <div class="container p-3 m-0">
     @* 1 row for details *@
     <div class="row">
-        <div class="col-3 "> 
-            <ul class="list-group">
-                <li class="list-group-item">Details</li>
-            </ul>
-        </div>
-    
+        <h3>Details</h3>
+    </div>    
+    <div class="row">
+
         <div class="col-9">
             <form method="post">
                 <div class="form-group">
@@ -100,19 +119,23 @@
                     @Html.EditorFor(model => Model.EventUpdateModel.Location, new { htmlAttributes = new { @class = "form-control" } })
                 </div>
 
+                <div>
+                <input type="hidden" asp-for="TimeZoneOffset" />
                 <input class="btn btn-primary" id="Submit" type="submit" value="Update Details" asp-page-handler="UpdateEventDetails"/>
-                <input class="btn btn-warning" id="Delete" type="submit" value="Delete Event" asp-page-handler="DeleteEvent"
+                <input class="btn btn-danger" id="Delete" type="submit" value="Delete Event" asp-page-handler="DeleteEvent"
                     onclick="return confirm('Are you sure you want to Delete the event?')" />    
+                @if(User.IsAdmin())
+                {
+                    <input type="checkbox" data-val="true" id="forceDelete" name="forceDelete" value="true">
+                     <label for="forceDelete">Use The Force Luke?</label>
+                }
+                </div>
             </form>
         </div>
     </div>
         
     <div class="row">
-        <div class="col-3"> 
-            <ul class="list-group">
-            <li class="list-group-item">Add Ride</li>
-            </ul>
-        </div>
+        <h3>Add Ride</h3>
         
         <div class="col-9">
             <form method="post">
@@ -136,15 +159,13 @@
             </form>                    
         </div>
     </div>
+    
+    <div class="row">
+        <h3>Rides</h3>
+    </div>
     @foreach(var groupRide in Model.RideEvent.GroupRides)
     {
         <div class="row">
-            <div class="col-3 "> 
-                <ul class="list-group">
-                    <li class="list-group-item">@groupRide.RideType Ride</li>
-                </ul>
-            </div>
-
             <div class="col-9">
                 <form method="post">
                     <ul class="list-group list-group-flush">
@@ -156,7 +177,7 @@
                     </ul>
                      <input type="hidden" name="rideId" value="@groupRide.Id" />
                      <input class="btn btn-primary" id="Update" type="submit" value="Update Route" asp-page-handler = "UpdateRide" />
-                    <input class="btn btn-warning" id="Delete" type="submit" value="Delete Ride" asp-page-handler="DeleteRide"
+                    <input class="btn btn-danger" id="Delete" type="submit" value="Delete Ride" asp-page-handler="DeleteRide"
                         onclick="return confirm('Are you sure you want to Delete this ride?')" />    
                 </form>
             </div>

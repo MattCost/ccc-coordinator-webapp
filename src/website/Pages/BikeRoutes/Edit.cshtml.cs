@@ -19,7 +19,9 @@ namespace CCC.website.Pages.BikeRoutes
         
         public EditPageModel(ILogger<EditPageModel> logger, IDownstreamApi api) : base(logger, api)
         {
-
+            Logger.LogTrace("BikeRoutes Index Ctor Trace");
+            Logger.LogDebug("BikeRoutes Index Ctor Debug");
+            Logger.LogInformation("BikeRoutes Index Ctor Information");
         }
 
         public async Task OnGetAsync()
@@ -36,17 +38,30 @@ namespace CCC.website.Pages.BikeRoutes
                 CurrentPageErrorMessage = "Unable to get BikeRoutes";
                 CurrentPageAction = "BikeRoutes/Edit/OnGet";
             }
+            Logger.LogTrace("Exiting OnGetAsync Id {Id}", Id);
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostUpdateAsync()
         {
-            Logger.LogTrace("Entering OnPostAsync");
+            Logger.LogTrace("Entering OnPostUpdateAsync");
             if(BikeRoute != null)
             {
                 Logger.LogTrace("UpdateModel is not null");
+
                 try
                 {
                     await API.PatchForUserAsync("API", BikeRoute, options => { options.RelativePath = $"BikeRoutes/{Id}"; });
+                    
+                    Logger.LogDebug("Null Hack");
+                    for(int i=0; i<BikeRoute.Cues.Count ; i++)
+                    {
+                        if(BikeRoute.Cues[i].StreetName == null) 
+                            BikeRoute.Cues[i].StreetName = string.Empty;
+                        if(BikeRoute.Cues[i].Notes == null) 
+                            BikeRoute.Cues[i].Notes = string.Empty;
+                    }
+                    await API.PutForUserAsync("API", BikeRoute.Cues, options => { options.RelativePath = $"BikeRoutes/{Id}/cues"; });
+
                 }
                 catch(Exception ex)
                 {
@@ -55,10 +70,14 @@ namespace CCC.website.Pages.BikeRoutes
                     PreviousPageErrorMessage = $"Error updating BikeRoute";
                 }
             }
-
+            Logger.LogTrace("Exiting OnPostUpdateAsync");
             return RedirectToPage();
         }
 
+        public IActionResult OnPostDiscardChanges()
+        {
+            return RedirectToPage();
+        }
         public IActionResult OnPostDiscardCueChanges()
         {
             Logger.LogTrace("Entering OnPostDiscardCuesAsync Id {Id}", Id);
@@ -87,8 +106,8 @@ namespace CCC.website.Pages.BikeRoutes
                 PreviousPageAction = "BikeRoute/Edit/OnPostSaveCuesAsync";
                 PreviousPageErrorMessage = $"Error updating BikeRoute Cues";
             }
-            return RedirectToPage();            
-
+            Logger.LogTrace("Exiting OnPostSaveCueChangesAsync");
+            return RedirectToPage();
         }
 
 
@@ -109,16 +128,17 @@ namespace CCC.website.Pages.BikeRoutes
 
         public void OnPostAddCueRow()
         {
-            Logger.LogDebug("Entering OnPostAddCueRow");
+            Logger.LogTrace("Entering OnPostAddCueRow");
             Logger.LogDebug("BikeRoute Json {Json}", JsonSerializer.Serialize(BikeRoute));
             BikeRoute.Cues.Add(new CueEntry());
             ModelState.Clear();
+            Logger.LogTrace("Exiting OnPostAddCueRow");
 
         }
 
         public void OnPostInsertCueRow(int cueIndex)
         {
-            Logger.LogDebug("Entering OnPostInsertCueRow Index {Index}", cueIndex);
+            Logger.LogTrace("Entering OnPostInsertCueRow Index {Index}", cueIndex);
             Logger.LogDebug("BikeRoute Json {Json}", JsonSerializer.Serialize(BikeRoute));
             if(cueIndex < BikeRoute.Cues.Count)
             {
@@ -126,7 +146,8 @@ namespace CCC.website.Pages.BikeRoutes
                 BikeRoute.Cues.Insert(cueIndex, new CueEntry());
                 ModelState.Clear();
             }
-            Logger.LogDebug("BikeRoute Json {Json}", JsonSerializer.Serialize(BikeRoute));
+            Logger.LogTrace("BikeRoute Json {Json}", JsonSerializer.Serialize(BikeRoute));
+            Logger.LogTrace("Exiting OnPostInsertCueRow");
         }
 
         public async Task<IActionResult> OnPostDeleteAsync()

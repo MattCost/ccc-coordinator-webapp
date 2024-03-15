@@ -16,6 +16,9 @@ namespace CCC.website.Pages.BikeRoutes
     {
         public IndexPageModel(ILogger<IndexPageModel> logger, IDownstreamApi api) : base(logger, api)
         {
+            Logger.LogTrace("BikeRoutes Index Ctor Trace");
+            Logger.LogDebug("BikeRoutes Index Ctor Debug");
+            Logger.LogInformation("BikeRoutes Index Ctor Information");
         }
 
         public async Task<JsonResult> OnGetFetchBikeRoutes()

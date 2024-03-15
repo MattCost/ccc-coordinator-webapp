@@ -20,12 +20,17 @@ namespace CCC.website.Pages.Events
         [BindProperty, DataType(DataType.Date)]
         public DateTime Date { get; set; } = DateTime.Now.Date;
         [BindProperty, DataType(DataType.Time)]
-        public DateTime Time { get; set; }        
+        public DateTime Time { get; set; }       
+
+        [BindProperty]
+        public int TimeZoneOffset {get;set;}
 
         public async Task<ActionResult> OnPostAsync()
         {
+            var utcStart =DateTime.SpecifyKind(Date.Add(Time.TimeOfDay) + TimeSpan.FromMinutes(TimeZoneOffset), DateTimeKind.Utc);
+            Logger.LogDebug("Date: {Date}, Time: {Time}, UTC: {UTC}", Date, Time, utcStart);
+            CreateModel.StartTime = utcStart;
             Logger.LogDebug("Entering OnPostAsync. CreateModel: {CreateModel}", System.Text.Json.JsonSerializer.Serialize(CreateModel));
-            CreateModel.StartTime = Date.Add(Time.TimeOfDay);
             
             try
             {
@@ -41,6 +46,8 @@ namespace CCC.website.Pages.Events
                     PreviousPageErrorMessage = "API returned null when trying to create event";
                     return RedirectToPage("/Index");
                 }
+                Logger.LogTrace("Creation complete, redirecting to edit page");
+
                 return RedirectToPage( "Edit", new { id = newModel.Id});
             }
             catch (Exception ex)

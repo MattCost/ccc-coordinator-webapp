@@ -26,9 +26,9 @@
       let output = [];
       @if(User.IsContributor())
       {
-        @: output.push(`<a href="Edit/${row.id}" title="Edit"><i class="fa-solid fa-pen-to-square fa-xl ccc-green"></i></a>`);
+        @: output.push(`<a href="Edit/${row.id}" title="Edit"><i class="fa-solid fa-pen-to-square fa-xl ccc-green"></i></a>&ensp;`);
       }
-      output.push(`<a href="Details/${row.id}" title="Details"><i class="fa-solid fa-circle-info fa-xl ccc-pink"></i></a>`);
+      output.push(`<a href="Details/${row.id}" title="Details"><i class="fa-solid fa-circle-info fa-xl ccc-pink"></i></a>&ensp;`);
       return output.join('');
 
     }
@@ -105,7 +105,12 @@
     </tr>
   </thead>
 </table>
-
+@if(User.ShowCrudOperations())
+{
+    <div>
+    <a asp-page="/Events/Create" class="btn btn-primary btn-lg" role="button" ><i class="fa-solid fa-circle-plus"></i> Create Event</a>
+    </div>
+}
 @* 
 <h3>Hello World</h3>
 @foreach(var route in Model.RideEvents)

@@ -1,6 +1,17 @@
 @page
 @model CCC.website.Pages.Events.CreatePageModel
 
+@section Scripts
+{
+    <script>
+        $(function() {
+            var date = new Date();
+            var offset = date.getTimezoneOffset();
+            console.log( "offset ", offset);
+            document.getElementById("TimeZoneOffset").value=offset
+    });
+    </script>
+}
 <div class="row">
     Create a new event
 </div>
@@ -38,5 +49,8 @@
         <small id="desciption" class="form-text text-muted"> - Where at</small>
         @Html.EditorFor(model => Model.CreateModel.Location, new { htmlAttributes = new { @class = "form-control" } })
     </div>
+
+    <input type="hidden" asp-for="TimeZoneOffset" />
+    
     <input class="btn btn-primary" id="Submit" type="submit" value="submit" />
 </form>

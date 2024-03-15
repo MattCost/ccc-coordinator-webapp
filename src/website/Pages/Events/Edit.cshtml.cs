@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using CCC.Authorization;
 using CCC.Entities;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.Graph;
 
 
 namespace CCC.website.Pages.Events;
@@ -28,7 +29,11 @@ public class EditPageModel : PageModelBase
     
     [BindProperty, DataType(DataType.Time)]
     public TimeSpan EventTime { get; set; }
+    
+    [BindProperty]
+    public int TimeZoneOffset {get;set;}
 
+    public DateTimeOffset EventStartTime {get;set;} = new();
     public SelectList BikeRouteSelectList {get;set;} =new SelectList(new List<SelectListItem>(), "Value", "Text");
     
     [BindProperty]
@@ -48,6 +53,7 @@ public class EditPageModel : PageModelBase
             {
                 options.RelativePath = $"ViewModels/RideEvents/{Id}";
             });
+
             Logger.LogDebug("Result from API {Result}", result);
             RideEvent = result ?? new RideEventViewModel();
             EventUpdateModel = new RideEventUpdateModel
@@ -59,6 +65,7 @@ public class EditPageModel : PageModelBase
             };
             EventDate = RideEvent.RideEvent.StartTime.Date;
             EventTime = RideEvent.RideEvent.StartTime.TimeOfDay;
+            EventStartTime = RideEvent.RideEvent.StartTime;
 
             if(User.IsCoordinator())
             {
@@ -108,19 +115,31 @@ public class EditPageModel : PageModelBase
             return new EmptyResult();
         }
 
-        public async Task<IActionResult> OnPostDeleteEventAsync()
+        public async Task<IActionResult> OnPostDeleteEventAsync(bool forceDelete)
         {
-            await API.DeleteForUserAsync("API", string.Empty, options =>
+            Logger.LogTrace("Entering OnPostDeleteEventAsync. ForceDelete {Force}",forceDelete);
+            try
             {
-                options.RelativePath = $"RideEvents/{Id}";
-            });
-            return RedirectToPage("Index/");
+                await API.DeleteForUserAsync("API", string.Empty, options =>
+                {
+                    options.RelativePath = $"RideEvents/{Id}?force={forceDelete}";
+                });
+                return RedirectToPage("Events/");
+            }
+            catch(Exception ex)
+            {
+                Logger.LogError(ex, "Error deleting event");
+                PreviousPageAction = "OnPostDeleteEvent";
+                PreviousPageErrorMessage = ex.Message;
+                return RedirectToPage();
+            }
 
         }
         public async Task<IActionResult> OnPostUpdateEventDetailsAsync()
         {
             Logger.LogTrace("Entering OnPostUpdateEventDetails");
-            EventUpdateModel.StartTime = EventDate.Add(EventTime);
+            var utcStart = DateTime.SpecifyKind(EventDate.Add(EventTime) + TimeSpan.FromMinutes(TimeZoneOffset), DateTimeKind.Utc);
+            EventUpdateModel.StartTime = utcStart;
 
             await API.PatchForUserAsync("API", EventUpdateModel, options =>
             {
