@@ -84,12 +84,37 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Adhyst Signups</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Modify Signups</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
         <form method="post">
             <div class="modal-body">
-            ...
+            @{
+                @* open a div here *@
+                CCC.Entities.RideType currentRideType = Model.RideEvent.GroupRides.Where(ride => ride.Id == Model.Signups[0].RideId).First().RideType;
+                @: <div class="border p-2">@currentRideType<div class="border p-2">
+                for(int i=0 ; i<Model.Signups. Count ; i++)
+                {
+                    CCC.Entities.RideType rideType = Model.RideEvent.GroupRides.Where(ride => ride.Id == Model.Signups[i].RideId).First().RideType;
+                    if(currentRideType != rideType)
+                    {
+                        currentRideType = rideType;
+                        @: </div></div><div class="border p-2 ">@currentRideType<div class="border p-2">
+                        
+                    }
+                    // if Model.Signups[i].RideType != currentRideType
+                    // then close the div, and open a new div and print out the new ride type
+                    @Html.HiddenFor(modelItem => Model.Signups[i].RideId)
+                    @Html.HiddenFor(modelItem => Model.Signups[i].CoordinatorRole)
+                    <label for="Model.Signups[i].UserId">@Model.Signups[i].CoordinatorRole </label>
+                    
+                    <select class="form-control" asp-for="Signups[i].UserId" asp-items="Model.Coordinators">
+                    </select>
+
+                }
+                @: </div></div>
+                
+            }
             
             </div>
             <div class="modal-footer">
