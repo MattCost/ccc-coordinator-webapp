@@ -147,6 +147,7 @@ public class GroupRidesController : EntityProviderBaseController
     [HttpPatch("{id:guid}/coordinators/{role:coordinatorRole}")]
     public async Task<ActionResult> Signup([FromRoute] Guid id, [FromRoute] CoordinatorRole role, [FromBody] string coordinatorId)
     {
+        //get group ride, get parent event, get all rides, if user is already signed up bad request
         return await EntityProviderActionHelper(async () =>
         {
             var model = await EntityProvider.GetGroupRide(id);

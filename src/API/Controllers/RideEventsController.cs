@@ -96,6 +96,30 @@ public class RideEventsController : EntityProviderBaseController
         return await EntityProviderActionHelper( async () => await EntityProvider.RestoreRideEvent(id), "Unable to restore ride event");
     }    
 
+    [HttpGet("{id:guid}/signups")]
+    public async Task<ActionResult> GetAllSignups([FromRoute] Guid id)
+    {
+        var output = new List<SignupEntry>();
+        var model = await EntityProvider.GetRideEvent(id);
+
+        foreach (var rideId in model.RideIds)
+        {
+            var ride = await EntityProvider.GetGroupRide(rideId);
+            foreach (var role in ride.Coordinators.Keys)
+            {
+                var current = ride.Coordinators[role].CoordinatorIds.Select(coordinatorId => new SignupEntry { CoordinatorRole = role, RideId = ride.Id, UserId = coordinatorId });
+                output.AddRange(current);
+
+                var blanksRequired = ride.Coordinators[role].RequiredCount - current.Count();
+                for (int i = 0; i < blanksRequired; i++)
+                {
+                    output.Add(new SignupEntry { CoordinatorRole = role, RideId = ride.Id, UserId = string.Empty });
+                }
+            }
+        }
+        return Ok(output);
+    }
+
 }
 
 

@@ -14,13 +14,6 @@ namespace CCC.website.Pages.Events;
 public class DetailsPageModel : PageModelBase
 {
 
-    public class ModifySignupEntry
-    {
-        public string UserId { get; set; } = string.Empty;
-        public Guid RideId { get; set; }
-        public CoordinatorRole CoordinatorRole { get; set; }
-    }
-
     [BindProperty(SupportsGet = true)]
     public Guid Id { get; set; }
 
@@ -30,10 +23,9 @@ public class DetailsPageModel : PageModelBase
     //add list for all coordinators, allow any coordinator to add any other coordinator for any role (to play musical chairs)
     public List<User> AllCoordinators { get; set; } = new();
 
-    // Need a select list for allCoordinators, userId and displayName
 
     [BindProperty]
-    public List<ModifySignupEntry> Signups { get; set; } = new();
+    public List<SignupEntry> Signups { get; set; } = new();
 
     public SelectList Coordinators { get; set; } = new SelectList(new List<SelectListItem>(), "Value", "Text");
 
@@ -67,20 +59,11 @@ public class DetailsPageModel : PageModelBase
                     options.RelativePath = "Users/coordinators";
                 }) ?? new();
 
-                foreach (var ride in RideEvent.GroupRides)
+                Signups = await API.GetForUserAsync<List<SignupEntry>>("API", options =>
                 {
-                    foreach (var role in ride.Coordinators.Keys)
-                    {
-                        var current = ride.Coordinators[role].CoordinatorIds.Select(coordinatorId => new ModifySignupEntry { CoordinatorRole = role, RideId = ride.Id, UserId = coordinatorId });
-                        Signups.AddRange(current);
+                    options.RelativePath = $"RideEvents/{Id}/signups";
+                }) ?? new List<SignupEntry>();
 
-                        var blanksRequired = ride.Coordinators[role].RequiredCount - current.Count();
-                        for (int i = 0; i < blanksRequired; i++)
-                        {
-                            Signups.Add(new ModifySignupEntry { CoordinatorRole = role, RideId = ride.Id, UserId = string.Empty });
-                        }
-                    }
-                }
                 Coordinators = new SelectList(AllCoordinators.Select(coordinator => new SelectListItem { Value = coordinator.UserId, Text = coordinator.DisplayName }).Append(new SelectListItem { Value = string.Empty, Text = "None" }), "Value", "Text");
 
 
