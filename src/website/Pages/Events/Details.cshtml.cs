@@ -65,11 +65,7 @@ public class DetailsPageModel : PageModelBase
                 }) ?? new List<SignupEntry>();
 
                 Coordinators = new SelectList(AllCoordinators.Select(coordinator => new SelectListItem { Value = coordinator.UserId, Text = coordinator.DisplayName }).Append(new SelectListItem { Value = string.Empty, Text = "None" }), "Value", "Text");
-
-
             }
-
-
         }
         catch (Exception ex)
         {
@@ -142,8 +138,8 @@ public class DetailsPageModel : PageModelBase
 
                 // if a user is in current state, but not requested state remove
                 var toRemove = currentCoordinators.Where(coordinatorId => !requestCoordinators.Contains(coordinatorId));
+                
                 // if a user is in request state, but not in current state add
-
                 var toAdd = requestCoordinators.Where(coordinatorId => !currentCoordinators.Contains(coordinatorId));
 
                 if (toRemove.Any())
