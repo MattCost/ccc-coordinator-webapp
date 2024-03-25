@@ -19,15 +19,15 @@ public class DetailsPageModel : PageModelBase
 
     public RideEventViewModel RideEvent { get; set; } = new();
     public Dictionary<string, object> ExtraData { get; set; } = new();
+    public bool IsSignedUp {get;set;}
 
-    //add list for all coordinators, allow any coordinator to add any other coordinator for any role (to play musical chairs)
     public List<User> AllCoordinators { get; set; } = new();
 
 
     [BindProperty]
     public List<SignupEntry> Signups { get; set; } = new();
 
-    public SelectList Coordinators { get; set; } = new SelectList(new List<SelectListItem>(), "Value", "Text");
+    public SelectList CoordinatorSelectList { get; set; } = new SelectList(new List<SelectListItem>(), "Value", "Text");
 
     public DetailsPageModel(ILogger<PageModelBase> logger, IDownstreamApi api) : base(logger, api)
     {
@@ -37,6 +37,7 @@ public class DetailsPageModel : PageModelBase
     {
         // ExtraData["UserIsCoordinator"] = User.IsCoordinator();
         ExtraData["activeTab"] = string.IsNullOrEmpty(activeTab) ? "list-details" : activeTab;
+        ViewData["activeTab"] = string.IsNullOrEmpty(activeTab) ? "list-details" : activeTab;
 
         try
         {
@@ -52,6 +53,7 @@ public class DetailsPageModel : PageModelBase
                 var coordinatorSignedUp = RideEvent.GroupRides.Select(ride => ride.Coordinators.Values.ToList()).SelectMany(x => x).Where(entry => entry.CoordinatorIds.Contains(User.NameIdentifier())).Any();
                 Logger.LogDebug("CoordinatorSignedUp: {coordinatorSignedUp}", coordinatorSignedUp);
                 ExtraData["signedUp"] = coordinatorSignedUp;
+                IsSignedUp = coordinatorSignedUp;
                 ExtraData["userDisplayNameLookup"] = RideEvent.CoordinatorDisplayNames;
 
                 AllCoordinators = await API.GetForUserAsync<List<User>>("API", options =>
@@ -64,7 +66,7 @@ public class DetailsPageModel : PageModelBase
                     options.RelativePath = $"RideEvents/{Id}/signups";
                 }) ?? new List<SignupEntry>();
 
-                Coordinators = new SelectList(AllCoordinators.Select(coordinator => new SelectListItem { Value = coordinator.UserId, Text = coordinator.DisplayName }).Append(new SelectListItem { Value = string.Empty, Text = "None" }), "Value", "Text");
+                CoordinatorSelectList = new SelectList(AllCoordinators.Select(coordinator => new SelectListItem { Value = coordinator.UserId, Text = coordinator.DisplayName }).Append(new SelectListItem { Value = string.Empty, Text = "None" }), "Value", "Text");
             }
         }
         catch (Exception ex)

@@ -150,6 +150,45 @@ CCC Colors
 }
 
 
+.tooltip-text {
+  position: absolute;
+  z-index: 2;
+  width: 100px;
+  color: white;
+  font-size: 12px;
+  background-color: #192733;
+  border-radius: 10px;
+  padding: 10px 15px 10px 15px;
+}
+
+.tooltip-right {
+  top: -8px;
+  left: 120%;
+}
+
+.tooltip-fade {
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.tooltip-delay {
+  opacity: 0;
+  transition: opacity 0.2s;
+  transition-delay: 1s;
+}
+
+.tooltip-container:hover .tooltip-fade { opacity: 1; }
+.tooltip-container:hover .tooltip-delay { opacity: 1; }
+
+
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+  /* margin: 40px; */
+  font-family: Arial;
+  text-align: center;
+}
+
 /*
 
 From the docs.css bootstrap examples file

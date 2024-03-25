@@ -5,6 +5,8 @@
     const string key = "signedUp";
     object? junk = ViewData[key];
     bool signedUp = junk == null ? false : (bool)junk;
+    Dictionary<string, string> coordinatorDisplayNames = ViewData["CoordinatorDisplayNames"] == null ? new() : (Dictionary<string, string>)ViewData["CoordinatorDisplayNames"]!;
+
 
 }
 @* Version 1 - List view *@
@@ -41,7 +43,16 @@
         {
             <tr>
                 <td>@Html.DisplayFor(modelItem => coordinatorRole)</td>
-                <td><span class="badge @(Model.Coordinators[coordinatorRole].RequiredCountMet ? "bg-success" : "bg-warning") rounded-pill">@Html.DisplayFor(modelItem => Model.Coordinators[coordinatorRole].CoordinatorIds.Count) / @Html.DisplayFor(modelItem => Model.Coordinators[coordinatorRole].RequiredCount)</span></td>
+                @{
+                    var coordinators = Model.Coordinators[coordinatorRole].CoordinatorIds.Select(coordId => coordinatorDisplayNames[coordId]).ToList();
+                    var mouseOver = coordinators.Count() == 0 ? "Be the first" : coordinators.Count() == 1 ? coordinators.First() : string.Join(", ", coordinators);
+                }
+                <td>
+                    <div class="tooltip-container">
+                        <span class="badge @(Model.Coordinators[coordinatorRole].RequiredCountMet ? "bg-success" : "bg-warning") rounded-pill">@Html.DisplayFor(modelItem => Model.Coordinators[coordinatorRole].CoordinatorIds.Count) / @Html.DisplayFor(modelItem => Model.Coordinators[coordinatorRole].RequiredCount)</span>
+                        <span class="tooltip-text tooltip-fade tooltip-right">@mouseOver</span>
+                    </div>
+                    </td>
                 <td>
                     @if(User.IsCoordinator() @* && !signedUp *@ && !Model.Coordinators[coordinatorRole].RequiredCountMet && !Model.Coordinators[coordinatorRole].CoordinatorIds.Contains(User.NameIdentifier()))
                     {
