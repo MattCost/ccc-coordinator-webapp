@@ -51,6 +51,26 @@
             return input;
         }
 
+        function generateOperationDropdown(id, name, value) {
+            console.log("generating dropdown ", {id, name, value});
+            var options = JSON.parse(document.getElementById("route-cues").dataset.operations);
+            
+            var selectList = document.createElement("select");
+            selectList.id = id;
+            for(let i=0 ; i<options.length ; i++) {
+                var option = document.createElement("option");
+                option.value = options[i];
+                option.text = options[i];
+                if(value != undefined && value == options[i]) {
+                    console.log("value matches index i ", i);
+                    option.selected = true;
+                }
+                selectList.append(option);
+            }
+
+            return selectList;
+        }
+
         function generateActions(index) {
             var deleteBtn = document.createElement("button");
             deleteBtn.type = "button";
@@ -78,7 +98,6 @@
             var tableBody = document.getElementById("cueEditTableBody");
             var lastRow = document.getElementById("lastrow");
             var index = JSON.parse(tableBody.dataset.rows);
-            @* tableBody.appendChild( generateRow(index, row)); *@
             tableBody.insertBefore( generateRow(index, row), lastRow);
             tableBody.dataset.rows = index+1;
         }
@@ -86,23 +105,27 @@
         function generateRow(index, row)
         {
             var existing = row != undefined;
+            console.log("generateRow index ", index);
+            if(existing) {
+                console.log("Existing true. row ", row);
+            }
             var newRow = document.createElement("tr");
             newRow.id = `row-${index}`;
             
             var op = document.createElement("td");
-            // generate dropdown for enum            
+            op.appendChild(generateOperationDropdown(`row-${index}-op`, `row-${index}-op`, existing ? row.Operation : undefined));
             newRow.appendChild(op);
             
             var name = document.createElement("td");
-            name.appendChild(generateTextInput("name", "name", existing ? row.StreetName : "Street Name"));
+            name.appendChild(generateTextInput(`row-${index}-name`, `row-${index}-name`, existing ? row.StreetName : "Street Name"));
             newRow.appendChild(name);
 
             var mileMarker = document.createElement("td");
-            mileMarker.appendChild(generateTextInput("mileMarker", "mileMarker", existing ? row.MileMarker : "Mile Marker"));            
+            mileMarker.appendChild(generateTextInput(`row-${index}-mile-marker`, `row-${index}-mile-marker`, existing ? row.MileMarker : "Mile Marker"));            
             newRow.appendChild(mileMarker);
 
             var notes = document.createElement("td");
-            notes.appendChild(generateTextInput("notes", "notes", existing ? row.Notes : "Notes"));
+            notes.appendChild(generateTextInput(`row-${index}-notes`, `row-${index}-notes`, existing ? row.Notes : "Notes"));
             newRow.appendChild(notes);
 
             var actions = document.createElement("td");
@@ -129,16 +152,70 @@
             }
         }
 
+        function getCues() {
+            let output = [];
+            var tableBody = document.getElementById("cueEditTableBody");
+            for(const row of tableBody.children) {
+                console.log("Processing row ", row.id);
+                if(row.id != "lastrow") {
+                    var op = document.getElementById(`${row.id}-op`);
+                    var operation = op.options[ op.selectedIndex].value;
+                    let entry = {
+                        Operation : operation,
+                        StreetName : document.getElementById(`${row.id}-name`).value,
+                        MileMarker : document.getElementById(`${row.id}-mile-marker`).value,
+                        Notes : document.getElementById(`${row.id}-notes`).value,
+                    };
+                    console.log(entry);
+                    output.push(entry);
+                }
+            }
+            return output;
+        }
+
+        function submitForm() {
+            console.log("submitting form");
+            var id = document.getElementById("Id").value;
+            var name = document.getElementById("Name").value;
+            var description = document.getElementById("Description").value;
+            var distance = document.getElementById("Distance").value;
+            var cues = getCues();
+
+            $.ajax({
+                url: '?handler=Update',
+                type: "POST",
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader("RequestVerificationToken", $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: {
+                    id,
+                    name,
+                    description,
+                    distance,
+                    cues
+                }
+            }).done(function(data) {
+                console.log(data);
+                if(data.result == "success") {
+                    console.log("update complete");
+                    window.location.href = '@Url.Content($"~/BikeRoutes/Details/{Model.Id}")';
+                } else {
+                    alert(data.result);
+                }
+            })
+
+        }
+
     </script>
 }
 
 <div class="row">
     Bike Route Details
-    <div id="route-cues" data-cues='@Html.Raw(Model.CuesJson)'></div>
+    <div id="route-cues" data-cues='@Html.Raw(Model.CuesJson)' data-operations='@Html.Raw(Model.OperationsJson)'></div>
 </div>
 <form method="post">
     <div class="form-group">
-        @* @Html.HiddenFor(model => Model.BikeRoute.Id) *@
+        @Html.HiddenFor(model => Model.Id)
         @Html.LabelFor(model => Model.Name)
         @Html.EditorFor(model => Model.Name, new
             {
@@ -185,7 +262,8 @@
         </tbody>
          
     </table>
-    <input class="btn btn-success" id="Submit" type="submit" value="Save Changes" asp-page-handler="Update"/>
+    @* <input class="btn btn-success" id="Submit" type="submit" value="Save Changes" asp-page-handler="Update"/> *@
+    <button type="button" class="btn btn-success" value="Save Changes" onclick="submitForm()">Save Changes</button>
 
     <input class="btn btn-warning" id="Discard" type="submit" value="Discard Changes" asp-page-handler="DiscardChanges"
         onclick="return confirm('Are you sure?')" />

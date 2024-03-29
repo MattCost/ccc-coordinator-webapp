@@ -2,6 +2,7 @@
 using System.Data;
 using System.Text.Json;
 using CCC.Entities;
+using CCC.Enums;
 using CCC.website.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Graph.Models.CallRecords;
@@ -26,14 +27,19 @@ namespace CCC.website.Pages.BikeRoutes
         [BindProperty]
         public double Distance {get;set;}
 
+        [BindProperty]
+        public List<CueEntry> Cues {get;set;} = new();
+
         public string CuesJson {get;set;} = string.Empty;
 
+        public string OperationsJson {get;set;}
         
         public EditPageModel(ILogger<EditPageModel> logger, IDownstreamApi api) : base(logger, api)
         {
             Logger.LogTrace("BikeRoutes Index Ctor Trace");
             Logger.LogDebug("BikeRoutes Index Ctor Debug");
             Logger.LogInformation("BikeRoutes Index Ctor Information");
+            OperationsJson = System.Text.Json.JsonSerializer.Serialize(Enum.GetValues(typeof(CueOperation)));
         }
 
         public async Task OnGetAsync()
@@ -57,13 +63,14 @@ namespace CCC.website.Pages.BikeRoutes
             Logger.LogTrace("Exiting OnGetAsync Id {Id}", Id);
         }
 
-        public async Task<IActionResult> OnPostUpdateAsync()
+        public async Task<JsonResult> OnPostUpdateAsync()
         {
             Logger.LogTrace("Entering OnPostUpdateAsync. Name: {Name} Desc: {Desc} Distance: {Distance}", Name, Description, Distance);
             if(string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(Description))
             {
                 Logger.LogError("Missing required parameter.");
-                return RedirectToPage();
+                // return RedirectToPage();
+                return new JsonResult( new {result="error. missing required parameter"} );
             }
 
             try
@@ -76,18 +83,15 @@ namespace CCC.website.Pages.BikeRoutes
                 };
                 await API.PatchForUserAsync("API", updateModel, options => { options.RelativePath = $"BikeRoutes/{Id}"; });
 
-
-                var cuesJson = HttpContext.Session.GetString($"route-{Id}-cues") ?? "{}";
-                var cues = System.Text.Json.JsonSerializer.Deserialize<List<CueEntry>>(cuesJson) ?? new();
                 Logger.LogDebug("Null Hack");
-                for(int i=0; i<cues.Count ; i++)
+                for(int i=0; i<Cues.Count ; i++)
                 {
-                    if(cues[i].StreetName == null) 
-                        cues[i].StreetName = string.Empty;
-                    if(cues[i].Notes == null) 
-                        cues[i].Notes = string.Empty;
+                    if(Cues[i].StreetName == null) 
+                        Cues[i].StreetName = string.Empty;
+                    if(Cues[i].Notes == null) 
+                        Cues[i].Notes = string.Empty;
                 }
-                await API.PutForUserAsync("API", cues, options => { options.RelativePath = $"BikeRoutes/{Id}/cues"; });
+                await API.PutForUserAsync("API", Cues, options => { options.RelativePath = $"BikeRoutes/{Id}/cues"; });
 
             }
             catch(Exception ex)
@@ -95,10 +99,14 @@ namespace CCC.website.Pages.BikeRoutes
                 Logger.LogError(ex, "Exception trying to update BikeRoute Id {Id}", Id);
                 PreviousPageAction = "BikeRoute/Edit/OnPost";
                 PreviousPageErrorMessage = $"Error updating BikeRoute";
+                return new JsonResult( new {result="error. missing required parameter"} );
+
             }
             
             Logger.LogTrace("Exiting OnPostUpdateAsync");
-            return RedirectToPage();
+            return new JsonResult( new {result="success"} );
+
+            // return RedirectToPage();
         }
 
         public IActionResult OnPostDiscardChanges()
