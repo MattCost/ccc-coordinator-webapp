@@ -113,9 +113,9 @@ namespace CCC.website
             }
 
             app.UseStaticFiles();
-            app.UseSession();
 
             app.UseCookiePolicy();
+            app.UseSession();
 
             app.UseRouting();
             app.UseAuthentication();
