@@ -17,16 +17,130 @@
 @section Scripts
 {
     @* <script src="https://unpkg.com/bootstrap-table@1.22.1/dist/bootstrap-table.min.js"></script> *@
+     	
+    <script>
+        $(function() {
+            console.log( "ready!" );
+            var cuesJson = document.getElementById("route-cues").dataset.cues;
+            console.log("cues json ", cuesJson);
+            var cues = JSON.parse(cuesJson);
+            console.log("cues ", cues);
+
+            for (let i = 0; i < cues.length ; i++) {
+                addRow(cues[i]);
+            }
+
+        });
+
+        function generateLabel(labelFor, labelValue) {
+            var label = document.createElement("label");
+            label.setAttribute("for", labelFor);
+            label.innerHTML = labelValue;
+            return label;
+        }
+
+        function generateTextInput(id, name, value) {
+            var input = document.createElement("input");
+            input.setAttribute("class", "form-control");
+            input.type = "text";
+            input.id = id;
+            input.name = name;
+            if(value != undefined) {
+                input.value = value;
+            }
+            return input;
+        }
+
+        function generateActions(index) {
+            var deleteBtn = document.createElement("button");
+            deleteBtn.type = "button";
+            deleteBtn.id = `delete-row-${index}`;
+            deleteBtn.value = "Delete";
+            deleteBtn.innerHTML = "Delete";
+            deleteBtn.setAttribute("class", "btn btn-warning");
+            deleteBtn.onclick = function() { deleteRow(index);};
+
+            var insert = document.createElement("button");
+            insert.type = "button";
+            insert.id = `insert-row-${index}`;
+            insert.value = "Insert";
+            insert.innerHTML = "Insert";
+            insert.setAttribute("class", "btn btn-success");
+            insert.onclick = function() { insertRow(index);};
+            
+            var div = document.createElement("div");
+            div.appendChild(insert);
+            div.appendChild(deleteBtn);
+            return div;
+
+        }
+        function addRow(row) {
+            var tableBody = document.getElementById("cueEditTableBody");
+            var lastRow = document.getElementById("lastrow");
+            var index = JSON.parse(tableBody.dataset.rows);
+            @* tableBody.appendChild( generateRow(index, row)); *@
+            tableBody.insertBefore( generateRow(index, row), lastRow);
+            tableBody.dataset.rows = index+1;
+        }
+
+        function generateRow(index, row)
+        {
+            var existing = row != undefined;
+            var newRow = document.createElement("tr");
+            newRow.id = `row-${index}`;
+            
+            var op = document.createElement("td");
+            // generate dropdown for enum            
+            newRow.appendChild(op);
+            
+            var name = document.createElement("td");
+            name.appendChild(generateTextInput("name", "name", existing ? row.StreetName : "Street Name"));
+            newRow.appendChild(name);
+
+            var mileMarker = document.createElement("td");
+            mileMarker.appendChild(generateTextInput("mileMarker", "mileMarker", existing ? row.MileMarker : "Mile Marker"));            
+            newRow.appendChild(mileMarker);
+
+            var notes = document.createElement("td");
+            notes.appendChild(generateTextInput("notes", "notes", existing ? row.Notes : "Notes"));
+            newRow.appendChild(notes);
+
+            var actions = document.createElement("td");
+            actions.appendChild(generateActions(index));
+            newRow.appendChild(actions);
+            return newRow;
+        }
+
+        function insertRow(index) {
+            var targetRow = document.getElementById(`row-${index}`);
+            if(targetRow != undefined) {
+                var tableBody = document.getElementById("cueEditTableBody");
+                var index = JSON.parse(tableBody.dataset.rows) +1;
+                targetRow.parentElement.insertBefore(generateRow(index), targetRow);
+                tableBody.dataset.rows = index;
+            }
+            @* alert(`Inserting row before ${index}`); *@
+        }
+
+        function deleteRow(index) {
+            var row = document.getElementById(`row-${index}`);
+            if(row != undefined) {
+                row.parentElement.removeChild(row);
+            }
+        }
+
+    </script>
 }
 
 <div class="row">
     Bike Route Details
+    <div id="route-cues" data-cues='@Html.Raw(Model.CuesJson)'></div>
 </div>
 <form method="post">
     <div class="form-group">
-        @Html.HiddenFor(model => Model.BikeRoute.Id)
-        @Html.LabelFor(model => Model.BikeRoute.Name)
-        @Html.EditorFor(model => Model.BikeRoute.Name, new
+        @* @Html.HiddenFor(model => Model.BikeRoute.Id) *@
+        @Html.LabelFor(model => Model.Name)
+        @Html.EditorFor(model => Model.Name, new
             {
                 htmlAttributes = new
                 {
@@ -37,13 +151,13 @@
         <small id="name" class="form-text text-muted">What's the name of the route?</small>
     </div>
     <div class="form-group">
-        @Html.LabelFor(model => Model.BikeRoute.Description)
-        @Html.EditorFor(model => Model.BikeRoute.Description, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.LabelFor(model => Model.Description)
+        @Html.EditorFor(model => Model.Description, new { htmlAttributes = new { @class = "form-control" } })
         <small id="desciption" class="form-text text-muted">Provide a description of the route</small>
     </div>
     <div class="form-group">
-        @Html.LabelFor(model => Model.BikeRoute.Distance)
-        @Html.EditorFor(model => Model.BikeRoute.Distance, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.LabelFor(model => Model.Distance)
+        @Html.EditorFor(model => Model.Distance, new { htmlAttributes = new { @class = "form-control" } })
         <small id="desciption" class="form-text text-muted">How many miles?</small>
     </div>
 
@@ -59,49 +173,17 @@
                 <th>Actions</th>
             </tr>
         </thead>
-        <tbody>
-            @for(int i=0 ; i < Model.BikeRoute.Cues.Count; i++)
-            {
-                    <tr>
-                        <td>
-                            <div class="form-group">
-                                <select class="form-control" aria-placeholder="CueOperation" name=@($"BikeRoute.Cues[{i}].Operation") id=@($"BikeRoute_Cues_{i}__Operation") asp-items='EnumHelper.SelectListForEnum_Selected<CCC.Enums.CueOperation>(@Model.BikeRoute.Cues[i].Operation)'>
-                                    @* <option selected value="@Model.BikeRoute.Cues[i].Operation">@Model.BikeRoute.Cues[i].Operation</option> *@
-                                </select>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-group">
-                                @Html.EditorFor(modelItem => Model.BikeRoute.Cues[i].StreetName, new { htmlAttributes = new { @class = "form-control" } })
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-group">
-                                @Html.EditorFor(modelItem => Model.BikeRoute.Cues[i].MileMarker, new { htmlAttributes = new { @class = "form-control" } })
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-group">
-                                @Html.EditorFor(modelItem => Model.BikeRoute.Cues[i].Notes, new { htmlAttributes = new { @class = "form-control" } })
-                            </div>
-                        </td>
-                        <td>
-                            <input class="btn btn-warning" id="DeleteCue" type="submit" value="Delete" asp-page-handler="RemoveCueRow" asp-route-cueIndex=@i />
-                            <input class="btn btn-secondary" id="InsertCue" type="submit" value="Insert" asp-page-handler="InsertCueRow" asp-route-cueIndex=@i />
-                        </td>
-                    </tr>
-            }
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td>
-                    <input class="btn btn-secondary" id="AddCue" type="submit" value="Add Cue" asp-page-handler="AddCueRow"  />
-                </td>
-            </tr>
+        <tbody id="cueEditTableBody" data-rows=0>
 
+            <tr id="lastrow">
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th><button type="button" class="btn btn-secondary" id="AddCue" value="Add Cue" onclick='addRow()'>Add Cue</button></th>
+            </tr>
         </tbody>
+         
     </table>
     <input class="btn btn-success" id="Submit" type="submit" value="Save Changes" asp-page-handler="Update"/>
 
