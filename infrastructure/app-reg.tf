@@ -42,7 +42,7 @@ resource "azuread_application" "api" {
     }
     redirect_uris = ["http://localhost:8080/", "https://jwt.ms/"]
   }
-
+  
   required_resource_access {
     resource_app_id = data.azuread_application_published_app_ids.well_known.result.MicrosoftGraph
 
@@ -103,6 +103,12 @@ resource "azuread_application" "website" {
 
     logout_url = "https://${azurecaf_name.website.result}.azurewebsites.net/signout-oidc"
 
+  }
+
+  fallback_public_client_enabled = true
+
+  public_client {
+    redirect_uris = ["https://oauth.pstmn.io/v1/callback"]
   }
 
   required_resource_access {
