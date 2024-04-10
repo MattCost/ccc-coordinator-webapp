@@ -44,6 +44,28 @@
                 "/Views": "${workspaceFolder}/Views"
             }
         },
+        {
+            "name": "website-remote-api",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-website",
+            "program": "${workspaceFolder}/src/website/bin/Debug/net7.0/website.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/website",
+            "stopAtEntry": false,
+            // "serverReadyAction": {
+            //     "action": "openExternally",
+            //     "pattern": "\\bNow listening on:\\s+(http?://\\S+)"
+            // },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "API__BaseUrl" : "https://app-ccc-webapp-api-dev.azurewebsites.net/api/",
+                "DOTNET_USE_POLLING_FILE_WATCHER" : "1"
 
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Views"
+            }
+        },
     ]
 }
