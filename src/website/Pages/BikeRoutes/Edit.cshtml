@@ -168,9 +168,9 @@
                     let entry = {
                         Operation : operation,
                         Description : document.getElementById(`${row.id}-description`).value,
+                        MileMarker : document.getElementById(`${row.id}-mile-marker`).value
                         @* StreetName : document.getElementById(`${row.id}-name`).value, *@
-                        @* MileMarker : document.getElementById(`${row.id}-mile-marker`).value, *@
-                        Notes : document.getElementById(`${row.id}-notes`).value,
+                        @* Notes : document.getElementById(`${row.id}-notes`).value, *@
                     };
                     console.log(entry);
                     output.push(entry);
