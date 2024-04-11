@@ -124,7 +124,7 @@ public class BikeRoutesController : EntityProviderBaseController
 
     [Authorize(Policy = CCC.Authorization.Enums.ContributorPolicy)]
     [HttpDelete("{id:guid}/cues")]
-    public async Task<ActionResult> DeleteAllCue([FromRoute] Guid id, [FromBody] List<CueEntry> cues)
+    public async Task<ActionResult> DeleteAllCue([FromRoute] Guid id)
     {
         var model = await EntityProvider.GetBikeRoute(id);
         model.Cues = new();
