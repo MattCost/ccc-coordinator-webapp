@@ -8,7 +8,7 @@ public enum CueOperation
 {
     [CueOperationPrintAttribute(" ")]
     Default = 0,
-    [CueOperationPrintAttribute("Α")]
+    [CueOperationPrintAttribute("ɑ")]
     StartRoute = 1,
 
     [CueOperationPrintAttribute("L")]
