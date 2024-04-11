@@ -44,7 +44,10 @@ public enum CueOperation
     [CueOperationPrintAttribute("(S)")]
     StraightCircle = 12,
     [CueOperationPrintAttribute("Ω")]
-    EndRoute = 13
+    
+    EndRoute = 13,
+    [CueOperationPrint("o>")]
+    IceCream = 14
 }
 
 [System.AttributeUsage(System.AttributeTargets.Field)]
