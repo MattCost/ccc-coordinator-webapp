@@ -116,13 +116,18 @@
             op.appendChild(generateOperationDropdown(`row-${index}-op`, `row-${index}-op`, existing ? row.Operation : undefined));
             newRow.appendChild(op);
             
-            var name = document.createElement("td");
+            var description = document.createElement("td");
+            description.appendChild(generateTextInput(`row-${index}-description`, `row-${index}-description`, existing ? row.Description : "Description"));
+            newRow.appendChild(name);
+
+
+            @* var name = document.createElement("td");
             name.appendChild(generateTextInput(`row-${index}-name`, `row-${index}-name`, existing ? row.StreetName : "Street Name"));
             newRow.appendChild(name);
 
             var notes = document.createElement("td");
             notes.appendChild(generateTextInput(`row-${index}-notes`, `row-${index}-notes`, existing ? row.Notes : "Notes"));
-            newRow.appendChild(notes);
+            newRow.appendChild(notes); *@
 
             var mileMarker = document.createElement("td");
             mileMarker.appendChild(generateTextInput(`row-${index}-mile-marker`, `row-${index}-mile-marker`, existing ? row.MileMarker : "Mile Marker"));            
@@ -162,8 +167,9 @@
                     var operation = op.options[ op.selectedIndex].value;
                     let entry = {
                         Operation : operation,
-                        StreetName : document.getElementById(`${row.id}-name`).value,
-                        MileMarker : document.getElementById(`${row.id}-mile-marker`).value,
+                        Description : document.getElementById(`${row.id}-description`).value,
+                        @* StreetName : document.getElementById(`${row.id}-name`).value, *@
+                        @* MileMarker : document.getElementById(`${row.id}-mile-marker`).value, *@
                         Notes : document.getElementById(`${row.id}-notes`).value,
                     };
                     console.log(entry);
@@ -244,8 +250,9 @@
         <thead>
             <tr>
                 <th>Operation</th>
-                <th>Street / Landmark</th>
-                <th>Notes</th>
+                <th>Description</th>
+                @* <th>Street / Landmark</th>
+                <th>Notes</th> *@
                 <th>Mile Marker</th>
                 <th>Actions</th>
             </tr>
@@ -255,7 +262,8 @@
             <tr id="lastrow">
                 <th></th>
                 <th></th>
-                <th></th>
+                @* <th></th> *@
+                @* <th></th> *@
                 <th></th>
                 <th><button type="button" class="btn btn-secondary" id="AddCue" value="Add Cue" onclick='addRow()'>Add Cue</button></th>
             </tr>
@@ -270,87 +278,3 @@
     <input class="btn btn-danger" id="Delete" type="submit" value="Delete Route" asp-page-handler="Delete"
         onclick="return confirm('Are you sure you want to Delete the route?')" />    
 </form>
-@*
-get model
-save list of cues in temp data
-page handlers work on temp data model
-hit save changes -> uses replace all cues endpoint with temp data version
-hit discard changes -> blow away temp data
-page displays temp data version of cues
-
-
-disable all form controls
-click a row to enable them
-wait for row to lose focus
-changes are added to list of requests
-
-user hits cancle - list is deleted
-user hits save - each operation is submitted
-
-*@
-@* <div class="container">
-Edit Route Cues
-<div class="row">
-<div class="col">
-Operation
-</div>
-<div class="col">
-Street Name
-</div>
-<div class="col">
-Notes
-</div>
-<div class="col">
-Mile Marker
-</div>
-<div class="col">
-Index
-</div>
-<div class="col">
-Submit
-</div>
-</div>
-
-@for(int index = 0 ; index < Model.BikeRoute.Cues.Count; index++)
-{
-<div class="row">
-@Html.DisplayFor(modelItem => Model.BikeRoute.Cues[index], "CueSheetRowForEdit")
-<div class="col">
-@Html.DisplayFor( m => index)
-</div>
-<div class="col">
-<form asp-page-handler="DeleteCueRow" method="post">
-@Html.HiddenFor( m=> index)
-<input id = "Submit" type = "submit" value = "Delete Row" />
-</form>
-</div>
-</div>
-}
-<form method="post">
-<div class="row">
-<div class="col">
-<select name="CueRow.Operation" asp-items='EnumHelper.SelectListForEnum<CueOperation>()'>
-<option disabled selected value="">Select an operation </option>
-</select>
-</div>
-<div class="col">
-<input asp-for="CueRow.StreetName" placeholder="street name" />
-</div>
-<div class="col">
-<input asp-for="CueRow.MileMarker" placeholder="mile marker" />
-</div>
-<div class="col">
-<select name="index" asp-items='Enumerable.Range(0,Model.BikeRoute.Cues.Count).Select( i=> new SelectListItem{
-Text=i.ToString(), Value=i.ToString()})'>
-<option disabled selected>index</option>
-</select>
-</div>
-<div class="col">
-<input id = "Submit" type = "submit" value = "Add Row" asp-page-handler="AddCueRow" title="Add new row at end"/>
-<input id = "SubmitInsert" type = "submit" value = "Insert" asp-page-handler="InsertCueRow" title="Insert new row before
-index"/>
-</div>
-</div>
-</form>
-</div>
-*@
