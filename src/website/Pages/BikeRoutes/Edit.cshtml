@@ -120,13 +120,13 @@
             name.appendChild(generateTextInput(`row-${index}-name`, `row-${index}-name`, existing ? row.StreetName : "Street Name"));
             newRow.appendChild(name);
 
-            var mileMarker = document.createElement("td");
-            mileMarker.appendChild(generateTextInput(`row-${index}-mile-marker`, `row-${index}-mile-marker`, existing ? row.MileMarker : "Mile Marker"));            
-            newRow.appendChild(mileMarker);
-
             var notes = document.createElement("td");
             notes.appendChild(generateTextInput(`row-${index}-notes`, `row-${index}-notes`, existing ? row.Notes : "Notes"));
             newRow.appendChild(notes);
+
+            var mileMarker = document.createElement("td");
+            mileMarker.appendChild(generateTextInput(`row-${index}-mile-marker`, `row-${index}-mile-marker`, existing ? row.MileMarker : "Mile Marker"));            
+            newRow.appendChild(mileMarker);
 
             var actions = document.createElement("td");
             actions.appendChild(generateActions(index));
@@ -245,8 +245,8 @@
             <tr>
                 <th>Operation</th>
                 <th>Street / Landmark</th>
-                <th>Mile Marker</th>
                 <th>Notes</th>
+                <th>Mile Marker</th>
                 <th>Actions</th>
             </tr>
         </thead>

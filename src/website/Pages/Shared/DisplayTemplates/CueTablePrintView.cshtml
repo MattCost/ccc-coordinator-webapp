@@ -24,6 +24,14 @@
                         <td>@Html.DisplayFor(modelItem => cueRow.StreetName)</td>
                         <td>@(cueRow.MileMarker > 0 ? @Html.DisplayFor(modelItem => cueRow.MileMarker) : "")</td>
                     </tr>
+                    if(!string.IsNullOrWhiteSpace(cueRow.Notes))
+                    {
+                        <tr>
+                            <td></td>
+                            <td>@(cueRow.Notes)</td>
+                            <td></td>
+                        </tr>
+                    }
                 }
             </tbody>
         </table>
