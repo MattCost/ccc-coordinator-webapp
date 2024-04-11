@@ -2,7 +2,8 @@
 
 <tr>
     <th scope="row">@Html.DisplayFor(model => model.Operation)</th>
-    <td>@Html.DisplayFor(model => model.StreetName)</td>
-    <td>@Html.DisplayFor(model => model.Notes)</td>
+    <th scope="row">@Html.DisplayFor(model => model.Description)</th>
+    @* <td>@Html.DisplayFor(model => model.StreetName)</td>
+    <td>@Html.DisplayFor(model => model.Notes)</td> *@
     <td>@(Model.MileMarker > 0 ? @Html.DisplayFor(model => model.MileMarker) :"")</td>
 </tr>

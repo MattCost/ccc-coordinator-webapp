@@ -86,10 +86,12 @@ namespace CCC.website.Pages.BikeRoutes
                 Logger.LogDebug("Null Hack");
                 for(int i=0; i<Cues.Count ; i++)
                 {
-                    if(Cues[i].StreetName == null) 
-                        Cues[i].StreetName = string.Empty;
-                    if(Cues[i].Notes == null) 
-                        Cues[i].Notes = string.Empty;
+                    if(Cues[i].Description == null) 
+                        Cues[i].Description = string.Empty;
+                    // if(Cues[i].StreetName == null) 
+                    //     Cues[i].StreetName = string.Empty;
+                    // if(Cues[i].Notes == null) 
+                    //     Cues[i].Notes = string.Empty;
                 }
                 await API.PutForUserAsync("API", Cues, options => { options.RelativePath = $"BikeRoutes/{Id}/cues"; });
 

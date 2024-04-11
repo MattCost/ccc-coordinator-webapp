@@ -11,8 +11,8 @@
             <thead>
                 <tr>
                     <th style="max-width:20px" scope="col">@* operation *@</th>
-                    <th style="max-width:55px" scope="col">@Html.DisplayNameFor(model => model.Cues.First().StreetName)
-                    </th>
+                    <th style="max-width:55px" scope="col">@Html.DisplayNameFor(model => model.Cues.First().Description)</th>
+                    @* <th style="max-width:55px" scope="col">@Html.DisplayNameFor(model => model.Cues.First().StreetName)</th>*@
                     <th style="max-width:15px" scope="col">@* mile *@</th>
                 </tr>
             </thead>
@@ -21,17 +21,18 @@
                 {
                     <tr>
                         <td>@cueRow.Operation.GetPrintAttribute()</td>
-                        <td>@Html.DisplayFor(modelItem => cueRow.StreetName)</td>
+                        @* <td>@Html.DisplayFor(modelItem => cueRow.StreetName)</td> *@
+                        <td>@Html.DisplayFor(modelItem => cueRow.Description)</td>
                         <td>@(cueRow.MileMarker > 0 ? @Html.DisplayFor(modelItem => cueRow.MileMarker) : "")</td>
                     </tr>
-                    if(!string.IsNullOrWhiteSpace(cueRow.Notes))
+                    @* if(!string.IsNullOrWhiteSpace(cueRow.Notes))
                     {
                         <tr>
                             <td></td>
                             <td>@(cueRow.Notes)</td>
                             <td></td>
                         </tr>
-                    }
+                    } *@
                 }
             </tbody>
         </table>
