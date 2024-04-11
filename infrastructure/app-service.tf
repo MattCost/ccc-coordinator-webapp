@@ -6,7 +6,7 @@ resource "azurerm_service_plan" "this" {
   resource_group_name = azurerm_resource_group.this.name
   location            = azurerm_resource_group.this.location
   os_type             = "Linux"
-  sku_name            = "F1"
+  sku_name            = "B1"
 
   tags = {
     app     = local.appName
@@ -23,7 +23,7 @@ resource "azurerm_linux_web_app" "api" {
   service_plan_id     = azurerm_service_plan.this.id
 
   site_config {
-    always_on = false
+    always_on = true
 
     application_stack {
       dotnet_version = "7.0"
@@ -44,7 +44,7 @@ resource "azurerm_linux_web_app" "api" {
     Swagger__PolicyId     = "B2C_1_SignupSignin"
     Swagger__ClientId     = azuread_application.website.application_id
     Swagger__Scope        = "https://cccwebapp.onmicrosoft.com/ccc-webapp-api/API.Access"
-    Swagger__ScopeDisplay = "access api as user"
+    Swagger__ScopeDisplay = "access api as user" 
 
 
     STORAGE_ACT_CONNECTION_STRING = azurerm_storage_account.this.primary_connection_string
@@ -69,7 +69,7 @@ resource "azurerm_linux_web_app" "website" {
   service_plan_id     = azurerm_service_plan.this.id
 
   site_config {
-    always_on = false
+    always_on = true
 
     application_stack {
       dotnet_version = "7.0"
