@@ -183,20 +183,26 @@
                             @: <div class="border p-2 @(isPink ? "ccc-pink" : "ccc-green")">@currentRideType<div class="border p-2">
                             for(int i=0 ; i<Model.Signups. Count ; i++)
                             {
-                                CCC.Entities.RideType rideType = Model.RideEvent.GroupRides.Where(ride => ride.Id == Model.Signups[i].EntityId).First().RideType;
-                                if(currentRideType != rideType)
+                                if(Model.Signups[i].EntityType == CCC.Enums.EntityTypes.GroupRide)
                                 {
-                                    currentRideType = rideType;
-                                    isPink = ! isPink;
-                                    @: </div></div><div class="border p-2 @(isPink ? "ccc-pink" : "ccc-green")">@currentRideType<div class="border p-2">
+                                    CCC.Entities.RideType rideType = Model.RideEvent.GroupRides.Where(ride => ride.Id == Model.Signups[i].EntityId).First().RideType;
+                                    if(currentRideType != rideType)
+                                    {
+                                        currentRideType = rideType;
+                                        isPink = ! isPink;
+                                        @: </div></div><div class="border p-2 @(isPink ? "ccc-pink" : "ccc-green")">@currentRideType<div class="border p-2">
+                                    }
+                                    @Html.HiddenFor(modelItem => Model.Signups[i].EntityId)
+                                    @Html.HiddenFor(modelItem => Model.Signups[i].CoordinatorRole)
+                                    <label for="Model.Signups[i].UserId">@Model.Signups[i].CoordinatorRole </label>
+                                    
+                                    <select class="form-control" asp-for="Signups[i].UserId" asp-items="Model.CoordinatorSelectList">
+                                    </select>
                                 }
-                                @Html.HiddenFor(modelItem => Model.Signups[i].EntityId)
-                                @Html.HiddenFor(modelItem => Model.Signups[i].CoordinatorRole)
-                                <label for="Model.Signups[i].UserId">@Model.Signups[i].CoordinatorRole </label>
-                                
-                                <select class="form-control" asp-for="Signups[i].UserId" asp-items="Model.CoordinatorSelectList">
-                                </select>
-
+                                if(Model.Signups[i].EntityType == CCC.Enums.EntityTypes.RideEvent)
+                                {
+                                    @* todo *@
+                                }
                             }
                             @: </div></div>
                             
