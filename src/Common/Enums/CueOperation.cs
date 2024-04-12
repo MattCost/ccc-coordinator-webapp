@@ -47,7 +47,10 @@ public enum CueOperation
 
     EndRoute = 13,
     [CueOperationPrint("🍦")]
-    IceCream = 14
+    IceCream = 14,
+
+    [CueOperationPrint("🫂")]
+    MassUp = 15
 }
 
 [System.AttributeUsage(System.AttributeTargets.Field)]
