@@ -135,7 +135,7 @@ public class DetailsPageModel : PageModelBase
                 var currentCoordinators = ride.Coordinators[role].CoordinatorIds;
                 var requestCoordinators =
                     Signups.Where(signup => !string.IsNullOrEmpty(signup.UserId))
-                        .Where(signup => signup.RideId == ride.Id && signup.CoordinatorRole == role)
+                        .Where(signup =>  signup.EntityType == Enums.EntityTypes.GroupRide && signup.EntityId == ride.Id && signup.CoordinatorRole == role)
                         .Select(signup => signup.UserId);
 
                 // if a user is in current state, but not requested state remove

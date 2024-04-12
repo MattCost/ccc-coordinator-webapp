@@ -1,9 +1,12 @@
+using System.Text.Json.Serialization;
+
 namespace CCC.Enums;
 
-public static class EntityTypes
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum EntityTypes
 {
-    public const string BikeRoute = nameof(BikeRoute);
-    public const string GroupRide = nameof(GroupRide);
-    public const string RideEvent = nameof(RideEvent);
-
+    Unknown = 0,
+    BikeRoute = 1,
+    GroupRide = 2,
+    RideEvent = 3,
 }

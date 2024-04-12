@@ -350,7 +350,7 @@ public class EntityProviderTableStorage : IEntityProvider
             throw new Exception("UserId must be provided");
         }
         
-        var queryFilter = $"PartitionKey eq '{userId}' and EntityType eq '{EntityTypes.BikeRoute}'";
+        var queryFilter = $"PartitionKey eq '{userId}' and EntityType eq '{EntityTypes.BikeRoute.ToString()}'";
         try
         {
             var output = new List<Guid>();
@@ -393,7 +393,7 @@ public class EntityProviderTableStorage : IEntityProvider
         //validate route id?
         var entry = new TableEntity(userId, bikeRouteId.ToString())
         {
-            ["EntityType"] = EntityTypes.BikeRoute,
+            ["EntityType"] = EntityTypes.BikeRoute.ToString(),
             ["EntityId"] = bikeRouteId
         };
         await FavoritesTableClient.UpsertEntityAsync(entry);

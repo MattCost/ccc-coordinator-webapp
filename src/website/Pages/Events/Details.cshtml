@@ -178,19 +178,19 @@
                 <div class="tab-pane fade show @( activeTab == "list-signups" ? "active" : "")" id="list-signups" role="tabpanel" aria-labelledby="list-signups-list">
                         <form method="post">
                         @{
-                            CCC.Entities.RideType currentRideType = Model.RideEvent.GroupRides.Where(ride => ride.Id == Model.Signups[0].RideId).First().RideType;
+                            CCC.Entities.RideType currentRideType = Model.RideEvent.GroupRides.Where(ride => ride.Id == Model.Signups[0].EntityId).First().RideType;
                             bool isPink = true;
                             @: <div class="border p-2 @(isPink ? "ccc-pink" : "ccc-green")">@currentRideType<div class="border p-2">
                             for(int i=0 ; i<Model.Signups. Count ; i++)
                             {
-                                CCC.Entities.RideType rideType = Model.RideEvent.GroupRides.Where(ride => ride.Id == Model.Signups[i].RideId).First().RideType;
+                                CCC.Entities.RideType rideType = Model.RideEvent.GroupRides.Where(ride => ride.Id == Model.Signups[i].EntityId).First().RideType;
                                 if(currentRideType != rideType)
                                 {
                                     currentRideType = rideType;
                                     isPink = ! isPink;
                                     @: </div></div><div class="border p-2 @(isPink ? "ccc-pink" : "ccc-green")">@currentRideType<div class="border p-2">
                                 }
-                                @Html.HiddenFor(modelItem => Model.Signups[i].RideId)
+                                @Html.HiddenFor(modelItem => Model.Signups[i].EntityId)
                                 @Html.HiddenFor(modelItem => Model.Signups[i].CoordinatorRole)
                                 <label for="Model.Signups[i].UserId">@Model.Signups[i].CoordinatorRole </label>
                                 

@@ -145,26 +145,27 @@ public class RideEventsController : EntityProviderBaseController
             var ride = await EntityProvider.GetGroupRide(rideId);
             foreach (var role in ride.Coordinators.Keys)
             {
-                var current = ride.Coordinators[role].CoordinatorIds.Select(coordinatorId => new SignupEntry { CoordinatorRole = role, RideId = ride.Id, UserId = coordinatorId });
+                var current = ride.Coordinators[role].CoordinatorIds.Select(coordinatorId => new SignupEntry { CoordinatorRole = role, EntityType=Enums.EntityTypes.GroupRide ,EntityId = ride.Id, UserId = coordinatorId });
                 output.AddRange(current);
 
                 var blanksRequired = ride.Coordinators[role].RequiredCount - current.Count();
                 for (int i = 0; i < blanksRequired; i++)
                 {
-                    output.Add(new SignupEntry { CoordinatorRole = role, RideId = ride.Id, UserId = string.Empty });
+                    output.Add(new SignupEntry { CoordinatorRole = role, EntityType=Enums.EntityTypes.GroupRide ,EntityId = ride.Id, UserId = string.Empty });
                 }
             }
         }
+        
         foreach(var supportRole in model.SupportPersonnel.Keys)
         {
-            var current = model.SupportPersonnel[supportRole].CoordinatorIds.Select(coordinatorId => new SignupEntry { CoordinatorRole = supportRole, RideId = model.Id, UserId = coordinatorId });
+            var current = model.SupportPersonnel[supportRole].CoordinatorIds.Select(coordinatorId => new SignupEntry { CoordinatorRole = supportRole, EntityType=Enums.EntityTypes.GroupRide, EntityId = model.Id, UserId = coordinatorId });
             output.AddRange(current);
 
             var blanksRequired = model.SupportPersonnel[supportRole].RequiredCount - current.Count();
             for (int i = 0; i < blanksRequired; i++)
             {
-                output.Add(new SignupEntry { CoordinatorRole = supportRole, RideId = model.Id, UserId = string.Empty });
-            }
+                output.Add(new SignupEntry { CoordinatorRole = supportRole, EntityType = Enums.EntityTypes.GroupRide, EntityId = model.Id, UserId = string.Empty });
+            }   
         }
         return Ok(output);
     }
