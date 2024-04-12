@@ -39,6 +39,17 @@ public class RideEventsController : EntityProviderBaseController
             Location = createModel.Location,
             RideIds = createModel.Rides
         };
+
+        if(createModel.Facilitator)
+        {
+            model.SupportPersonnel[CoordinatorRole.Facilitator] = new CoordinatorEntry{ RequiredCount = 1 };
+        }
+        
+        if(createModel.GrillMaster)
+        {
+            model.SupportPersonnel[CoordinatorRole.GrillMaster] = new CoordinatorEntry{ RequiredCount = 1 };
+        }
+
         Logger.LogDebug("Generated Model {Json}", System.Text.Json.JsonSerializer.Serialize(model));
         return await EntityProviderActionHelper( async () => {await EntityProvider.UpdateRideEvent(model); return model;}, "Unable to create Ride Event");
     }
@@ -57,6 +68,33 @@ public class RideEventsController : EntityProviderBaseController
             model.Description = updateModel.Description ?? model.Description;
             model.StartTime = updateModel.StartTime ?? model.StartTime;
             model.Location = updateModel.Location ?? model.Location;
+            
+            if(updateModel.Facilitator.HasValue)
+            {
+                if(updateModel.Facilitator.Value && !model.SupportPersonnel.ContainsKey(CoordinatorRole.Facilitator) )
+                {
+                    model.SupportPersonnel[CoordinatorRole.Facilitator] = new CoordinatorEntry{RequiredCount = 1};
+                }
+
+                if( !updateModel.Facilitator.Value && model.SupportPersonnel.ContainsKey(CoordinatorRole.Facilitator) )
+                {
+                    model.SupportPersonnel.Remove(CoordinatorRole.Facilitator);
+                }
+            }
+
+            if(updateModel.GrillMaster.HasValue)
+            {
+                if(updateModel.GrillMaster.Value && !model.SupportPersonnel.ContainsKey(CoordinatorRole.GrillMaster) )
+                {
+                    model.SupportPersonnel[CoordinatorRole.GrillMaster] = new CoordinatorEntry{RequiredCount = 1};
+                }
+
+                if( !updateModel.GrillMaster.Value && model.SupportPersonnel.ContainsKey(CoordinatorRole.GrillMaster) )
+                {
+                    model.SupportPersonnel.Remove(CoordinatorRole.GrillMaster);
+                }
+            }
+
             Logger.LogDebug("Model: {Model}", model);
             await EntityProvider.UpdateRideEvent(model);
         },"Unable to update Ride Event");
@@ -117,9 +155,64 @@ public class RideEventsController : EntityProviderBaseController
                 }
             }
         }
+        foreach(var supportRole in model.SupportPersonnel.Keys)
+        {
+            var current = model.SupportPersonnel[supportRole].CoordinatorIds.Select(coordinatorId => new SignupEntry { CoordinatorRole = supportRole, RideId = model.Id, UserId = coordinatorId });
+            output.AddRange(current);
+
+            var blanksRequired = model.SupportPersonnel[supportRole].RequiredCount - current.Count();
+            for (int i = 0; i < blanksRequired; i++)
+            {
+                output.Add(new SignupEntry { CoordinatorRole = supportRole, RideId = model.Id, UserId = string.Empty });
+            }
+        }
         return Ok(output);
     }
 
+    [Authorize(Policy = CCC.Authorization.Enums.CoordinatorPolicy)]
+    [HttpPatch("{id:guid}/support/{role:coordinatorRole}")]
+    public async Task<ActionResult> Signup([FromRoute] Guid id, [FromRoute] CoordinatorRole role, [FromBody] string coordinatorId)
+    {
+        //get group ride, get parent event, get all rides, if user is already signed up bad request
+        return await EntityProviderActionHelper(async () =>
+        {
+            var model = await EntityProvider.GetRideEvent(id);
+            if (!model.SupportPersonnel.ContainsKey(role) )
+            {
+                throw new InvalidOperationException($"Support Role {role} not required");
+            }
+            if (model.SupportPersonnel[role].RequiredCountMet)
+            {
+                throw new InvalidOperationException($"Support Role {role} already filled");
+            }            
+            model.SupportPersonnel[role].CoordinatorIds.Add(coordinatorId);
+            await EntityProvider.UpdateRideEvent(model);
+        }, "Unable to signup");
+    }
+
+    [Authorize(Policy = CCC.Authorization.Enums.CoordinatorPolicy)]
+    [HttpDelete("{id:guid}/support/{role:coordinatorRole}")]
+    public async Task<ActionResult> DeleteSignup([FromRoute] Guid id, [FromRoute] CoordinatorRole role, [FromBody] string coordinatorId)
+    {
+        return await EntityProviderActionHelper(async () =>
+        {
+            var model = await EntityProvider.GetRideEvent(id);
+            if(!model.SupportPersonnel.ContainsKey(role))
+            {
+                throw new InvalidOperationException($"Support Role {role} not required. Unable to delete");
+            }
+
+            if (!model.SupportPersonnel[role].CoordinatorIds.Contains(coordinatorId))
+            {
+                throw new InvalidOperationException("Coordinator is not signed up. Unable to delete");
+            }
+            model.SupportPersonnel[role].CoordinatorIds.Remove(coordinatorId);
+            await EntityProvider.UpdateRideEvent(model);
+        }, "Unable to remove signup");
+    }    
+
+
+    
 }
 
 

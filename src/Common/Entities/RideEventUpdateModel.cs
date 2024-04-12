@@ -6,5 +6,7 @@ public class RideEventUpdateModel
     public string? Description { get; set; } 
     public DateTimeOffset? StartTime { get; set; }
     public string? Location { get; set; }
+    public bool? GrillMaster {get;set;}
+    public bool? Facilitator {get;set;}
 
 }

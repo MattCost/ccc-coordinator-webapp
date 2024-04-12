@@ -9,5 +9,6 @@ public enum CoordinatorRole
     Setup = 4,
     Teardown = 5,
     GrillMaster = 6,
-    BeerRunner = 7
+    BeerRunner = 7,
+    Facilitator = 8
 }

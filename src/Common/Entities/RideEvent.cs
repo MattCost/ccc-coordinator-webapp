@@ -8,5 +8,5 @@ public class RideEvent
     public DateTimeOffset StartTime { get; set; }
     public string Location { get; set; } = string.Empty;
     public List<Guid> RideIds { get; set; } = new();
-
+    public Dictionary<CoordinatorRole, CoordinatorEntry> SupportPersonnel { get; set; } = new();
 }
