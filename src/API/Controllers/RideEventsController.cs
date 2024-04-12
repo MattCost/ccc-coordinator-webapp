@@ -158,7 +158,7 @@ public class RideEventsController : EntityProviderBaseController
         
         foreach(var supportRole in model.SupportPersonnel.Keys)
         {
-            var current = model.SupportPersonnel[supportRole].CoordinatorIds.Select(coordinatorId => new SignupEntry { CoordinatorRole = supportRole, EntityType=Enums.EntityTypes.GroupRide, EntityId = model.Id, UserId = coordinatorId });
+            var current = model.SupportPersonnel[supportRole].CoordinatorIds.Select(coordinatorId => new SignupEntry { CoordinatorRole = supportRole, EntityType=Enums.EntityTypes.RideEvent, EntityId = model.Id, UserId = coordinatorId });
             output.AddRange(current);
 
             var blanksRequired = model.SupportPersonnel[supportRole].RequiredCount - current.Count();
