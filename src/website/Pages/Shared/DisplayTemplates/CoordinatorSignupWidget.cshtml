@@ -56,11 +56,11 @@
                 <td>
                     @if(User.IsCoordinator() @* && !signedUp *@ && !Model.Coordinators[coordinatorRole].RequiredCountMet && !Model.Coordinators[coordinatorRole].CoordinatorIds.Contains(User.NameIdentifier()))
                     {
-                        <button type="button" class="btn btn-success" @(signedUp ? "disabled" : "") onclick="signup('@coordinatorRole', '@Model.Id')">Signup</button>
+                        <button type="button" class="btn btn-success" @(signedUp ? "disabled" : "") onclick="signup('@coordinatorRole', '@Model.Id', 'GroupRide')">Signup</button>
                     }
                     @if(User.IsCoordinator() && Model.Coordinators[coordinatorRole].CoordinatorIds.Contains(User.NameIdentifier()))
                     {
-                        <button type="button" class="btn btn-warning" onclick="dropout('@coordinatorRole', '@Model.Id')">Drop Out</button>
+                        <button type="button" class="btn btn-warning" onclick="dropout('@coordinatorRole', '@Model.Id', 'GroupRide')">Drop Out</button>
                     }    
                 </td>
             </tr>

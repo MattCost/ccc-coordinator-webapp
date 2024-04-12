@@ -1,0 +1,49 @@
+@model CCC.Entities.RideEvent
+@using CCC.Authorization
+@using CCC.Entities
+@{
+    const string key = "signedUp";
+    object? junk = ViewData[key];
+    bool signedUp = junk == null ? false : (bool)junk;
+    Dictionary<string, string> coordinatorDisplayNames = ViewData["CoordinatorDisplayNames"] == null ? new() : (Dictionary<string, string>)ViewData["CoordinatorDisplayNames"]!;
+
+
+}
+
+<table class="table table-striped table-bordered table-sm">
+    <thead>
+        <tr>
+            <th scope="col">Position</th>
+            <th scope="col">Current / Required</th>
+            <th scope="col"></th>  @* Placeholder for buttons *@
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var coordinatorRole in Model.SupportPersonnel.Keys)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => coordinatorRole)</td>
+                @{
+                    var coordinators = Model.SupportPersonnel[coordinatorRole].CoordinatorIds.Select(coordId => coordinatorDisplayNames[coordId]).ToList();
+                    var mouseOver = coordinators.Count() == 0 ? "Be the first" : coordinators.Count() == 1 ? coordinators.First() : string.Join(", ", coordinators);
+                }
+                <td>
+                    <div class="tooltip-container">
+                        <span class="badge @(Model.SupportPersonnel[coordinatorRole].RequiredCountMet ? "bg-success" : "bg-warning") rounded-pill">@Html.DisplayFor(modelItem => Model.SupportPersonnel[coordinatorRole].CoordinatorIds.Count) / @Html.DisplayFor(modelItem => Model.SupportPersonnel[coordinatorRole].RequiredCount)</span>
+                        <span class="tooltip-text tooltip-fade tooltip-right">@mouseOver</span>
+                    </div>
+                    </td>
+                <td>
+                    @if(User.IsCoordinator() @* && !signedUp *@ && !Model.SupportPersonnel[coordinatorRole].RequiredCountMet && !Model.SupportPersonnel[coordinatorRole].CoordinatorIds.Contains(User.NameIdentifier()))
+                    {
+                        <button type="button" class="btn btn-success" @(signedUp ? "disabled" : "") onclick="signup('@coordinatorRole', '@Model.Id', 'RideEvent')">Signup</button>
+                    }
+                    @if(User.IsCoordinator() && Model.SupportPersonnel[coordinatorRole].CoordinatorIds.Contains(User.NameIdentifier()))
+                    {
+                        <button type="button" class="btn btn-warning" onclick="dropout('@coordinatorRole', '@Model.Id', 'RideEvent')">Drop Out</button>
+                    }    
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

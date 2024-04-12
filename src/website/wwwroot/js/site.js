@@ -3,18 +3,18 @@
 
 // Write your JavaScript code.
 
-function signup(role, id)
+function signup(role, entityId, entityType)
 {
     // var message = `Will sign up for ${role} in ride ${id}`;
     // alert(message);
 
-    const event = new CustomEvent("signup", {  detail: {role: role, rideId: id }});
+    const event = new CustomEvent("signup", {  detail: {role, entityId, entityType}});
     document.dispatchEvent(event);
 }
 
-function dropout(role, id)
+function dropout(role, entityId, entityType)
 {
-    const event = new CustomEvent("dropout", {  detail: {role: role, rideId: id }});
+    const event = new CustomEvent("dropout", {  detail: {role, entityId, entityType}});
     document.dispatchEvent(event);
 }
 

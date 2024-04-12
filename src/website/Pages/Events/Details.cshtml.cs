@@ -8,6 +8,7 @@ using Microsoft.Identity.Abstractions;
 using CCC.Authorization;
 using CCC.Entities;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using CCC.Enums;
 
 namespace CCC.website.Pages.Events;
 
@@ -18,7 +19,7 @@ public class DetailsPageModel : PageModelBase
     public Guid Id { get; set; }
 
     public RideEventViewModel RideEvent { get; set; } = new();
-    public Dictionary<string, object> ExtraData { get; set; } = new();
+    // public Dictionary<string, object> ExtraData { get; set; } = new();
     public bool IsSignedUp {get;set;}
 
     public List<User> AllCoordinators { get; set; } = new();
@@ -36,7 +37,7 @@ public class DetailsPageModel : PageModelBase
     public async Task OnGetAsync(string activeTab)
     {
         // ExtraData["UserIsCoordinator"] = User.IsCoordinator();
-        ExtraData["activeTab"] = string.IsNullOrEmpty(activeTab) ? "list-details" : activeTab;
+        // ExtraData["activeTab"] = string.IsNullOrEmpty(activeTab) ? "list-details" : activeTab;
         ViewData["activeTab"] = string.IsNullOrEmpty(activeTab) ? "list-details" : activeTab;
 
         try
@@ -51,10 +52,11 @@ public class DetailsPageModel : PageModelBase
             if (User.IsCoordinator())
             {
                 var coordinatorSignedUp = RideEvent.GroupRides.Select(ride => ride.Coordinators.Values.ToList()).SelectMany(x => x).Where(entry => entry.CoordinatorIds.Contains(User.NameIdentifier())).Any();
+                var supportSignedUp = RideEvent.RideEvent.SupportPersonnel.Select( entry => entry.Value).ToList().Where(entry => entry.CoordinatorIds.Contains(User.NameIdentifier())).Any();
                 Logger.LogDebug("CoordinatorSignedUp: {coordinatorSignedUp}", coordinatorSignedUp);
-                ExtraData["signedUp"] = coordinatorSignedUp;
-                IsSignedUp = coordinatorSignedUp;
-                ExtraData["userDisplayNameLookup"] = RideEvent.CoordinatorDisplayNames;
+                IsSignedUp = coordinatorSignedUp | supportSignedUp;
+                ViewData["signedUp"] = IsSignedUp;
+                ViewData["userDisplayNameLookup"] = RideEvent.CoordinatorDisplayNames;
 
                 AllCoordinators = await API.GetForUserAsync<List<User>>("API", options =>
                 {
@@ -78,31 +80,57 @@ public class DetailsPageModel : PageModelBase
     }
 
 
-    public async Task<EmptyResult> OnPostSignupAsync(Guid rideId, CoordinatorRole role)
+    public async Task<EmptyResult> OnPostSignupAsync(Guid entityId, CoordinatorRole role, EntityTypes entityType)
     {
-        Logger.LogTrace("Entering OnPostSignupAsync. RideId: {RideId}. Role: {Role}", rideId, role);
+        Logger.LogTrace("Entering OnPostSignupAsync. RideId: {RideId}. Role: {Role}. EntityType {EntityType}", entityId, role, entityType);
         var userIdentifier = User.NameIdentifier();
         Logger.LogTrace("User: {UserId}", userIdentifier);
 
-        await API.PatchForUserAsync("API", userIdentifier, options =>
+        if(entityType == EntityTypes.GroupRide)
         {
-            options.RelativePath = $"GroupRides/{rideId}/coordinators/{role}";
-        });
-        Logger.LogTrace("API Call Complete");
+            await API.PatchForUserAsync("API", userIdentifier, options =>
+            {
+                options.RelativePath = $"GroupRides/{entityId}/coordinators/{role}";
+            });
+            Logger.LogTrace("API to GroupRides controller Complete");
+        }
+
+        if(entityType == EntityTypes.RideEvent)
+        {
+            await API.PatchForUserAsync("API", userIdentifier, options =>
+            {
+                options.RelativePath = $"RideEvents/{entityId}/support/{role}";
+            });
+            Logger.LogTrace("API to RideEvents controller Complete");
+        }        
+        
         return new EmptyResult();
     }
 
-    public async Task<EmptyResult> OnPostDropoutAsync(Guid rideId, CoordinatorRole role)
+    public async Task<EmptyResult> OnPostDropoutAsync(Guid entityId, CoordinatorRole role, EntityTypes entityType)
     {
-        Logger.LogTrace("Entering OnPostSignupAsync. RideId: {RideId}. Role: {Role}", rideId, role);
+        Logger.LogTrace("Entering OnPostDropoutAsync. RideId: {RideId}. Role: {Role}. EntityType {EntityType}", entityId, role, entityType);
+
         var userIdentifier = User.NameIdentifier();
         Logger.LogTrace("User: {UserId}", userIdentifier);
 
-        await API.DeleteForUserAsync("API", userIdentifier, options =>
+        if(entityType == EntityTypes.GroupRide)
         {
-            options.RelativePath = $"GroupRides/{rideId}/coordinators/{role}";
-        });
-        Logger.LogTrace("API Call Complete");
+            await API.DeleteForUserAsync("API", userIdentifier, options =>
+            {
+                options.RelativePath = $"GroupRides/{entityId}/coordinators/{role}";
+            });
+            Logger.LogTrace("API Call Complete");
+        }
+
+        if(entityType == EntityTypes.RideEvent)
+        {
+            await API.DeleteForUserAsync("API", userIdentifier, options =>
+            {
+                options.RelativePath = $"RideEvents/{entityId}/support/{role}";
+            });
+            Logger.LogTrace("API Call Complete");
+        }        
         return new EmptyResult();
     }
 
