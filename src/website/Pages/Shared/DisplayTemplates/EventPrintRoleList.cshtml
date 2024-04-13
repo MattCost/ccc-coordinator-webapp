@@ -1,8 +1,22 @@
-@model List<CCC.Entities.GroupRide>
+@model CCC.ViewModels.RideEventViewModel
 
 
 <ul class="list-group list-group-flush">
-    @foreach(var ride in Model)
+        <li class="list-group-item">Support
+            <ul class="list-group list-group-flush">
+                @foreach(var role in Model.RideEvent.SupportPersonnel.Keys)
+                {
+                    for( int i=0 ; i<Model.RideEvent.SupportPersonnel[role].RequiredCount ; i++)
+                    {
+                        var userId = (i < Model.RideEvent.SupportPersonnel[role].CoordinatorIds.Count) ? Model.RideEvent.SupportPersonnel[role].CoordinatorIds[i] : "";
+                        <li class="list-group-item">@Html.DisplayFor(modelItem => role) - @Html.DisplayFor(modelItem => userId, "UserId") </li>
+                    }
+                }
+
+            </ul>
+        </li>
+    
+    @foreach(var ride in Model.GroupRides)
     {
         <li class="list-group-item">@Html.DisplayFor(modelItem => ride.RideType)
 

@@ -18,7 +18,7 @@ public class DetailsPageModel : PageModelBase
     [BindProperty(SupportsGet = true)]
     public Guid Id { get; set; }
 
-    public RideEventViewModel RideEvent { get; set; } = new();
+    public RideEventViewModel RideEventVM { get; set; } = new();
     // public Dictionary<string, object> ExtraData { get; set; } = new();
     public bool IsSignedUp {get;set;}
 
@@ -47,16 +47,16 @@ public class DetailsPageModel : PageModelBase
                 options.RelativePath = $"ViewModels/RideEvents/{Id}";
             });
             Logger.LogDebug("Result from API {Result}", result);
-            RideEvent = result ?? new RideEventViewModel();
+            RideEventVM = result ?? new RideEventViewModel();
 
             if (User.IsCoordinator())
             {
-                var coordinatorSignedUp = RideEvent.GroupRides.Select(ride => ride.Coordinators.Values.ToList()).SelectMany(x => x).Where(entry => entry.CoordinatorIds.Contains(User.NameIdentifier())).Any();
-                var supportSignedUp = RideEvent.RideEvent.SupportPersonnel.Select( entry => entry.Value).ToList().Where(entry => entry.CoordinatorIds.Contains(User.NameIdentifier())).Any();
+                var coordinatorSignedUp = RideEventVM.GroupRides.Select(ride => ride.Coordinators.Values.ToList()).SelectMany(x => x).Where(entry => entry.CoordinatorIds.Contains(User.NameIdentifier())).Any();
+                var supportSignedUp = RideEventVM.RideEvent.SupportPersonnel.Select( entry => entry.Value).ToList().Where(entry => entry.CoordinatorIds.Contains(User.NameIdentifier())).Any();
                 Logger.LogDebug("CoordinatorSignedUp: {coordinatorSignedUp}", coordinatorSignedUp);
                 IsSignedUp = coordinatorSignedUp | supportSignedUp;
                 ViewData["signedUp"] = IsSignedUp;
-                ViewData["userDisplayNameLookup"] = RideEvent.CoordinatorDisplayNames;
+                ViewData["userDisplayNameLookup"] = RideEventVM.CoordinatorDisplayNames;
 
                 AllCoordinators = await API.GetForUserAsync<List<User>>("API", options =>
                 {
@@ -151,11 +151,53 @@ public class DetailsPageModel : PageModelBase
             options.RelativePath = $"ViewModels/RideEvents/{Id}";
         });
         Logger.LogDebug("Result from API {Result}", result);
-        RideEvent = result ?? new RideEventViewModel();
+        RideEventVM = result ?? new RideEventViewModel();
 
-        Logger.LogTrace("Comparing Current signups to requested signups");
+        Logger.LogTrace("Processing Support signups");
+        foreach(var supportRole in RideEventVM.RideEvent.SupportPersonnel.Keys)
+        {
+            var currentCoordinators = RideEventVM.RideEvent.SupportPersonnel[supportRole].CoordinatorIds;
+            var requestCoordinators =
+                Signups.Where(signup => !string.IsNullOrEmpty(signup.UserId))
+                    .Where(signup =>  signup.EntityType == Enums.EntityTypes.RideEvent && signup.EntityId == RideEventVM.RideEvent.Id && signup.CoordinatorRole == supportRole)
+                    .Select(signup => signup.UserId);
+            var toRemove = currentCoordinators.Where(coordinatorId => !requestCoordinators.Contains(coordinatorId));
+            var toAdd = requestCoordinators.Where(coordinatorId => !currentCoordinators.Contains(coordinatorId));
+        
+            if (toRemove.Any())
+            {
+                Logger.LogTrace("We have {Count} signups to remove for {Role} role in Event {Id}", toRemove.Count(), supportRole, RideEventVM.RideEvent.Id);
+            }
+
+            if (toAdd.Any())
+            {
+                Logger.LogTrace("We have {Count} signups to add for {Role} role in Event {Id}", toAdd.Count(), supportRole, RideEventVM.RideEvent.Id);
+            }
+                
+        
+            foreach (var userId in toRemove)
+            {
+                Logger.LogTrace("Removing userId {UserId} from Role {Role} in Event {Id}", userId, supportRole, RideEventVM.RideEvent.Id);
+                await API.DeleteForUserAsync("API", userId, options =>
+                {
+                    options.RelativePath = $"RideEvents/{RideEventVM.RideEvent.Id}/support/{supportRole}";
+                });
+            }
+
+            foreach (var userId in toAdd)
+            {
+                Logger.LogTrace("Adding userId {UserId} from Role {Role} in Event {Id}", userId, supportRole, RideEventVM.RideEvent.Id);
+                await API.PatchForUserAsync("API", userId, options =>
+                {
+                    options.RelativePath = $"RideEvents/{RideEventVM.RideEvent.Id}/support/{supportRole}";
+                });
+            }
+        }
+
+        Logger.LogTrace("Processing Coordinator signups");
+
         // for each ride
-        foreach (var ride in RideEvent.GroupRides)
+        foreach (var ride in RideEventVM.GroupRides)
         {
             // for each role
             foreach (var role in ride.Coordinators.Keys)
@@ -181,6 +223,9 @@ public class DetailsPageModel : PageModelBase
                 {
                     Logger.LogTrace("We have {Count} signups to add for {Role} role in Ride {RideId}", toAdd.Count(), role, ride.Id);
                 }
+                
+                // todo - make api return bad request if a user tries to double book for a ride?
+                // todo - do all removes across all signups first, then do all adds.
 
                 foreach (var userId in toRemove)
                 {

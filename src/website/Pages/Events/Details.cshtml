@@ -6,9 +6,9 @@
     var token = antiforgery.GetAndStoreTokens(HttpContext).RequestToken;
     ViewData["Title"] = "Event Details";
     string activeTab = (string?)ViewData["activeTab"] ?? "list-details";
-    var rideEvent = Model.RideEvent.RideEvent ?? new CCC.Entities.RideEvent();
-    var routes = Model.RideEvent.BikeRoutes.Values.ToList();
-    ViewData["CoordinatorDisplayNames"] = Model.RideEvent.CoordinatorDisplayNames;
+    var rideEvent = Model.RideEventVM.RideEvent ?? new CCC.Entities.RideEvent();
+    var routes = Model.RideEventVM.BikeRoutes.Values.ToList();
+    ViewData["CoordinatorDisplayNames"] = Model.RideEventVM.CoordinatorDisplayNames;
 }
 
 @section Scripts
@@ -98,7 +98,7 @@
                 <a class="list-group-item list-group-item-action @( activeTab == "list-details" ? "active" : "")"
                     id="list-details-list" data-bs-toggle="list" href="#list-details" role="tab"
                     aria-controls="list-details">Details</a>
-                @foreach (var groupRide in Model.RideEvent.GroupRides)
+                @foreach (var groupRide in Model.RideEventVM.GroupRides)
                 {
                     <a class="list-group-item list-group-item-action" @(activeTab == $"list-{groupRide.Id}" ? "active" :
                     "") id=@($"list-{groupRide.Id}-list") data-bs-toggle="list" href="#@($"list-{groupRide.Id}")"
@@ -147,7 +147,7 @@
                                         @Html.DisplayFor( model => routes, "EventPrintCueSheets")
                                     </div>
                                     <div id='rolePrintout'>
-                                        @Html.DisplayFor( model => model.RideEvent.GroupRides, "EventPrintRoleList")
+                                        @Html.DisplayFor( model => model.RideEventVM, "EventPrintRoleList")
                                     </div>
                                 </div>
                             </div>
@@ -156,7 +156,7 @@
 
 
                 </div>
-            @foreach (var groupRide in Model.RideEvent.GroupRides)
+            @foreach (var groupRide in Model.RideEventVM.GroupRides)
             {
                 <div class="tab-pane fade @( activeTab == $"list-{groupRide.Id}" ? "active" : "")"
                     id=@($"list-{groupRide.Id}") role="tabpanel" aria-labelledby=@($"list-{groupRide.Id}-list")>
@@ -165,9 +165,9 @@
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item">@Html.DisplayFor(modelItem => groupRide.RideType) Ride</li>
                                 <li class="list-group-item">@Html.DisplayFor(modelItem =>
-                                Model.RideEvent.BikeRoutes[groupRide.BikeRouteId], "BikeRouteLink")</li>
+                                Model.RideEventVM.BikeRoutes[groupRide.BikeRouteId], "BikeRouteLink")</li>
                                 <li class="list-group-item">@Html.DisplayFor(modelItem =>
-                                Model.RideEvent.BikeRoutes[groupRide.BikeRouteId].Description)</li>
+                                Model.RideEventVM.BikeRoutes[groupRide.BikeRouteId].Description)</li>
 
                             </ul>
                         </div>
@@ -182,12 +182,12 @@
                     }
                     <div class="row mt-5">
                         <div class="col">
-                            @Html.DisplayFor(modelItem => Model.RideEvent.BikeRoutes[groupRide.BikeRouteId],"CueTableView")
+                            @Html.DisplayFor(modelItem => Model.RideEventVM.BikeRoutes[groupRide.BikeRouteId],"CueTableView")
                         </div>
                     </div>
                     <div class="row mt-3">
                         <div class="col">
-                            @Html.DisplayFor(modelItem => Model.RideEvent.BikeRoutes[groupRide.BikeRouteId],"CueTablePrintView")
+                            @Html.DisplayFor(modelItem => Model.RideEventVM.BikeRoutes[groupRide.BikeRouteId],"CueTablePrintView")
                         </div>
                     </div>
                 </div>
@@ -198,14 +198,33 @@
                 <div class="tab-pane fade show @( activeTab == "list-signups" ? "active" : "")" id="list-signups" role="tabpanel" aria-labelledby="list-signups-list">
                         <form method="post">
                         @{
-                            CCC.Entities.RideType currentRideType = Model.RideEvent.GroupRides.Where(ride => ride.Id == Model.Signups[0].EntityId).First().RideType;
+                            var groupRides = Model.Signups.Where(entry => entry.EntityType == CCC.Enums.EntityTypes.GroupRide);
+                            var support = Model.Signups.Where(entry => entry.EntityType == CCC.Enums.EntityTypes.RideEvent);
+                            var firstRideId = groupRides.First().EntityId;
                             bool isPink = true;
-                            @: <div class="border p-2 @(isPink ? "ccc-pink" : "ccc-green")">@currentRideType<div class="border p-2">
-                            for(int i=0 ; i<Model.Signups. Count ; i++)
+                            @: <div class="border p-2 @(isPink ? "ccc-pink" : "ccc-green")">Support<div class="border p-2">                            
+                            for(int i=0 ; i<Model.Signups.Count ; i++)
+                            {
+                                if(Model.Signups[i].EntityType == CCC.Enums.EntityTypes.RideEvent)
+                                {
+                                    @Html.HiddenFor(modelItem => Model.Signups[i].EntityId)
+                                    @Html.HiddenFor(modelItem => Model.Signups[i].EntityType)
+                                    @Html.HiddenFor(modelItem => Model.Signups[i].CoordinatorRole)
+                                    <label for="Model.Signups[i].UserId">@Model.Signups[i].CoordinatorRole </label>
+                                    
+                                    <select class="form-control" asp-for="Signups[i].UserId" asp-items="Model.CoordinatorSelectList">
+                                    </select>
+                                }                                
+                            }
+                            isPink = false;
+                            
+                            CCC.Entities.RideType currentRideType = Model.RideEventVM.GroupRides.Where(ride => ride.Id == firstRideId).First().RideType;
+                            @: </div></div><div class="border p-2 @(isPink ? "ccc-pink" : "ccc-green")">@currentRideType<div class="border p-2">
+                            for(int i=0 ; i<Model.Signups.Count ; i++)
                             {
                                 if(Model.Signups[i].EntityType == CCC.Enums.EntityTypes.GroupRide)
                                 {
-                                    CCC.Entities.RideType rideType = Model.RideEvent.GroupRides.Where(ride => ride.Id == Model.Signups[i].EntityId).First().RideType;
+                                    CCC.Entities.RideType rideType = Model.RideEventVM.GroupRides.Where(ride => ride.Id == Model.Signups[i].EntityId).First().RideType;
                                     if(currentRideType != rideType)
                                     {
                                         currentRideType = rideType;
@@ -220,10 +239,7 @@
                                     <select class="form-control" asp-for="Signups[i].UserId" asp-items="Model.CoordinatorSelectList">
                                     </select>
                                 }
-                                if(Model.Signups[i].EntityType == CCC.Enums.EntityTypes.RideEvent)
-                                {
-                                    @* todo *@
-                                }
+
                             }
                             @: </div></div>
                             
