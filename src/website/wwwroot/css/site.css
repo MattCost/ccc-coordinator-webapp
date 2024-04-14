@@ -110,6 +110,13 @@ CCC Colors
   color: var(--ccc-green);
 }
 
+.gravel-ride {
+  color:burlywood;
+}
+
+.mtb-ride {
+  color:darkgreen;
+}
 /* 
     Generate grid formatting
 */

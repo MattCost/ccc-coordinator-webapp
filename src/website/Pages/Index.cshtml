@@ -47,10 +47,27 @@
 
             rideEvents.forEach((ride) => {
                 console.log(ride);
+                var eventName = "Ride";
+                var className = "default-ride";
+                switch(ride.eventType) {
+                    case "Road":
+                        eventName = "Road Ride";
+                        className = "road-ride";
+                        break;
+                    case "Gravel":
+                        eventName = "Gravel Ride";
+                        className = "gravel-ride";
+                        break;
+                    case "MTB":
+                        eventName = "Montain Bike";
+                        className = "mtb-ride";
+                        break;
+                }
+                
                 calendarEvents.push({
                     date: new Date(ride.startTime),
-                    eventName: "Group Ride",
-                    className: "road-ride",
+                    eventName: eventName,
+                    className: className,
                     dateColor: "#eb34ba",
                     ride: ride,
                     onclick(e, data) {

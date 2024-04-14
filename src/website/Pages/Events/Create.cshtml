@@ -30,6 +30,13 @@
             })
     </div>
     <div class="form-group">
+        @Html.LabelFor(model => Model.CreateModel.EventType)
+        <small class="form-text text-muted"> - What type of event?</small>
+        <select asp-for="CreateModel.EventType" asp-items="@Html.GetEnumSelectList<CCC.Enums.EventTypes>()">
+            <option disabled hidden>select a ride type</option>
+        </select>
+    </div>
+    <div class="form-group">
         @Html.LabelFor(model => Model.CreateModel.Description)
         <small id="desciption" class="form-text text-muted"> - Provide a description of the event</small>
         @Html.EditorFor(model => Model.CreateModel.Description, new
