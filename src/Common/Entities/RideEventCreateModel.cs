@@ -9,6 +9,6 @@ public class RideEventCreateModel
     public List<Guid> Rides { get; set; } = new();
     public bool Facilitator { get; set; }
     public bool GrillMaster { get; set; }
-    public EventTypes EventType {get; set; } 
+    public Enums.EventTypes EventType {get; set; } 
 
 }

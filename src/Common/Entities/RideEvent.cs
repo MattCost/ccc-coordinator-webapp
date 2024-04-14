@@ -9,5 +9,5 @@ public class RideEvent
     public string Location { get; set; } = string.Empty;
     public List<Guid> RideIds { get; set; } = new();
     public Dictionary<CoordinatorRole, CoordinatorEntry> SupportPersonnel { get; set; } = new();
-    public EventTypes EventType {get; set; }
+    public Enums.EventTypes EventType {get; set; }
 }
