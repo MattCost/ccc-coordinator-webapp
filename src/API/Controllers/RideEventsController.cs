@@ -37,7 +37,8 @@ public class RideEventsController : EntityProviderBaseController
             Description = createModel.Description,
             StartTime = createModel.StartTime,
             Location = createModel.Location,
-            RideIds = createModel.Rides
+            RideIds = createModel.Rides,
+            EventType = createModel.EventType
         };
 
         if(createModel.Facilitator)
@@ -68,6 +69,7 @@ public class RideEventsController : EntityProviderBaseController
             model.Description = updateModel.Description ?? model.Description;
             model.StartTime = updateModel.StartTime ?? model.StartTime;
             model.Location = updateModel.Location ?? model.Location;
+            model.EventType = updateModel.EventType ?? model.EventType;
             
             if(updateModel.Facilitator.HasValue)
             {

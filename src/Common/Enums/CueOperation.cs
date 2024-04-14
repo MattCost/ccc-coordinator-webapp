@@ -8,7 +8,7 @@ public enum CueOperation
 {
     [CueOperationPrintAttribute(" ")]
     Default = 0,
-    [CueOperationPrintAttribute("ɑ")]
+    [CueOperationPrintAttribute("▶️")]
     StartRoute = 1,
 
     [CueOperationPrintAttribute("L")]
@@ -43,7 +43,7 @@ public enum CueOperation
 
     [CueOperationPrintAttribute("(S)")]
     StraightCircle = 12,
-    [CueOperationPrintAttribute("Ω")]
+    [CueOperationPrintAttribute("⏹️")]
 
     EndRoute = 13,
     [CueOperationPrint("🍦")]

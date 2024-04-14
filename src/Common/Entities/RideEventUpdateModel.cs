@@ -8,5 +8,6 @@ public class RideEventUpdateModel
     public string? Location { get; set; }
     public bool? GrillMaster {get;set;}
     public bool? Facilitator {get;set;}
+    public EventTypes? EventType {get; set; } 
 
 }

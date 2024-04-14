@@ -8,6 +8,5 @@ public class GroupRide
     public RideType RideType { get; set; }
     public Guid BikeRouteId { get; set; }
     public Guid RideEventId { get; set; }
-    //Rename to CoordinatorSlots
     public Dictionary<CoordinatorRole, CoordinatorEntry> Coordinators { get; set; } = new();
 }
