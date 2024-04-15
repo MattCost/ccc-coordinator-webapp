@@ -91,6 +91,7 @@ resource "azuread_application" "website" {
       id_token_issuance_enabled     = true
     }
     redirect_uris = [
+      "https://ccc.cirrusly.net/signin-oidc",
       "https://${azurecaf_name.website.result}.azurewebsites.net/signin-oidc",              # Cloud website
       "https://${azurecaf_name.api.result}.azurewebsites.net/swagger/oauth2-redirect.html", # Cloud swagger
 
