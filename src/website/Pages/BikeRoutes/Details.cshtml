@@ -35,4 +35,9 @@
         @Html.DisplayFor(modelItem => Model.BikeRoute,"CueTablePrintView")
         </div>
     </div>
+    <div class="row">
+        <div class="col">
+            @Html.Raw(Model.BikeRoute.RideWithGpsEmbed)
+        </div>
+    </div>
 </div>
