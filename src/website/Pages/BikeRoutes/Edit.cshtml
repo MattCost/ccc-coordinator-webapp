@@ -176,6 +176,9 @@
             var name = document.getElementById("Name").value;
             var description = document.getElementById("Description").value;
             var distance = document.getElementById("Distance").value;
+            var rideWithGPSRouteId = document.getElementById("RideWithGPSRouteId").value;
+            var rideWithGPSLink = document.getElementById("RideWithGPSLink").value;
+            var garminConnectLink = document.getElementById("GarminConnectLink").value;
             var cues = getCues();
 
             $.ajax({
@@ -189,6 +192,9 @@
                     name,
                     description,
                     distance,
+                    rideWithGPSRouteId,
+                    rideWithGPSLink,
+                    garminConnectLink,
                     cues
                 }
             }).done(function(data) {
