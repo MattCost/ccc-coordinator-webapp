@@ -41,6 +41,9 @@ public class BikeRoutesController : EntityProviderBaseController
             model.Name = updateModel.Name ?? model.Name;
             model.Distance = updateModel.Distance ?? model.Distance;
             model.Description = updateModel.Description ?? model.Description;
+            model.RideWithGPSRouteId = updateModel.RideWithGPSRouteId ?? model.RideWithGPSRouteId;
+            model.RideWithGPSLink = updateModel.RideWithGPSLink ?? model.RideWithGPSLink;
+            model.GarminConnectLink = updateModel.GarminConnectLink ?? model.GarminConnectLink;
             Logger.LogDebug("Model: {Model}", model);
             await EntityProvider.UpdateBikeRoute(model);
         },"Unable to update Bike Route");
@@ -56,7 +59,10 @@ public class BikeRoutesController : EntityProviderBaseController
             Id = Guid.NewGuid(),
             Name = createModel.Name,
             Description = createModel.Description,
-            Distance = createModel.Distance
+            Distance = createModel.Distance,
+            RideWithGPSLink = createModel.RideWithGPSLink,
+            RideWithGPSRouteId = createModel.RideWithGPSRouteId,
+            GarminConnectLink = createModel.GarminConnectLink
         };  
         return await EntityProviderActionHelper( async () => { await EntityProvider.UpdateBikeRoute(model); return model;}, "Unable to create Bike Route");
     }
