@@ -156,7 +156,8 @@ public class EntityProviderTableStorage : IEntityProvider
                 tableEntity[property.Name] :
                 System.Text.Json.JsonSerializer.Deserialize(tableEntity[property.Name].ToString() ?? "{}", property.PropertyType);
 
-            property.SetValue(output, value);
+            property.SetMethod?.Invoke(output, new[] { value });
+            // property.SetValue(output, value);
         }
         return output;
     }
