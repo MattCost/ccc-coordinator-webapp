@@ -16,26 +16,29 @@
     </div>
     @if(User.ShowCrudOperations())
     {
-    <div class="row">
+    <div class="row mt-2">
         <div class="col">
             <a asp-page="Edit" asp-route-id=@Model.BikeRoute.Id>Edit</a>
         </div>
     </div>
     }
-    <div class="row mt-5">
+    <div class="row mt-3">
         <div class="col">
             <h4>
             Turn by Turn listing <small class="text-muted">Don't Get Lost!</small>
             </h4>
+        </div>
+    <div class="row mt-1">
+        <div class="col">
+            @Html.DisplayFor(modelItem => Model.BikeRoute,"CueTablePrintView")
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col">
             @Html.DisplayFor(modelItem => Model.BikeRoute,"CueTableView")
         </div>
     </div>
-    <div class="row mt-3">
-        <div class="col">
-        @Html.DisplayFor(modelItem => Model.BikeRoute,"CueTablePrintView")
-        </div>
-    </div>
-    <div class="row">
+    <div class="row mt-2">
         <div class="col">
             @Html.Raw(Model.BikeRoute.RideWithGpsEmbed)
         </div>
