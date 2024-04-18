@@ -15,14 +15,20 @@ namespace CCC.website.Pages.BikeRoutes
         [BindProperty(SupportsGet = true)]
         public Guid Id { get; set; }
 
-        // [BindProperty]
-        // public BikeRoute BikeRoute { get; set; } = new();
-
         [BindProperty]
         public string Name {get;set;} = string.Empty;
 
         [BindProperty]
         public string Description {get;set;} = string.Empty;
+
+        [BindProperty]
+        public string RideWithGPSRouteId {get;set;} = string.Empty;
+
+        [BindProperty]
+        public string RideWithGPSLink {get;set;} = string.Empty;
+
+        [BindProperty]
+        public string GarminConnectLink {get;set;} = string.Empty;
 
         [BindProperty]
         public double Distance {get;set;}
@@ -52,6 +58,9 @@ namespace CCC.website.Pages.BikeRoutes
                 Name = bikeRoute.Name;
                 Description = bikeRoute.Description;
                 Distance = bikeRoute.Distance;
+                RideWithGPSLink = bikeRoute.RideWithGPSLink;
+                RideWithGPSRouteId = bikeRoute.RideWithGPSRouteId;
+                GarminConnectLink = bikeRoute.GarminConnectLink;
                 CuesJson = System.Text.Json.JsonSerializer.Serialize(bikeRoute.Cues);
             }
             catch (Exception ex)
@@ -79,7 +88,10 @@ namespace CCC.website.Pages.BikeRoutes
                 {
                     Name = Name,
                     Description = Description,
-                    Distance = Distance
+                    Distance = Distance,
+                    RideWithGPSLink = RideWithGPSLink,
+                    RideWithGPSRouteId = RideWithGPSRouteId,
+                    GarminConnectLink = GarminConnectLink
                 };
                 await API.PatchForUserAsync("API", updateModel, options => { options.RelativePath = $"BikeRoutes/{Id}"; });
 
@@ -106,86 +118,14 @@ namespace CCC.website.Pages.BikeRoutes
             }
             
             Logger.LogTrace("Exiting OnPostUpdateAsync");
-            return new JsonResult( new {result="success"} );
 
-            // return RedirectToPage();
+            return new JsonResult( new {result="success"} );
         }
 
         public IActionResult OnPostDiscardChanges()
         {
             return RedirectToPage();
         }
-        // public IActionResult OnPostDiscardCueChanges()
-        // {
-        //     Logger.LogTrace("Entering OnPostDiscardCuesAsync Id {Id}", Id);
-        //     return RedirectToPage();
-        // }
-
-        // public async Task<IActionResult> OnPostSaveCueChangesAsync()
-        // {
-        //     Logger.LogTrace("Entering OnPostSaveCuesAsync. BikeRoute Json {Cues}", JsonSerializer.Serialize(BikeRoute));
-        //     Logger.LogDebug("Null Hack");
-        //     for(int i=0; i<BikeRoute.Cues.Count ; i++)
-        //     {
-        //         if(BikeRoute.Cues[i].StreetName == null) 
-        //             BikeRoute.Cues[i].StreetName = string.Empty;
-        //         if(BikeRoute.Cues[i].Notes == null) 
-        //             BikeRoute.Cues[i].Notes = string.Empty;
-
-        //     }
-        //     try
-        //     {
-        //         await API.PutForUserAsync("API", BikeRoute.Cues, options => { options.RelativePath = $"BikeRoutes/{Id}/cues"; });
-        //     }
-        //     catch(Exception ex)
-        //     {
-        //         Logger.LogError(ex, "Exception trying to update Cues for BikeRoute Id {Id}", Id);
-        //         PreviousPageAction = "BikeRoute/Edit/OnPostSaveCuesAsync";
-        //         PreviousPageErrorMessage = $"Error updating BikeRoute Cues";
-        //     }
-        //     Logger.LogTrace("Exiting OnPostSaveCueChangesAsync");
-        //     return RedirectToPage();
-        // }
-
-
-        // public void OnPostRemoveCueRow(int cueIndex)
-        // {
-        //     Logger.LogDebug("Entering OnPostRemoveCue Index {Index}", cueIndex);
-        //     Logger.LogDebug("BikeRoute Json {Json}", JsonSerializer.Serialize(BikeRoute));
-
-        //     if(cueIndex < BikeRoute.Cues.Count)
-        //     {
-        //         Logger.LogDebug("Removing cue at Index {Index}", cueIndex);
-        //         BikeRoute.Cues.RemoveAt(cueIndex);
-        //         ModelState.Clear();
-        //     }
-        //     Logger.LogDebug("BikeRoute Json {Json}", JsonSerializer.Serialize(BikeRoute));
-
-        // }
-
-        // public void OnPostAddCueRow()
-        // {
-        //     Logger.LogTrace("Entering OnPostAddCueRow");
-        //     Logger.LogDebug("BikeRoute Json {Json}", JsonSerializer.Serialize(BikeRoute));
-        //     BikeRoute.Cues.Add(new CueEntry());
-        //     ModelState.Clear();
-        //     Logger.LogTrace("Exiting OnPostAddCueRow");
-
-        // }
-
-        // public void OnPostInsertCueRow(int cueIndex)
-        // {
-        //     Logger.LogTrace("Entering OnPostInsertCueRow Index {Index}", cueIndex);
-        //     Logger.LogDebug("BikeRoute Json {Json}", JsonSerializer.Serialize(BikeRoute));
-        //     if(cueIndex < BikeRoute.Cues.Count)
-        //     {
-        //         Logger.LogDebug("Inserting cue at Index {Index}", cueIndex);
-        //         BikeRoute.Cues.Insert(cueIndex, new CueEntry());
-        //         ModelState.Clear();
-        //     }
-        //     Logger.LogTrace("BikeRoute Json {Json}", JsonSerializer.Serialize(BikeRoute));
-        //     Logger.LogTrace("Exiting OnPostInsertCueRow");
-        // }
 
         public async Task<IActionResult> OnPostDeleteAsync()
         {

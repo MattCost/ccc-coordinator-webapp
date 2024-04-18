@@ -120,15 +120,6 @@
             description.appendChild(generateTextInput(`row-${index}-description`, `row-${index}-description`, existing ? row.Description : "Description"));
             newRow.appendChild(description);
 
-
-            @* var name = document.createElement("td");
-            name.appendChild(generateTextInput(`row-${index}-name`, `row-${index}-name`, existing ? row.StreetName : "Street Name"));
-            newRow.appendChild(name);
-
-            var notes = document.createElement("td");
-            notes.appendChild(generateTextInput(`row-${index}-notes`, `row-${index}-notes`, existing ? row.Notes : "Notes"));
-            newRow.appendChild(notes); *@
-
             var mileMarker = document.createElement("td");
             mileMarker.appendChild(generateTextInput(`row-${index}-mile-marker`, `row-${index}-mile-marker`, existing ? row.MileMarker : "Mile Marker"));            
             newRow.appendChild(mileMarker);
@@ -243,6 +234,26 @@
         @Html.EditorFor(model => Model.Distance, new { htmlAttributes = new { @class = "form-control" } })
         <small id="desciption" class="form-text text-muted">How many miles?</small>
     </div>
+
+
+    <div class="form-group">
+        @Html.LabelFor( model => Model.RideWithGPSRouteId)
+        @Html.EditorFor( model => Model.RideWithGPSRouteId, new { htmlAttributes = new { @class = "form-control" } })
+        <small id="desciption" class="form-text text-muted">Ride With GPS Route Id</small>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor( model => Model.RideWithGPSLink)
+        @Html.EditorFor( model => Model.RideWithGPSLink, new { htmlAttributes = new { @class = "form-control" } })
+        <small id="desciption" class="form-text text-muted">Link to Ride With GPS Route</small>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor( model => Model.GarminConnectLink)
+        @Html.EditorFor( model => Model.GarminConnectLink, new { htmlAttributes = new { @class = "form-control" } })
+        <small id="desciption" class="form-text text-muted">Link to Garmin Connect Route</small>
+    </div>
+
 
  <p> </p>
 
