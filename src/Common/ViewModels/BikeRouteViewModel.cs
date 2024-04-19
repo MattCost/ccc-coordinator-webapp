@@ -15,9 +15,8 @@ public class BikeRouteViewModel : BikeRoute
         Description = model.Description;
         Cues = model.Cues;
         Distance = model.Distance;
-        RideWithGPSLink = model.RideWithGPSLink;
-        GarminConnectLink = model.GarminConnectLink;
         RideWithGPSRouteId = model.RideWithGPSRouteId;
+        GarminConnectRouteId = model.GarminConnectRouteId;
         
     }
 }

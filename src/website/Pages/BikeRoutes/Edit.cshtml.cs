@@ -25,10 +25,7 @@ namespace CCC.website.Pages.BikeRoutes
         public string RideWithGPSRouteId {get;set;} = string.Empty;
 
         [BindProperty]
-        public string RideWithGPSLink {get;set;} = string.Empty;
-
-        [BindProperty]
-        public string GarminConnectLink {get;set;} = string.Empty;
+        public string GarminConnectRouteId {get;set;} = string.Empty;
 
         [BindProperty]
         public double Distance {get;set;}
@@ -58,9 +55,8 @@ namespace CCC.website.Pages.BikeRoutes
                 Name = bikeRoute.Name;
                 Description = bikeRoute.Description;
                 Distance = bikeRoute.Distance;
-                RideWithGPSLink = bikeRoute.RideWithGPSLink;
                 RideWithGPSRouteId = bikeRoute.RideWithGPSRouteId;
-                GarminConnectLink = bikeRoute.GarminConnectLink;
+                GarminConnectRouteId = bikeRoute.GarminConnectLink;
                 CuesJson = System.Text.Json.JsonSerializer.Serialize(bikeRoute.Cues);
             }
             catch (Exception ex)
@@ -89,9 +85,8 @@ namespace CCC.website.Pages.BikeRoutes
                     Name = Name,
                     Description = Description,
                     Distance = Distance,
-                    RideWithGPSLink = RideWithGPSLink,
                     RideWithGPSRouteId = RideWithGPSRouteId,
-                    GarminConnectLink = GarminConnectLink
+                    GarminConnectRouteId = GarminConnectRouteId
                 };
                 await API.PatchForUserAsync("API", updateModel, options => { options.RelativePath = $"BikeRoutes/{Id}"; });
 

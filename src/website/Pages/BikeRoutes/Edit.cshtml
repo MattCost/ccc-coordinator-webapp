@@ -248,16 +248,11 @@
         <small id="desciption" class="form-text text-muted">Ride With GPS Route Id</small>
     </div>
 
-    <div class="form-group">
-        @Html.LabelFor( model => Model.RideWithGPSLink)
-        @Html.EditorFor( model => Model.RideWithGPSLink, new { htmlAttributes = new { @class = "form-control" } })
-        <small id="desciption" class="form-text text-muted">Link to Ride With GPS Route</small>
-    </div>
 
     <div class="form-group">
-        @Html.LabelFor( model => Model.GarminConnectLink)
-        @Html.EditorFor( model => Model.GarminConnectLink, new { htmlAttributes = new { @class = "form-control" } })
-        <small id="desciption" class="form-text text-muted">Link to Garmin Connect Route</small>
+        @Html.LabelFor( model => Model.GarminConnectRouteId)
+        @Html.EditorFor( model => Model.GarminConnectRouteId, new { htmlAttributes = new { @class = "form-control" } })
+        <small id="desciption" class="form-text text-muted">Garmin Connect Route Id</small>
     </div>
 
 

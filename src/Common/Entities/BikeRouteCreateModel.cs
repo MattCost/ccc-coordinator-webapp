@@ -7,7 +7,6 @@ public class BikeRouteCreateModel
     public double Distance { get; set; }
 
     public string RideWithGPSRouteId { get; set; } = string.Empty;
-    public string RideWithGPSLink { get; set; } = string.Empty;
-    public string GarminConnectLink { get; set; } = string.Empty;
+    public string GarminConnectRouteId { get; set; } = string.Empty;
 
 }

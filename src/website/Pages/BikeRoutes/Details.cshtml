@@ -40,6 +40,15 @@
     </div>
     <div class="row mt-2">
         <div class="col">
+            <ul>
+                <li><a href=@Html.Raw(Model.BikeRoute.RideWithGPSLink)>Ride With GPS</li>
+                <li><a href=@Html.Raw(Model.BikeRoute.GarminConnectLink)>Garmin Connect</li>
+
+            </ul>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col">
             @Html.Raw(Model.BikeRoute.RideWithGpsEmbed)
         </div>
     </div>
