@@ -56,7 +56,7 @@ namespace CCC.website.Pages.BikeRoutes
                 Description = bikeRoute.Description;
                 Distance = bikeRoute.Distance;
                 RideWithGPSRouteId = bikeRoute.RideWithGPSRouteId;
-                GarminConnectRouteId = bikeRoute.GarminConnectLink;
+                GarminConnectRouteId = bikeRoute.GarminConnectRouteId;
                 CuesJson = System.Text.Json.JsonSerializer.Serialize(bikeRoute.Cues);
             }
             catch (Exception ex)
