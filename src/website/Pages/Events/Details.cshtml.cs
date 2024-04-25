@@ -58,15 +58,19 @@ public class DetailsPageModel : PageModelBase
                 ViewData["signedUp"] = IsSignedUp;
                 ViewData["userDisplayNameLookup"] = RideEventVM.CoordinatorDisplayNames;
 
-                AllCoordinators = await API.GetForUserAsync<List<User>>("API", options =>
+                var AllCoordinatorsTask = API.GetForUserAsync<List<User>>("API", options =>
                 {
                     options.RelativePath = "Users/coordinators";
-                }) ?? new();
+                });
 
-                Signups = await API.GetForUserAsync<List<SignupEntry>>("API", options =>
+                var SignupsTask = API.GetForUserAsync<List<SignupEntry>>("API", options =>
                 {
                     options.RelativePath = $"RideEvents/{Id}/signups";
-                }) ?? new List<SignupEntry>();
+                });
+                await Task.WhenAll(AllCoordinatorsTask, SignupsTask);
+                
+                AllCoordinators = AllCoordinatorsTask.Result ?? new();
+                Signups = SignupsTask.Result ?? new();
 
                 CoordinatorSelectList = new SelectList(AllCoordinators.Select(coordinator => new SelectListItem { Value = coordinator.UserId, Text = coordinator.DisplayName }).Append(new SelectListItem { Value = string.Empty, Text = "None" }), "Value", "Text");
             }
