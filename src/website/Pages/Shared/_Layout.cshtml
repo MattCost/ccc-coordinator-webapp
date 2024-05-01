@@ -78,16 +78,12 @@
                                         <li><hr class="dropdown-divider"></li>
                                         <li class="dropdown-item">url: @Html.DisplayFor(modelItem => PreviousPageAction)</li>
                                     }
-@* 
-                                    <li><a class="dropdown-item" href="#">error 1</a></li>
-                                    <li><a class="dropdown-item" href="#">error 2</a></li>
-                                    <li><a class="dropdown-item" href="#">error 3</a></li> *@
                                 </ul>
                             </li>
                         }
-                            <li class="nav-item">
+                            @* <li class="nav-item">
                                 <a class="nav-link" href="/Hello">API Status</a>
-                            </li>
+                            </li> *@
                         @if(showCrudOperations)
                         {
                             <li class="nav-item dropdown">
@@ -111,6 +107,10 @@
                                 </ul>
                             </li>
                         }
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="SignOut">Sign Out</a>
+                        </li>                            
+
                         </ul>
                     </div>
                 </div>
