@@ -59,8 +59,8 @@ public class BikeRoutesController : EntityProviderBaseController
             Name = createModel.Name,
             Description = createModel.Description,
             Distance = createModel.Distance,
-            RideWithGPSRouteId = createModel.RideWithGPSRouteId,
-            GarminConnectRouteId = createModel.GarminConnectRouteId
+            RideWithGPSRouteId = createModel.RideWithGPSRouteId ??  string.Empty,
+            GarminConnectRouteId = createModel.GarminConnectRouteId ?? string.Empty,
 
         };  
         return await EntityProviderActionHelper( async () => { await EntityProvider.UpdateBikeRoute(model); return model;}, "Unable to create Bike Route");
