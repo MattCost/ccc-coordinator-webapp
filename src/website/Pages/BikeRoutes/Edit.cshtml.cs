@@ -131,5 +131,26 @@ namespace CCC.website.Pages.BikeRoutes
             return RedirectToPage("Index");
         }
 
+        public async Task<IActionResult> OnPostBulkCueReplace(string bulkCues)
+        {
+            Logger.LogTrace("Entering OnPostBulkCueReplace. cues {Cues}", bulkCues);
+            var rows = bulkCues.Split('\n');
+            var cueEntries = new List<CueEntry>();
+            foreach(var row in rows)
+            {
+                var cues= row.Split(',');
+                if(cues.Count() >= 3)
+                {
+                    Enum.TryParse(cues[0], out CueOperation operation);
+                    double.TryParse(cues[2], out double distance);
+                    cueEntries.Add(new CueEntry {Operation = operation, MileMarker = distance, Description = cues[1] });
+                }
+            }
+            await API.PutForUserAsync("API", cueEntries, OperationsJson => {
+                OperationsJson.RelativePath = $"BikeRoutes/{Id}/cues";
+            });        
+            return RedirectToPage();
+        }
+
     }
 }

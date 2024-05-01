@@ -2,6 +2,7 @@
 @using CCC.Entities
 @using CCC.Enums
 @using CCC.website.Models
+@using CCC.Authorization
 @model CCC.website.Pages.BikeRoutes.EditPageModel
 
 @{
@@ -39,7 +40,7 @@
             return label;
         }
 
-        function generateTextInput(id, name, value) {
+        function generateTextInput(id, name, value, placeholder) {
             var input = document.createElement("input");
             input.setAttribute("class", "form-control");
             input.type = "text";
@@ -47,6 +48,9 @@
             input.name = name;
             if(value != undefined) {
                 input.value = value;
+            }
+            if(placeholder != undefined) {
+                input.placeholder = placeholder;
             }
             return input;
         }
@@ -117,11 +121,11 @@
             newRow.appendChild(op);
             
             var description = document.createElement("td");
-            description.appendChild(generateTextInput(`row-${index}-description`, `row-${index}-description`, existing ? row.Description : "Description"));
+            description.appendChild(generateTextInput(`row-${index}-description`, `row-${index}-description`, existing ? row.Description : "", "Cue"));
             newRow.appendChild(description);
 
             var mileMarker = document.createElement("td");
-            mileMarker.appendChild(generateTextInput(`row-${index}-mile-marker`, `row-${index}-mile-marker`, existing ? row.MileMarker : "Mile Marker"));            
+            mileMarker.appendChild(generateTextInput(`row-${index}-mile-marker`, `row-${index}-mile-marker`, existing ? row.MileMarker : ""));            
             newRow.appendChild(mileMarker);
 
             var actions = document.createElement("td");
@@ -206,14 +210,17 @@
             })
 
         }
-
     </script>
 }
 
 <div class="row">
+    <div class="col">       
     Bike Route Details
     <div id="route-cues" data-cues='@Html.Raw(Model.CuesJson)' data-operations='@Html.Raw(Model.OperationsJson)'></div>
+    </div>
 </div>
+<div class="row">
+    <div class="col">
 <form method="post">
     <div class="form-group">
         @Html.HiddenFor(model => Model.Id)
@@ -288,3 +295,18 @@
     <input class="btn btn-danger" id="Delete" type="submit" value="Delete Route" asp-page-handler="Delete"
         onclick="return confirm('Are you sure you want to Delete the route?')" />    
 </form>
+</div>
+</div>
+@if(User.IsAdmin())
+{
+    <div class="row mt-4">
+        <div class="col">
+            <form method="post" name="bulkCueReplace">
+            <div class="form-group">
+            <textarea name="bulkCues" id="bulkCues" rows="20" cols="40"></textarea>
+            </div>
+            <input class="btn btn-warning" id="ReplaceCues" type="submit" value="Bulk Replace Cues" asp-page-handler="BulkCueReplace" onclick="return confirm('Are you sure?')" />
+            </form>
+        </div>
+    </div>
+}
