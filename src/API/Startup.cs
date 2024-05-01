@@ -76,7 +76,10 @@ namespace CCC.API
                 // options.Filters.Add<CustomExceptionFilter>();
             });
 
-            services.AddControllers();
+            services.AddControllers(
+                options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true
+            );
+
 
             services.AddEndpointsApiExplorer();
 
