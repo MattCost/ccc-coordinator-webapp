@@ -62,6 +62,7 @@ public class EditPageModel : PageModelBase
                 Description = RideEvent.RideEvent.Description,
                 StartTime = RideEvent.RideEvent.StartTime,
                 Location = RideEvent.RideEvent.Location,
+                EventType = RideEvent.RideEvent.EventType
             };
             EventDate = RideEvent.RideEvent.StartTime.Date;
             EventTime = RideEvent.RideEvent.StartTime.TimeOfDay;
