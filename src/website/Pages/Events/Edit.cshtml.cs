@@ -16,26 +16,32 @@ namespace CCC.website.Pages.Events;
 
 public class EditPageModel : PageModelBase
 {
-    [BindProperty(SupportsGet =true)]
-    public Guid Id {get; set;}
+    [BindProperty(SupportsGet = true)]
+    public Guid Id { get; set; }
 
-    public RideEventViewModel RideEvent { get; set;} = new();
+    public RideEventViewModel RideEvent { get; set; } = new();
 
     [BindProperty]
-    public RideEventUpdateModel EventUpdateModel {get;set;} = new();
+    public RideEventUpdateModel EventUpdateModel { get; set; } = new();
+    
+    [BindProperty]
+    public bool IncludeFacilitator {get;set;}
+
+    [BindProperty]
+    public bool IncludeGrillMaster {get;set;}
 
     [BindProperty, DataType(DataType.Date)]
     public DateTime EventDate { get; set; }
-    
+
     [BindProperty, DataType(DataType.Time)]
     public TimeSpan EventTime { get; set; }
-    
-    [BindProperty]
-    public int TimeZoneOffset {get;set;}
 
-    public DateTimeOffset EventStartTime {get;set;} = new();
-    public SelectList BikeRouteSelectList {get;set;} =new SelectList(new List<SelectListItem>(), "Value", "Text");
-    
+    [BindProperty]
+    public int TimeZoneOffset { get; set; }
+
+    public DateTimeOffset EventStartTime { get; set; } = new();
+    public SelectList BikeRouteSelectList { get; set; } = new SelectList(new List<SelectListItem>(), "Value", "Text");
+
     [BindProperty]
     public GroupRideCreateModel RideCreateModel { get; set; } = new();
 
@@ -64,20 +70,24 @@ public class EditPageModel : PageModelBase
                 Location = RideEvent.RideEvent.Location,
                 EventType = RideEvent.RideEvent.EventType
             };
+            
+            IncludeFacilitator = RideEvent.RideEvent.SupportPersonnel.ContainsKey(CoordinatorRole.Facilitator);
+            IncludeGrillMaster = RideEvent.RideEvent.SupportPersonnel.ContainsKey(CoordinatorRole.GrillMaster);
+
             EventDate = RideEvent.RideEvent.StartTime.Date;
             EventTime = RideEvent.RideEvent.StartTime.TimeOfDay;
             EventStartTime = RideEvent.RideEvent.StartTime;
 
-            if(User.IsCoordinator())
+            if (User.IsCoordinator())
             {
-                var coordinatorSignedUp  = RideEvent.GroupRides.Select( ride => ride.Coordinators.Values.ToList()).SelectMany( x=>x).Where( entry => entry.CoordinatorIds.Contains(User.NameIdentifier())).Any();
+                var coordinatorSignedUp = RideEvent.GroupRides.Select(ride => ride.Coordinators.Values.ToList()).SelectMany(x => x).Where(entry => entry.CoordinatorIds.Contains(User.NameIdentifier())).Any();
                 Logger.LogDebug("CoordinatorSignedUp: {coordinatorSignedUp}", coordinatorSignedUp);
             }
 
-            var routes = await API.GetForUserAsync<List<BikeRoute>>("API", options => options.RelativePath = "BikeRoutes") ?? new ();
-            BikeRouteSelectList = new SelectList( routes.Select( r => new SelectListItem{ Value = r.Id.ToString(), Text = $"{r.Name} - {r.Distance} miles" }), "Value", "Text");
+            var routes = await API.GetForUserAsync<List<BikeRoute>>("API", options => options.RelativePath = "BikeRoutes") ?? new();
+            BikeRouteSelectList = new SelectList(routes.Select(r => new SelectListItem { Value = r.Id.ToString(), Text = $"{r.Name} - {r.Distance} miles" }), "Value", "Text");
             RideCreateModel.RideEventId = Id;
-            
+
         }
         catch (Exception ex)
         {
@@ -88,116 +98,118 @@ public class EditPageModel : PageModelBase
     }
 
 
-        public async Task<EmptyResult> OnPostSignupAsync(Guid rideId, CoordinatorRole role)
+    public async Task<EmptyResult> OnPostSignupAsync(Guid rideId, CoordinatorRole role)
+    {
+        Logger.LogTrace("Entering OnPostSignupAsync. RideId: {RideId}. Role: {Role}", rideId, role);
+        var userIdentifier = User.NameIdentifier();
+        Logger.LogTrace("User: {UserId}", userIdentifier);
+
+        await API.PatchForUserAsync("API", userIdentifier, options =>
         {
-            Logger.LogTrace("Entering OnPostSignupAsync. RideId: {RideId}. Role: {Role}", rideId, role);
-            var userIdentifier = User.NameIdentifier();
-            Logger.LogTrace("User: {UserId}", userIdentifier);
+            options.RelativePath = $"GroupRides/{rideId}/coordinators/{role}";
+        });
+        Logger.LogTrace("API Call Complete");
+        return new EmptyResult();
+    }
 
-            await API.PatchForUserAsync("API", userIdentifier, options =>
-            {
-                options.RelativePath = $"GroupRides/{rideId}/coordinators/{role}";
-            });
-            Logger.LogTrace("API Call Complete");
-            return new EmptyResult();
-        }
+    public async Task<EmptyResult> OnPostDropoutAsync(Guid rideId, CoordinatorRole role)
+    {
+        Logger.LogTrace("Entering OnPostSignupAsync. RideId: {RideId}. Role: {Role}", rideId, role);
+        var userIdentifier = User.NameIdentifier();
+        Logger.LogTrace("User: {UserId}", userIdentifier);
 
-        public async Task<EmptyResult> OnPostDropoutAsync(Guid rideId, CoordinatorRole role)
+        await API.DeleteForUserAsync("API", userIdentifier, options =>
         {
-            Logger.LogTrace("Entering OnPostSignupAsync. RideId: {RideId}. Role: {Role}", rideId, role);
-            var userIdentifier = User.NameIdentifier();
-            Logger.LogTrace("User: {UserId}", userIdentifier);
+            options.RelativePath = $"GroupRides/{rideId}/coordinators/{role}";
+        });
+        Logger.LogTrace("API Call Complete");
+        return new EmptyResult();
+    }
 
-            await API.DeleteForUserAsync("API", userIdentifier, options =>
-            {
-                options.RelativePath = $"GroupRides/{rideId}/coordinators/{role}";
-            });
-            Logger.LogTrace("API Call Complete");
-            return new EmptyResult();
-        }
-
-        public async Task<IActionResult> OnPostDeleteEventAsync(bool forceDelete)
+    public async Task<IActionResult> OnPostDeleteEventAsync(bool forceDelete)
+    {
+        Logger.LogTrace("Entering OnPostDeleteEventAsync. ForceDelete {Force}", forceDelete);
+        try
         {
-            Logger.LogTrace("Entering OnPostDeleteEventAsync. ForceDelete {Force}",forceDelete);
-            try
-            {
-                await API.DeleteForUserAsync("API", string.Empty, options =>
-                {
-                    options.RelativePath = $"RideEvents/{Id}?force={forceDelete}";
-                });
-                return RedirectToPage("Events/");
-            }
-            catch(Exception ex)
-            {
-                Logger.LogError(ex, "Error deleting event");
-                PreviousPageAction = "OnPostDeleteEvent";
-                PreviousPageErrorMessage = ex.Message;
-                return RedirectToPage();
-            }
-
-        }
-        public async Task<IActionResult> OnPostUpdateEventDetailsAsync()
-        {
-            Logger.LogTrace("Entering OnPostUpdateEventDetails");
-            var utcStart = DateTime.SpecifyKind(EventDate.Add(EventTime) + TimeSpan.FromMinutes(TimeZoneOffset), DateTimeKind.Utc);
-            EventUpdateModel.StartTime = utcStart;
-
-            await API.PatchForUserAsync("API", EventUpdateModel, options =>
-            {
-                options.RelativePath = $"RideEvents/{Id}";
-            });
-            Logger.LogDebug("Patch Complete");
-            return RedirectToPage();
-        }
-
-        public async Task<IActionResult> OnPostDeleteRideAsync(Guid rideId)
-        {
-            Logger.LogTrace("Entering OnPostDeleteRideAsync. Ride Id {RideId}", rideId);
             await API.DeleteForUserAsync("API", string.Empty, options =>
             {
-                options.RelativePath = $"GroupRides/{rideId}";
+                options.RelativePath = $"RideEvents/{Id}?force={forceDelete}";
             });
-            await Task.CompletedTask;
-            return RedirectToPage();
+            return RedirectToPage("Events/");
         }
-
-        public async Task<IActionResult> OnPostCreateRideAsync()
+        catch (Exception ex)
         {
-            Logger.LogTrace("Entering OnPostCreateRideAsync");
-            try
-            {
-                var newModel = await API.PostForUserAsync<GroupRideCreateModel, GroupRide>("API", this.RideCreateModel, options =>
-                {
-                    options.RelativePath = "GroupRides";
-                });
-
-                if(newModel is null || newModel.Id == Guid.Empty)
-                {
-                    Logger.LogError("Unable to create GroupRide. API Returned null");
-                    PreviousPageAction = "Events/Edit/OnPostCreateRideAsync";
-                    PreviousPageErrorMessage = "API returned null when trying to create groupRide";
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex, "Unable to create Group Ride");
-                PreviousPageAction = "GroupRiEvents/Edit/OnPostCreateRideAsync";
-                PreviousPageErrorMessage = "Error when trying to create group ride";
-            }
+            Logger.LogError(ex, "Error deleting event");
+            PreviousPageAction = "OnPostDeleteEvent";
+            PreviousPageErrorMessage = ex.Message;
             return RedirectToPage();
         }
 
-        public async Task<IActionResult> OnPostUpdateRideAsync(Guid rideId)
+    }
+    public async Task<IActionResult> OnPostUpdateEventDetailsAsync()
+    {
+        Logger.LogTrace("Entering OnPostUpdateEventDetails");
+        var utcStart = DateTime.SpecifyKind(EventDate.Add(EventTime) + TimeSpan.FromMinutes(TimeZoneOffset), DateTimeKind.Utc);
+        EventUpdateModel.StartTime = utcStart;
+        EventUpdateModel.Facilitator = IncludeFacilitator;
+        EventUpdateModel.GrillMaster = IncludeGrillMaster;
+
+        await API.PatchForUserAsync("API", EventUpdateModel, options =>
         {
-            if(Request != null && Request.Form != null && !string.IsNullOrEmpty(Request.Form["groupRide.BikeRouteId"].ToString()))
+            options.RelativePath = $"RideEvents/{Id}";
+        });
+        Logger.LogDebug("Patch Complete");
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostDeleteRideAsync(Guid rideId)
+    {
+        Logger.LogTrace("Entering OnPostDeleteRideAsync. Ride Id {RideId}", rideId);
+        await API.DeleteForUserAsync("API", string.Empty, options =>
+        {
+            options.RelativePath = $"GroupRides/{rideId}";
+        });
+        await Task.CompletedTask;
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostCreateRideAsync()
+    {
+        Logger.LogTrace("Entering OnPostCreateRideAsync");
+        try
+        {
+            var newModel = await API.PostForUserAsync<GroupRideCreateModel, GroupRide>("API", this.RideCreateModel, options =>
             {
-                Guid bikeRouteId = Guid.Parse(Request.Form["groupRide.BikeRouteId"].ToString());
-                Logger.LogTrace("Entering OnPostUpdateRideAsync. Group Ride Id {GroupRideId} Bike Route Id {BikeRouteId}", rideId, bikeRouteId);
-                await API.PatchForUserAsync("API", string.Empty, options => 
-                {
-                    options.RelativePath = $"GroupRides/{rideId}/route/{bikeRouteId}";
-                });
+                options.RelativePath = "GroupRides";
+            });
+
+            if (newModel is null || newModel.Id == Guid.Empty)
+            {
+                Logger.LogError("Unable to create GroupRide. API Returned null");
+                PreviousPageAction = "Events/Edit/OnPostCreateRideAsync";
+                PreviousPageErrorMessage = "API returned null when trying to create groupRide";
             }
-            return RedirectToPage();
         }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Unable to create Group Ride");
+            PreviousPageAction = "GroupRiEvents/Edit/OnPostCreateRideAsync";
+            PreviousPageErrorMessage = "Error when trying to create group ride";
+        }
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostUpdateRideAsync(Guid rideId)
+    {
+        if (Request != null && Request.Form != null && !string.IsNullOrEmpty(Request.Form["groupRide.BikeRouteId"].ToString()))
+        {
+            Guid bikeRouteId = Guid.Parse(Request.Form["groupRide.BikeRouteId"].ToString());
+            Logger.LogTrace("Entering OnPostUpdateRideAsync. Group Ride Id {GroupRideId} Bike Route Id {BikeRouteId}", rideId, bikeRouteId);
+            await API.PatchForUserAsync("API", string.Empty, options =>
+            {
+                options.RelativePath = $"GroupRides/{rideId}/route/{bikeRouteId}";
+            });
+        }
+        return RedirectToPage();
+    }
 }

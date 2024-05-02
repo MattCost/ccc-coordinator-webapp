@@ -143,7 +143,7 @@ public class DetailsPageModel : PageModelBase
 
         Logger.LogTrace("Entering OnPostAdvancedSignup. Getting current state");
 
-        var x = Signups.Where(signup => !string.IsNullOrEmpty(signup.UserId)).Select(signup => signup.UserId);
+        var x = Signups.Where(signup => signup.CoordinatorRole != CoordinatorRole.GrillMaster).Where(signup => !string.IsNullOrEmpty(signup.UserId)).Select(signup => signup.UserId);
         if(x.Count() != x.Distinct().Count() )
         {
             Logger.LogError("Bad input, same coordinator can't do 2 roles");

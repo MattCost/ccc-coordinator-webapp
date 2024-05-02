@@ -32,7 +32,7 @@
     <div class="form-group">
         @Html.LabelFor(model => Model.CreateModel.EventType)
         <small class="form-text text-muted"> - What type of event?</small>
-        <select asp-for="CreateModel.EventType" asp-items="@Html.GetEnumSelectList<CCC.Enums.EventTypes>()">
+        <select class="form-select" asp-for="CreateModel.EventType" asp-items="@Html.GetEnumSelectList<CCC.Enums.EventTypes>()">
             <option disabled hidden>select a ride type</option>
         </select>
     </div>
@@ -55,6 +55,9 @@
         @Html.LabelFor(model => Model.CreateModel.Location)
         <small id="desciption" class="form-text text-muted"> - Where at</small>
         @Html.EditorFor(model => Model.CreateModel.Location, new { htmlAttributes = new { @class = "form-control" } })
+    </div>
+    <div class="form-group">
+        Facilitator? @Html.CheckBoxFor(model => Model.CreateModel.Facilitator) Grill Master? @Html.CheckBoxFor(model => Model.CreateModel.GrillMaster)
     </div>
 
     <input type="hidden" asp-for="TimeZoneOffset" />
