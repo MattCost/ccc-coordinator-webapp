@@ -26,9 +26,9 @@
       let output = [];
       @if(User.IsContributor())
       {
-        @: output.push(`<a href="Edit/${row.id}" title="Edit"><i class="fa-solid fa-pen-to-square fa-xl ccc-green"></i></a>&ensp;`);
+        @: output.push(`<a href="Edit/${row.id}" title="Edit"><i class="fa-solid fa-pen-to-square fa-2xl ccc-green"></i></a>&ensp;`);
       }
-      output.push(`<a href="Details/${row.id}" title="Details"><i class="fa-solid fa-circle-info fa-xl ccc-pink"></i></a>&ensp;`);
+      output.push(`<a href="Details/${row.id}" title="Details"><i class="fa-solid fa-circle-info fa-2xl ccc-pink"></i></a>&ensp;`);
       return output.join('');
 
     }
