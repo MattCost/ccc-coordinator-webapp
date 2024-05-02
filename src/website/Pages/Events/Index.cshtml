@@ -33,66 +33,24 @@
 
     }
 
-    var $table = $('#bikeRouteTable')
-
-    function toggleFavoriteRoute(row) {
-      console.log("Toggling favorite for row", row);
-      if(row.isFavorite)
-      {
-        $.ajax({
-          type: "POST",
-          headers: { "RequestVerificationToken": '@token' },
-          url: "?handler=RemoveFavoriteRoute",
-          data: { routeId: row.id}
-        }).done(function (response) {
-          @* console.log("Remove Favorite complete"); *@
-          $table.bootstrapTable('refresh')
+    $(function() {
+        var $table = $('#rideEventTable')
+        console.log( "adding onClickRow event" );
+        $table.bootstrapTable({
+          onClickRow: function(row, $element, field) {
+            console.log("row clicked ", row); 
+            location.assign(`/Events/Details/${row.id}`);
+          }
         });
-      }
-      else
-      {
-        $.ajax({
-          type: "POST",
-          headers: { "RequestVerificationToken": '@token' },
-          url: "?handler=AddFavoriteRoute",
-          data: { routeId: row.id}
-        }).done(function (response) {
-          @* console.log("Add Favorite complete"); *@
-          $table.bootstrapTable('refresh')
-        });   
-      }
-    }
 
-    $('#filterByDistance').click(function () {
-      var min = document.getElementById("minDistance").value;
-      var max = document.getElementById("maxDistance").value;
-      $table.bootstrapTable('filterBy', {
-        //no filters here, just the algo
-      }, {
-        'filterAlgorithm': (row, filters) => {
-        return (row.distance >= min) && (row.distance <= max);
-      }
-      })
     });
-
-    $('#clearDistanceFilter').click(function() {
-      $table.bootstrapTable('filterBy', { }, {'filterAlgorithm': 'and'});
-    })
-    operateEvents = {
-      'click .toggle-favorite-route': function (e, value, row, index) {
-        toggleFavoriteRoute(row);
-      },
-      
-      'click .route-details': function (e, value, row, index) {
-        location.href = `BikeRoutes/Details/${row.id}`;
-      }
-    }
   </script>
 
 }
 <h3>You wanna go ride bikes?</h3>
 
-<table data-toggle="table" data-search="true" data-data-type="json" data-ajax="fetchRideEvents" data-pagination="true"
+@* <table data-toggle="table" data-search="true" data-data-type="json" data-ajax="fetchRideEvents" data-pagination="true" *@
+<table data-search="true" data-data-type="json" data-ajax="fetchRideEvents" data-pagination="true"
   data-sort-name="name"
   data-sort-order="asc"
   class="table" id="rideEventTable">
@@ -101,7 +59,7 @@
       <th data-field="name" data-sortable="true">Name</th>
       <th data-field="location" data-sortable="true">Location</th>
       <th data-field="startTime" data-sortable="true">Time</th>
-      <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents">Actions</th>
+      <th data-field="operate" data-formatter="operateFormatter" >Actions</th>
     </tr>
   </thead>
 </table>
