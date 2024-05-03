@@ -151,12 +151,18 @@ public class GroupRidesController : EntityProviderBaseController
         return await EntityProviderActionHelper(async () =>
         {
             var model = await EntityProvider.GetGroupRide(id);
+            var parentEvent = await EntityProvider.GetRideEvent( model.RideEventId);
             if (model.Coordinators[role].RequiredCountMet)
             {
                 throw new InvalidOperationException("Ride is already full");
             }
             model.Coordinators[role].CoordinatorIds.Add(coordinatorId);
             await EntityProvider.UpdateGroupRide(model);
+            
+            if(parentEvent.UnavailableCoordinators.Remove(coordinatorId))
+            {
+                await EntityProvider.UpdateRideEvent(parentEvent);
+            }
         }, "Unable to signup");
     }
 

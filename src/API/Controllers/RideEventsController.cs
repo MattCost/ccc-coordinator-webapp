@@ -2,6 +2,7 @@ using CCC.Entities;
 using CCC.Services.EntityProvider;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Graph.Models.ODataErrors;
 
 namespace CCC.API.Controllers;
 
@@ -189,6 +190,7 @@ public class RideEventsController : EntityProviderBaseController
                 throw new InvalidOperationException($"Support Role {role} already filled");
             }            
             model.SupportPersonnel[role].CoordinatorIds.Add(coordinatorId);
+            model.UnavailableCoordinators.Remove(coordinatorId);
             await EntityProvider.UpdateRideEvent(model);
         }, "Unable to signup");
     }
@@ -214,7 +216,59 @@ public class RideEventsController : EntityProviderBaseController
         }, "Unable to remove signup");
     }    
 
+    [Authorize(Policy =CCC.Authorization.Enums.CoordinatorPolicy)]
+    [HttpPost("{id:guid}/unavailable/{coordinatorId}")]
+    public async Task<ActionResult> AddUnavailable([FromRoute] Guid id, [FromRoute] string coordinatorId)
+    {
+        return await EntityProviderActionHelper(async() =>
+        {
+            var model = await EntityProvider.GetRideEvent(id);
+            if(!model.UnavailableCoordinators.Contains(coordinatorId))
+            {
+                model.UnavailableCoordinators.Add(coordinatorId);
+                await EntityProvider.UpdateRideEvent(model);
+            }
+            
+            //check support
+            var supp = model.SupportPersonnel.Where( entry => entry.Value.CoordinatorIds.Contains(coordinatorId));
+            foreach(var entry in supp)
+            {
+                var role = entry.Key;
+                model.SupportPersonnel[role].CoordinatorIds.Remove(coordinatorId);
+                await EntityProvider.UpdateRideEvent(model);
+            }
 
+            //check all child rides
+            foreach(var rideId in model.RideIds)
+            {
+                var rideModel = await EntityProvider.GetGroupRide(rideId);
+                var entries = rideModel.Coordinators.Where( entry => entry.Value.CoordinatorIds.Contains(coordinatorId));
+                if(entries.Any()) 
+                {
+                    foreach(var entry in entries)
+                    {
+                        rideModel.Coordinators[entry.Key].CoordinatorIds.Remove(coordinatorId);
+                    }
+                    await EntityProvider.UpdateGroupRide(rideModel);
+                }
+            }
+
+        }, "unable to set as unavailable");
+    }
+
+    [Authorize(Policy =CCC.Authorization.Enums.CoordinatorPolicy)]
+    [HttpDelete("{id:guid}/unavailable/{coordinatorId}")]
+    public async Task<ActionResult> RemoveUnavailable([FromRoute] Guid id, [FromRoute] string coordinatorId)
+    {
+        return await EntityProviderActionHelper(async() =>
+        {
+            var model = await EntityProvider.GetRideEvent(id);
+            if(model.UnavailableCoordinators.Remove(coordinatorId))
+            {
+                await EntityProvider.UpdateRideEvent(model);
+            }
+        }, "unable to remove from unavailable");
+    }
     
 }
 

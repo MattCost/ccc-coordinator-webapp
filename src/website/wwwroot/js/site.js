@@ -3,56 +3,59 @@
 
 // Write your JavaScript code.
 
-function signup(role, entityId, entityType)
-{
+function signup(role, entityId, entityType) {
     // var message = `Will sign up for ${role} in ride ${id}`;
     // alert(message);
 
-    const event = new CustomEvent("signup", {  detail: {role, entityId, entityType}});
+    const event = new CustomEvent("signup", { detail: { role, entityId, entityType } });
     document.dispatchEvent(event);
 }
 
-function dropout(role, entityId, entityType)
-{
-    const event = new CustomEvent("dropout", {  detail: {role, entityId, entityType}});
+function dropout(role, entityId, entityType) {
+    const event = new CustomEvent("dropout", { detail: { role, entityId, entityType } });
     document.dispatchEvent(event);
 }
 
+function sadRSVP(entityId) {
+    const event = new CustomEvent("sadRSVP", { detail: { entityId } });
+    document.dispatchEvent(event);
+}
 
-function toggleClass(id, className)
-{
+function happyRSVP(entityId) {
+    const event = new CustomEvent("happyRSVP", { detail: {entityId}});
+    document.dispatchEvent(event);
+}
+
+function toggleClass(id, className) {
     var element = document.getElementById(id);
-    if(element.classList.contains(className))
-    {
+    if (element.classList.contains(className)) {
         element.classList.remove(className);
     }
-    else
-    {
+    else {
         element.classList.add(className);
-    }   
+    }
 }
 
-function printId(id)
-{
+function printId(id) {
     console.log("Printing ", id)
-    printElement2( document.getElementById(id))
+    printElement2(document.getElementById(id))
 }
 
 
 function printElement(elem) {
     console.log("cloning dom of target element")
     var domClone = elem.cloneNode(true);
-    
+
     console.log("getting printSection")
     var $printSection = document.getElementById("printSection");
-    
+
     if (!$printSection) {
         console.log("printSection not found, creating ne div")
         var $printSection = document.createElement("div");
         $printSection.id = "printSection";
         document.body.appendChild($printSection);
     }
-    
+
     console.log("clear innerHTML of printSection")
     $printSection.innerHTML = "";
     console.log("adding domClone to printSection")
@@ -69,13 +72,13 @@ function printElement2(elem) {
 
     console.log("cloning dom of target element")
     var domClone = elem.cloneNode(true);
-    
+
     console.log("creating print section")
     var $printSection = document.createElement("div");
     $printSection.id = "printSection";
-    document.body.innerHTML=""
+    document.body.innerHTML = ""
     document.body.appendChild($printSection);
-    
+
     console.log("adding domClone to printSection")
     $printSection.appendChild(domClone);
 

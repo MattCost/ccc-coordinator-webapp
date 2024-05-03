@@ -48,7 +48,8 @@ public class ViewModelsController : EntityProviderBaseController
         //Ids we need.
         var coordinatorIds = viewModel.GroupRides.SelectMany( ride => ride.Coordinators.Values.ToList()).SelectMany( entry => entry.CoordinatorIds).Distinct();
         var supportIds = viewModel.RideEvent.SupportPersonnel.SelectMany(entry => entry.Value.CoordinatorIds).Distinct();
-        var allIds = coordinatorIds.Concat(supportIds).Distinct();
+        var unavailableIds = viewModel.RideEvent.UnavailableCoordinators.Distinct();
+        var allIds = coordinatorIds.Concat(supportIds).Concat(unavailableIds).Distinct();
         viewModel.CoordinatorDisplayNames = allCoordinatorsTask.Result.Where( user => allIds.Contains(user.UserId) ).ToList().ToDictionary( user => user.UserId, user => user.DisplayName);
         return Ok(viewModel);
     }

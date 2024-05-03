@@ -45,26 +45,5 @@
                 </td>
             </tr>
         }
-        <tr>
-            <td>Unavailable</td>
-            @{
-                var coordinators2 = Model.UnavailableCoordinators.Select(coordId => coordinatorDisplayNames[coordId]).ToList();
-                var mouseOver2 = coordinators2.Count() == 0 ? "" : coordinators2.Count() == 1 ? coordinators2.First() : string.Join(", ", coordinators2);
-            }
-            <td><div class="tooltip-container">
-                <span class='badge bg-warning rounded-pill'>@Html.DisplayFor(modelItem => Model.UnavailableCoordinators.Count)</span>
-                <span class="tooltip-text tooltip-fade tooltip-right">@mouseOver2</span>
-            </div></td>
-            <td>
-                @if(User.IsCoordinator() && !Model.UnavailableCoordinators.Contains(User.NameIdentifier()))
-                    {
-                        <button type="button" class="btn btn-warning" onclick="sadRSVP('@Model.Id')">Can't Make it</button>
-                    }
-                    @if(User.IsCoordinator() && Model.UnavailableCoordinators.Contains(User.NameIdentifier()))
-                    {
-                        <button type="button" class="btn btn-success" onclick="happyRSVP('@Model.Id')">Can Make it</button>
-                    }
-            </td>
-        </tr>
     </tbody>
 </table>

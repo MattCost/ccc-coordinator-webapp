@@ -36,21 +36,44 @@
 
                 document.addEventListener("dropout", (e) => {
                     console.log(e);
+
                     var postSubmit = $.ajax({
                         type: "POST",
                         headers: { "RequestVerificationToken": '@token' },
                         url: "?handler=Dropout",
                         data: { entityId: e.detail.entityId, role: e.detail.role, entityType: e.detail.entityType }
-
-
                     }).done(function (response) {
                         if(e.detail.entityType == 'GroupRide') {
                             window.location.href = window.location.pathname+"?"+$.param({'activeTab':`list-${e.detail.entityId}`});
                         }
                         else if(e.detail.entityType == "RideEvent") {
                             window.location.href = window.location.pathname+"?"+$.param({'activeTab':`list-details`});
-                        }                    });
+                        }                    
+                    });
                 })
+
+                document.addEventListener("sadRSVP", (e) => {
+                    console.log(e);
+                    var postSubmit = $.ajax({
+                        type: "POST",
+                        headers: { "RequestVerificationToken": '@token' },
+                        url: "?handler=SetUnavailable",
+                        data: { entityId: e.detail.entityId }
+                    }).done(function (response) {
+                        window.location.href = window.location.pathname+"?"+$.param({'activeTab':`list-details`});
+                    });
+                })
+                document.addEventListener("happyRSVP", (e) => {
+                    console.log(e);
+                    var postSubmit = $.ajax({
+                        type: "POST",
+                        headers: { "RequestVerificationToken": '@token' },
+                        url: "?handler=RemoveUnavailable",
+                        data: { entityId: e.detail.entityId }
+                    }).done(function (response) {
+                        window.location.href = window.location.pathname+"?"+$.param({'activeTab':`list-details`});
+                    });
+                })                
 
                 const triggerTabList = document.querySelectorAll('#list-tab a')
                 triggerTabList.forEach(triggerEl => {

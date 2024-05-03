@@ -255,4 +255,32 @@ public class DetailsPageModel : PageModelBase
         return RedirectToPage();
     }
 
+    public async Task<EmptyResult> OnPostSetUnavailable(Guid entityId)
+    {
+        Logger.LogTrace("Entering OnPostSetUnavailable. Event Id: {entityId}", entityId);
+        var userIdentifier = User.NameIdentifier();
+        Logger.LogTrace("User: {UserId}", userIdentifier);
+
+        await API.PostForUserAsync("API", userIdentifier, options =>
+        {
+            options.RelativePath = $"RideEvents/{entityId}/unavailable/{userIdentifier}";
+        });
+        Logger.LogTrace("API to RideEvents controller Complete");
+        return new EmptyResult();
+    }
+
+    public async Task<EmptyResult> OnPostRemoveUnavailable(Guid entityId)
+    {
+        Logger.LogTrace("Entering OnPostRemoveUnavailable. Event Id: {entityId}", entityId);
+        var userIdentifier = User.NameIdentifier();
+        Logger.LogTrace("User: {UserId}", userIdentifier);
+
+        await API.DeleteForUserAsync("API", userIdentifier, options =>
+        {
+            options.RelativePath = $"RideEvents/{entityId}/unavailable/{userIdentifier}";
+        });
+        Logger.LogTrace("API to RideEvents controller Complete");
+        return new EmptyResult();
+    }
+
 }
