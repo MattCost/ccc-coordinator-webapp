@@ -1,3 +1,3 @@
 @model CCC.Entities.BikeRoute
 
-Route - <a asp-page="/BikeRoutes/Details" asp-route-id=@Model.Id>@Html.DisplayFor(model=> Model.Name)</a> - @Html.DisplayFor(mode => Model.Distance) miles - <a href=@Html.Raw(Model.RideWithGPSLink)>Ride With GPS</a>  - <a href=@Html.Raw(Model.GarminConnectLink)>Garmin Connect</a>
+Route - <a asp-page="/BikeRoutes/Details" asp-route-id=@Model.Id>@Html.DisplayFor(model=> Model.Name)</a> - @Html.DisplayFor(mode => Model.Distance) miles - <a href=@Html.Raw(Model.RideWithGPSLink) target="_blank">Ride With GPS</a>  - <a href=@Html.Raw(Model.GarminConnectLink) target="_blank">Garmin Connect</a>
