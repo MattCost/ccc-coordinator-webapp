@@ -42,31 +42,15 @@ azure pipeline to build and deploy to webapp/api services
 
 # TODOs
 
-setup facebook login
-    done but not verified
-
-setup gmail login
-    done for default domain
-
-test all policy based access
 
 setup custom domain (requires move away from Free App Service)
     google login with custom domain
     facebook login with custom domain and verify
 
 
-coordinator admin page to let admins assign coordinator role to others
-    search - find userId by display name / email
-    can we require email via b2c?
-
-CSS Styling on the entire app!
 
 Create Pages
-    Bike Route
-    Ride Event
-    Group Ride
-
-    need to make ride event deal with more type
+    need to make ride event deal with more types
     Add template for Wednesday night road ride
     add template for wednesday night mtb race
 
@@ -75,13 +59,5 @@ Create Pages
 views for riders vs coordinators
     riders don't see Role list
     riders don't see signup section
-
     allow anon access to view rides?
-    
-    view model returned has different data based on user
-
-
-Need a user management page
-    Admins - can assign CoordinatorAdmin / Contributor
-    CoordinatorAdmin - can assign Coordinator
-    
+    view model returned has different data based on user?
