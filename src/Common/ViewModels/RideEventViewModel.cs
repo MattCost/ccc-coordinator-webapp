@@ -8,4 +8,5 @@ public class RideEventViewModel
     public List<GroupRide> GroupRides  { get; set; } = new();
     public Dictionary<Guid, BikeRouteViewModel> BikeRoutes { get; set; } = new();
     public Dictionary<string, string> CoordinatorDisplayNames {get;set;} = new();
+    public List<string> AvailableCoordinators { get; set; } = new();
 }

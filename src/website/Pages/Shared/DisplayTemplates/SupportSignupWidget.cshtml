@@ -6,7 +6,8 @@
     object? junk = ViewData[key];
     bool signedUp = junk == null ? false : (bool)junk;
     Dictionary<string, string> coordinatorDisplayNames = ViewData["CoordinatorDisplayNames"] == null ? new() : (Dictionary<string, string>)ViewData["CoordinatorDisplayNames"]!;
-
+    List<string> availableCoordinators = ViewData["AvailableCoordinators"] == null? new (): (List<string>)ViewData["AvailableCoordinators"]!;
+    var mouseOver3 = availableCoordinators.Count() == 0 ? "No one left..." : availableCoordinators.Count() == 1 ? coordinatorDisplayNames[availableCoordinators.First()] : string.Join(", ", availableCoordinators.Select( user => coordinatorDisplayNames[user]));
 
 }
 
@@ -64,6 +65,15 @@
                     {
                         <button type="button" class="btn btn-success" onclick="happyRSVP('@Model.Id')">Can Make it</button>
                     }
+            </td>
+        </tr>
+        <tr>
+            <td>Still Available</td>
+            <td>
+                <div class="tooltip-container">
+                    <span class='badge bg-success rounded-pill'>@Html.DisplayFor(modelItem => availableCoordinators.Count)</span>
+                    <span class="tooltip-text tooltip-fade tooltip-right">@mouseOver3</span>
+                </div>
             </td>
         </tr>
     </tbody>

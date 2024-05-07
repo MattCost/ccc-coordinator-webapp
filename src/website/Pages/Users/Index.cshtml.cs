@@ -41,7 +41,7 @@ namespace CCC.website.Pages.Users
 
         public async Task<JsonResult> OnPostAssignCoordinatorAsync(string userId)
         {
-            Logger.LogTrace("Entering OnPostAssignCoordinatorAsync User Id", userId);
+            Logger.LogTrace("Entering OnPostAssignCoordinatorAsync User Id {UserId}", userId);
             try
             {
                 await API.PatchForUserAsync("API", string.Empty, options =>
@@ -60,7 +60,7 @@ namespace CCC.website.Pages.Users
         }
         public async Task<JsonResult> OnPostRemoveCoordinatorAsync(string userId)
         {
-            Logger.LogTrace("Entering OnPostRemoveCoordinator User Id", userId);
+            Logger.LogTrace("Entering OnPostRemoveCoordinator User Id {UserId}", userId);
             try
             {
                 await API.DeleteForUserAsync("API", string.Empty, options =>
@@ -80,7 +80,7 @@ namespace CCC.website.Pages.Users
 
         public async Task<JsonResult> OnPostAssignCoordinatorAdminAsync(string userId)
         {
-            Logger.LogTrace("Entering OnPostAssignCoordinatorAdminAsync User Id", userId);
+            Logger.LogTrace("Entering OnPostAssignCoordinatorAdminAsync User Id {UserId}", userId);
             try
             {
                 await API.PatchForUserAsync("API", string.Empty, options =>
@@ -100,7 +100,7 @@ namespace CCC.website.Pages.Users
 
         public async Task<JsonResult> OnPostRemoveCoordinatorAdminAsync(string userId)
         {
-            Logger.LogTrace("Entering OnPostRemoveCoordinatorAdminAsync User Id", userId);
+            Logger.LogTrace("Entering OnPostRemoveCoordinatorAdminAsync User Id {UserId}", userId);
             try
             {
                 await API.DeleteForUserAsync("API", string.Empty, options =>
@@ -119,7 +119,7 @@ namespace CCC.website.Pages.Users
 
         public async Task<JsonResult> OnPostAssignContributorAsync(string userId)
         {
-            Logger.LogTrace("Entering OnPostAssignContributorAsync User Id", userId);
+            Logger.LogTrace("Entering OnPostAssignContributorAsync User Id {UserId}", userId);
             try
             {
                 await API.PatchForUserAsync("API", string.Empty, options =>
@@ -139,7 +139,7 @@ namespace CCC.website.Pages.Users
 
         public async Task<JsonResult> OnPostRemoveContributorAsync(string userId)
         {
-            Logger.LogTrace("Entering OnPostRemoveContributorAsync User Id", userId);
+            Logger.LogTrace("Entering OnPostRemoveContributorAsync User Id {UserId}", userId);
             try
             {
                 await API.DeleteForUserAsync("API", string.Empty, options =>

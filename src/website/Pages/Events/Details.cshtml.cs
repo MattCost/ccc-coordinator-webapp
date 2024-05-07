@@ -1,10 +1,7 @@
-
-using System.ComponentModel;
 using CCC.ViewModels;
 using CCC.website.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Abstractions;
-
 using CCC.Authorization;
 using CCC.Entities;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -24,6 +21,7 @@ public class DetailsPageModel : PageModelBase
 
     public List<User> AllCoordinators { get; set; } = new();
 
+    public List<User> NotSignedUp {get;set;} = new();
 
     [BindProperty]
     public List<SignupEntry> Signups { get; set; } = new();
@@ -57,6 +55,7 @@ public class DetailsPageModel : PageModelBase
                 IsSignedUp = coordinatorSignedUp | supportSignedUp;
                 ViewData["signedUp"] = IsSignedUp;
                 ViewData["userDisplayNameLookup"] = RideEventVM.CoordinatorDisplayNames;
+                ViewData["availableCoordinators"] = RideEventVM.AvailableCoordinators;
 
                 var AllCoordinatorsTask = API.GetForUserAsync<List<User>>("API", options =>
                 {
@@ -70,8 +69,7 @@ public class DetailsPageModel : PageModelBase
                 await Task.WhenAll(AllCoordinatorsTask, SignupsTask);
                 
                 AllCoordinators = AllCoordinatorsTask.Result ?? new();
-                Signups = SignupsTask.Result ?? new();
-
+                Signups = SignupsTask.Result ?? new();                           
                 CoordinatorSelectList = new SelectList(AllCoordinators.Select(coordinator => new SelectListItem { Value = coordinator.UserId, Text = coordinator.DisplayName }).Append(new SelectListItem { Value = string.Empty, Text = "None" }), "Value", "Text");
             }
         }

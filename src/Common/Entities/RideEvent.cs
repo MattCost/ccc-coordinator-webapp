@@ -11,4 +11,4 @@ public class RideEvent
     public Dictionary<CoordinatorRole, CoordinatorEntry> SupportPersonnel { get; set; } = new();
     public Enums.EventTypes EventType {get; set; }
     public List<string> UnavailableCoordinators { get; set; } = new();
-}
+} 

@@ -9,6 +9,7 @@
     var rideEvent = Model.RideEventVM.RideEvent ?? new CCC.Entities.RideEvent();
     var routes = Model.RideEventVM.BikeRoutes.Values.ToList();
     ViewData["CoordinatorDisplayNames"] = Model.RideEventVM.CoordinatorDisplayNames;
+    ViewData["AvailableCoordinators"] = Model.RideEventVM.AvailableCoordinators;
 }
 
 @section Scripts
@@ -151,10 +152,9 @@
                                 <div class="row mt-3">
                                     <div class="col">
                                     @Html.DisplayFor(modelItem => rideEvent, "SupportSignupWidget")
+                                   </div>
                                 </div>
-                            </div>
                             }
-
                         </div>
                     </div>
 

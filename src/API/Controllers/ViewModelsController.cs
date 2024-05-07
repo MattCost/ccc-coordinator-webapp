@@ -46,11 +46,16 @@ public class ViewModelsController : EntityProviderBaseController
         await allCoordinatorsTask;
 
         //Ids we need.
-        var coordinatorIds = viewModel.GroupRides.SelectMany( ride => ride.Coordinators.Values.ToList()).SelectMany( entry => entry.CoordinatorIds).Distinct();
-        var supportIds = viewModel.RideEvent.SupportPersonnel.SelectMany(entry => entry.Value.CoordinatorIds).Distinct();
-        var unavailableIds = viewModel.RideEvent.UnavailableCoordinators.Distinct();
-        var allIds = coordinatorIds.Concat(supportIds).Concat(unavailableIds).Distinct();
-        viewModel.CoordinatorDisplayNames = allCoordinatorsTask.Result.Where( user => allIds.Contains(user.UserId) ).ToList().ToDictionary( user => user.UserId, user => user.DisplayName);
+        var rideCoordinatorIds = viewModel.GroupRides.SelectMany( ride => ride.Coordinators.Values.ToList()).SelectMany( entry => entry.CoordinatorIds).Distinct();
+        var supportCoordinatorIds = viewModel.RideEvent.SupportPersonnel.SelectMany(entry => entry.Value.CoordinatorIds).Distinct();
+        var unavailableCoordinatorIds = viewModel.RideEvent.UnavailableCoordinators.Distinct();
+        var allAccountedForIds = rideCoordinatorIds.Concat(supportCoordinatorIds).Concat(unavailableCoordinatorIds).Distinct();
+        var allCoordinatorUsers = allCoordinatorsTask.Result.ToList();
+        viewModel.CoordinatorDisplayNames = allCoordinatorUsers.ToDictionary(user => user.UserId, user => user.DisplayName);
+        
+        viewModel.AvailableCoordinators = allCoordinatorUsers.Where( coordinator => !allAccountedForIds.Contains(coordinator.UserId) ).Select(user => user.UserId).ToList();
+
+
         return Ok(viewModel);
     }
 
