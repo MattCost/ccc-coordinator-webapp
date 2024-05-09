@@ -165,6 +165,14 @@ public class BikeRoutesController : EntityProviderBaseController
         await EntityProvider.UpdateBikeRoute(model);
         return Ok();
     }
+
+    [HttpGet("{id:guid}/rides")]
+    public async Task<ActionResult> GetRidesUsingRoute([FromRoute] Guid id)
+    {
+        var rides = await EntityProvider.GetRidesUsingRoute(id);
+        return Ok(rides);
+    }
 }
+
 
 

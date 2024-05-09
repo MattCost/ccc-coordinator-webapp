@@ -102,6 +102,12 @@ public class MemoryEntityProvider : IEntityProvider
             throw new EntityNotFoundException(typeof(RideEvent), eventId);
     }
 
+    public Task<List<GroupRide>> GetRidesUsingRoute(Guid routeId)
+    {
+        var rides = _groupRides.Values.Where( ride => ride.BikeRouteId == routeId);
+        return Task.FromResult(rides.ToList());
+    }
+
     public Task RemoveFavoriteRoute(string userId, Guid bikeRouteId)
     {
         throw new NotImplementedException();

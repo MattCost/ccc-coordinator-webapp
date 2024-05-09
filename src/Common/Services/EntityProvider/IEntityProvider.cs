@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using CCC.Entities;
 
 namespace CCC.Services.EntityProvider;
@@ -26,5 +27,7 @@ public interface IEntityProvider
     Task<List<Guid>> GetFavoriteRoutes(string userId);
     Task AddFavoriteRoute(string userId, Guid bikeRouteId);
     Task RemoveFavoriteRoute(string userId, Guid bikeRouteId);
+
+    Task<List<GroupRide>> GetRidesUsingRoute(Guid routeId);
 
 }

@@ -132,17 +132,16 @@ public class EntityProviderTableStorage : IEntityProvider
 
     #endregion
 
-    
-    #endregion
-
-    #region PrivateMethods
-
-    private async Task<List<RideEvent>> GetRidesUsingRoute(Guid routeId)
+    public async Task<List<GroupRide>> GetRidesUsingRoute(Guid routeId)
     {
         var queryFilter = $"PartitionKey eq '{GroupRides}' and BikeRouteId eq guid'{routeId}' and not {IsDeletedFlag}";
 
-        return await QueryHelper<RideEvent>(queryFilter);
+        return await QueryHelper<GroupRide>(queryFilter);
     }
+
+    #endregion
+
+    #region PrivateMethods
     private static TModel CreateFromTableEntity<TModel>(TableEntity tableEntity) where TModel : class, new()
     {
         var output = new TModel();

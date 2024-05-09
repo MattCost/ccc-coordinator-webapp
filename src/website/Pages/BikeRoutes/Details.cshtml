@@ -42,7 +42,7 @@
         <div class="col">
             <ul>
                 <li><a href=@Html.Raw(Model.BikeRoute.RideWithGPSLink)>Ride With GPS</a></li>
-                <li><a href=@Html.Raw(Model.BikeRoute.GarminConnectLink)>Garmin Connect</a></li>
+                <li><a href=@Html.Raw(Model.BikeRoute.GarminConnectLink)>Garmin Connect</li>
             </ul>
         </div>
     </div>
@@ -51,4 +51,18 @@
             @Html.Raw(Model.BikeRoute.RideWithGpsEmbed)
         </div>
     </div>
+
+    <div class="row mt-2">
+        <div class="col">
+            Route used for @Model.GroupRides.Count() events!
+            <ul>
+                @foreach(var ride in Model.GroupRides)
+                {
+                    <li>
+                        <a asp-page="/Events/Details" asp-route-id="@ride.RideEventId">Details</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>    
 </div>

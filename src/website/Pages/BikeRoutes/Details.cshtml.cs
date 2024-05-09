@@ -11,6 +11,7 @@ namespace CCC.website.Pages.BikeRoutes
         public Guid Id { get; set; }
 
         public BikeRoute BikeRoute { get; set; } = new();
+        public List<GroupRide> GroupRides {get;set; } = new();        
         public DetailsPageModel(ILogger<PageModelBase> logger, IDownstreamApi api) : base(logger, api)
         {
         }
@@ -29,6 +30,17 @@ namespace CCC.website.Pages.BikeRoutes
                 Logger.LogError(ex, "Error getting entity Id {id}", Id);
                 CurrentPageErrorMessage = $"Unable to get BikeRoute";
                 CurrentPageAction = "BikeRoute/Details/OnGet";
+            }
+            
+            try
+            {
+                GroupRides = await API.GetForUserAsync<List<GroupRide>>("API", options => {
+                    options.RelativePath = $"BikeRoutes/{Id}/rides";
+                }) ?? new();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error getting related rides for Route Id {id}", Id);
             }
         }
     }
