@@ -85,7 +85,7 @@ public class EditPageModel : PageModelBase
             }
 
             var routes = await API.GetForUserAsync<List<BikeRoute>>("API", options => options.RelativePath = "BikeRoutes") ?? new();
-            BikeRouteSelectList = new SelectList(routes.Select(r => new SelectListItem { Value = r.Id.ToString(), Text = $"{r.Name} - {r.Distance} miles" }), "Value", "Text");
+            BikeRouteSelectList = new SelectList(routes.OrderBy(r => r.DistanceClass).ThenBy(r=>r.Name).Select(r => new SelectListItem { Value = r.Id.ToString(), Text = $"{r.Name} - {r.Distance} miles ({r.DistanceClass})" }), "Value", "Text");
             RideCreateModel.RideEventId = Id;
 
         }
