@@ -92,9 +92,35 @@
 
 <h3>Let's Go <span class="ccc-pink">Ride</span> <span class="ccc-green">Bikes!</span></h3>
 <div id="calendar"></div>
+@if(Model.NextRideEventVM != null)
+{
+
+<div class="row m-2">
+    <div class="col">
+        <ui>
+            <li>Next Event - <a href="/Events/Details/@Model.NextRideEventVM.RideEvent.Id">@Html.DisplayFor(model => Model.NextRideEventVM.RideEvent.Name)</a></li>
+            @if(ViewData["RideType"] != null) 
+            {
+                <li>@ViewData["RideType"] - @ViewData["Position"]</li>
+                <li><a href="/BikeRoutes/Details/@ViewData["RouteId"]">@ViewData["RouteName"]</a></li>
+            }
+            @if(ViewData["SupportRole"] != null)
+            {
+                <li>@ViewData["SupportRole"]</li>
+            }
+            @if(ViewData["Message"] != null)
+            {
+                <li>@ViewData["Message"]</li>
+            }
+        </ui>
+    </div>
+</div>
+}
 @if(User.ShowCrudOperations())
 {
-    <div>
-    <a asp-page="/Events/Create" class="btn btn-primary btn-lg" role="button" ><i class="fa-solid fa-circle-plus"></i> Create Event</a>
+    <div class="row ms-2 mt-4">
+        <div class="col">
+            <a asp-page="/Events/Create" class="btn btn-primary btn-lg" role="button" ><i class="fa-solid fa-circle-plus"></i> Create Event</a>
+        </div>
     </div>
 }
