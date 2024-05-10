@@ -35,9 +35,16 @@
                     </div>
                     </td>
                 <td>
-                    @if(User.IsCoordinator() @* && !signedUp *@ && !Model.SupportPersonnel[coordinatorRole].RequiredCountMet && !Model.SupportPersonnel[coordinatorRole].CoordinatorIds.Contains(User.NameIdentifier()))
+                    @if(User.IsCoordinator() && !Model.SupportPersonnel[coordinatorRole].RequiredCountMet && !Model.SupportPersonnel[coordinatorRole].CoordinatorIds.Contains(User.NameIdentifier()))
                     {
-                        <button type="button" class="btn btn-success" @(signedUp ? "disabled" : "") onclick="signup('@coordinatorRole', '@Model.Id', 'RideEvent')">Signup</button>
+                        if(coordinatorRole == CoordinatorRole.GrillMaster)
+                        {
+                            <button type="button" class="btn btn-success" onclick="signup('@coordinatorRole', '@Model.Id', 'RideEvent')">Signup</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-success" @(signedUp ? "disabled" : "") onclick="signup('@coordinatorRole', '@Model.Id', 'RideEvent')">Signup</button>
+                        }
                     }
                     @if(User.IsCoordinator() && Model.SupportPersonnel[coordinatorRole].CoordinatorIds.Contains(User.NameIdentifier()))
                     {
