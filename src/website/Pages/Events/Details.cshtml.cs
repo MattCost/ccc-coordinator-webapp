@@ -50,7 +50,9 @@ public class DetailsPageModel : PageModelBase
             if (User.IsCoordinator())
             {
                 var coordinatorSignedUp = RideEventVM.GroupRides.Select(ride => ride.Coordinators.Values.ToList()).SelectMany(x => x).Where(entry => entry.CoordinatorIds.Contains(User.NameIdentifier())).Any();
-                var supportSignedUp = RideEventVM.RideEvent.SupportPersonnel.Select( entry => entry.Value).ToList().Where(entry => entry.CoordinatorIds.Contains(User.NameIdentifier())).Any();
+                var supportSignedUp = RideEventVM.RideEvent.SupportPersonnel
+                    .Where(entry => entry.Key != CoordinatorRole.GrillMaster)
+                    .Select( entry => entry.Value).ToList().Where(entry => entry.CoordinatorIds.Contains(User.NameIdentifier())).Any();
                 Logger.LogDebug("CoordinatorSignedUp: {coordinatorSignedUp}", coordinatorSignedUp);
                 IsSignedUp = coordinatorSignedUp | supportSignedUp;
                 ViewData["signedUp"] = IsSignedUp;
