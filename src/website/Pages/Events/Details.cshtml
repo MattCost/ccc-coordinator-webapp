@@ -167,7 +167,8 @@
                                 <div class="print-preview">
                                     @* everything inside this div will be printed *@
                                     <div id='allCueSheets'>
-                                        @Html.DisplayFor( model => routes, "EventPrintCueSheets")
+                                        @* @Html.DisplayFor( model => routes, "EventPrintCueSheets") *@
+                                        @Html.DisplayFor( model => model.RideEventVM, "EventPrintCueSheets")
                                     </div>
                                     <div id='rolePrintout'>
                                         @Html.DisplayFor( model => model.RideEventVM, "EventPrintRoleList")
