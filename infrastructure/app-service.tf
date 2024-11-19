@@ -6,7 +6,9 @@ resource "azurerm_service_plan" "this" {
   resource_group_name = azurerm_resource_group.this.name
   location            = azurerm_resource_group.this.location
   os_type             = "Linux"
-  sku_name            = "B1"
+  sku_name            = "F1"
+  # F1 for free mode, B1 for basic mode.
+  # To switch to free mode, delete custom domain manually in portal. Then set always_on to false, and apply that change. Then finally change to F1 and apply that change
 
   tags = {
     app     = local.appName
@@ -23,7 +25,7 @@ resource "azurerm_linux_web_app" "api" {
   service_plan_id     = azurerm_service_plan.this.id
 
   site_config {
-    always_on = true
+    always_on = false
 
     application_stack {
       dotnet_version = "8.0"
@@ -69,7 +71,7 @@ resource "azurerm_linux_web_app" "website" {
   service_plan_id     = azurerm_service_plan.this.id
 
   site_config {
-    always_on = true
+    always_on = false
 
     application_stack {
       dotnet_version = "8.0"
